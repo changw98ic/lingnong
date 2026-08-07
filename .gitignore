@@ -1,0 +1,5 @@
+# Godot 4+ 编辑器生成的缓存与导入数据，不是源码
+.godot/
+
+# macOS
+.DS_Store
