@@ -4,7 +4,8 @@ signal state_changed
 signal realm_changed
 
 # 境界表来自 RealmConfig（scripts/systems/realm_config.gd），索引与 realm_index 对齐：
-# 0 凡人 / 1 炼气 / 2 筑基 / 3 金丹。直接引用 RealmConfig.REALMS 保证数值单一来源。
+# 0 凡人 / 1 炼气 / 2 筑基 / 3 金丹。境界同时是 Gate（突破门槛）与 Modifier
+#（production 作用于生长/产量/灵气/自动修炼灵气；cultivation 作用于丹药修为/自动修炼修为）。
 # 子系统 AlchemySystem / AutomationSystem 通过 class_name 全局可用，无需 preload。
 
 const SEASONS := [
@@ -26,22 +27,29 @@ const CROPS := {
 	"gathering_grass": {"name": "聚灵草", "sell_price": 5.0, "growth": 5.0, "qi": 3.0},
 }
 
-# 聚气丹走“花灵石购买”的旧手工业流程；筑基丹 / 金元丹由 AlchemySystem 炼制。
+# 聚气丹走“花灵石购买”的旧手工业流程；筑基丹 / 金元丹 / 狂暴丹由 AlchemySystem 炼制。
 const PILLS := {
 	"qi_gathering_pill": {"name": "聚气丹", "price": 5.0, "cultivation": 50.0},
 }
 
 const GRASS_ID := "gathering_grass"
 const AUTO_BREW_INTERVAL := 5.0
+# 田升级与灵脉化的灵石消耗。
+const FIELD_UPGRADE_BASE_COST := 50.0
+const SPIRIT_VEINIFY_COST := 500.0
+# 事件爆发窗：祥瑞降世期间全局生产倍率。
+const AUSPICIOUS_PRODUCTION_MULT := 5.0
+const RANDOM_EVENT_DURATION := 60.0
 
 var spirit_stones := 0.0
 var qi := 0.0
 var cultivation := 0.0
 var crop_inventory := {"gathering_grass": 0}
-var pills := {"qi_gathering_pill": 0, "foundation_pill": 0, "golden_pill": 0}
+# 丹药库存：聚气丹（灵石购买）+ 筑基/金元/狂暴丹（炼丹炉产出）。
+var pills := {"qi_gathering_pill": 0, "foundation_pill": 0, "golden_pill": 0, "frenzy_pill": 0}
 var realm_index := 0
-var field_level := 1
 var unlocked_fields := 1
+# 灵田结构（契约[2]）：每田自带 level/quality/spirit_vein，决定 field_yield_mult 与灵气浓度。
 var fields: Array[Dictionary] = []
 
 var practitioner_upgrades := {"wood_spirit": 0, "qi_gathering": 0, "farmer_insight": 0, "longevity": 0}
@@ -49,20 +57,25 @@ var knowledge_points := 0
 var reincarnation_count := 0
 # 转世全局产出倍率，跨世保留：1 + 0.5 * reincarnation_count。
 var reincarnation_mult := 1.0
-# 金丹突破累乘的全局产出倍率（本世有效，转世重置）。
-var global_prod_mult := 1.0
-# 炼气突破带来的灵气产出倍率（本世有效，转世重置）。
-var qi_gen_mult := 1.0
 var lifespan_days := 100.0
 var max_lifespan_days := 100.0
 
-# 解锁标志位（由突破奖励驱动）。
+# v2 新增：事件爆发窗全局生产倍率（祥瑞降世期间 =5.0，其余 =1.0）。
+var event_production_mult := 1.0
+# v2 新增：狂暴丹 active_buff。active_buff_until > now 时 active_buff_mult 生效。
+var active_buff_until := 0.0
+var active_buff_mult := 1.0
+
+# 解锁标志位（由突破奖励 RealmConfig.breakthrough_rewards 驱动）。
 var spirit_rain_unlocked := false
 var auto_harvest_enabled := false
 var alchemy_unlocked := false
 var foundation_pill_unlocked := false
 var golden_pill_unlocked := false
-var spirit_vein_unlocked := false
+# v2 新增解锁：灵田升级（筑基）、自动修炼（筑基）、灵脉化田（金丹）。
+var field_upgrade_unlocked := false
+var auto_cultivation_unlocked := false
+var spirit_veinify_unlocked := false
 
 # 子系统实例。
 var alchemy := AlchemySystem.new()
@@ -94,7 +107,7 @@ func initialize_new_game() -> void:
 	qi = 0.0
 	cultivation = 0.0
 	crop_inventory = {"gathering_grass": 0}
-	pills = {"qi_gathering_pill": 0, "foundation_pill": 0, "golden_pill": 0}
+	pills = {"qi_gathering_pill": 0, "foundation_pill": 0, "golden_pill": 0, "frenzy_pill": 0}
 	fields.clear()
 	spirit_rain_until.clear()
 	guardian_array_level.clear()
@@ -104,12 +117,23 @@ func initialize_new_game() -> void:
 	season_started_at = Time.get_unix_time_from_system()
 	random_event = ""
 	random_event_until = 0.0
+	event_production_mult = 1.0
+	active_buff_until = 0.0
+	active_buff_mult = 1.0
 	random_event_cooldown_until = Time.get_unix_time_from_system() + 180.0
 	insect_corpses = 0
 	next_auto_brew_at = 0.0
 	lifespan_days = maxf(1.0, max_lifespan_days + practitioner_upgrades["longevity"] * 10.0)
 	for i in range(3):
-		fields.append({"crop_id": "", "planted_at": 0.0, "ready_at": 0.0})
+		# 每田初始化为新结构：空作物、level=1、quality=1.0、非灵脉。
+		fields.append({
+			"crop_id": "",
+			"planted_at": 0.0,
+			"ready_at": 0.0,
+			"level": 1,
+			"quality": 1.0,
+			"spirit_vein": false,
+		})
 		spirit_rain_until.append(0.0)
 		guardian_array_level.append(1)
 		guardian_array_charges.append(3)
@@ -141,6 +165,7 @@ func can_breakthrough() -> bool:
 
 
 # 突破：按 RealmConfig.breakthrough_rewards(new_realm_index) 应用奖励。
+# production / cultivation 乘数不在这里设置——它们按当前境界实时查表。
 func breakthrough() -> bool:
 	if not can_breakthrough():
 		return false
@@ -157,17 +182,14 @@ func breakthrough() -> bool:
 		alchemy_unlocked = true
 	if bool(rewards.get("unlock_foundation_pill", false)):
 		foundation_pill_unlocked = true
+	if bool(rewards.get("unlock_field_upgrade", false)):
+		field_upgrade_unlocked = true
+	if bool(rewards.get("unlock_auto_cultivation", false)):
+		auto_cultivation_unlocked = true
 	if bool(rewards.get("unlock_golden_pill", false)):
 		golden_pill_unlocked = true
-	if bool(rewards.get("unlock_spirit_vein", false)):
-		spirit_vein_unlocked = true
-		automation.activate_spirit_vein()
-	var qi_mult := float(rewards.get("qi_gen_mult", 1.0))
-	if qi_mult != 1.0:
-		qi_gen_mult *= qi_mult
-	var global_delta := float(rewards.get("global_mult_delta", 1.0))
-	if global_delta != 1.0:
-		global_prod_mult *= global_delta
+	if bool(rewards.get("unlock_spirit_veinify", false)):
+		spirit_veinify_unlocked = true
 	realm_changed.emit()
 	emit_state_changed()
 	return true
@@ -186,13 +208,38 @@ func get_season_multiplier(kind: String) -> float:
 	return float(SEASONS[season_index].get(kind, 1.0))
 
 
-# 生长乘数 = 季节 × 木灵根 × 灵雨诀(×8) × reincarnation_mult × global_prod_mult。
+# 田自身产量乘数 = quality * (1 + (level-1)*0.2)（契约[2]）。
+func field_yield_mult(field_index: int) -> float:
+	if field_index < 0 or field_index >= fields.size():
+		return 1.0
+	var data: Dictionary = fields[field_index]
+	var level := int(data.get("level", 1))
+	var quality := float(data.get("quality", 1.0))
+	return quality * (1.0 + float(level - 1) * 0.2)
+
+
+# 狂暴丹 active_buff 是否生效中。
+func is_active_buff() -> bool:
+	return active_buff_until > Time.get_unix_time_from_system()
+
+
+# 当前 active_buff 剩余秒数（<=0 表示未生效）。
+func get_active_buff_remaining() -> float:
+	return maxf(0.0, active_buff_until - Time.get_unix_time_from_system())
+
+
+# 生长乘数（契约[3]）= 季节 × 木灵根 × 灵雨诀(×8) × production_mult × reincarnation_mult
+#                         × event_production_mult × (active_buff?active_buff_mult:1)。
 func get_growth_multiplier(field_index: int) -> float:
 	var multiplier := get_season_multiplier("growth")
 	multiplier *= 1.0 + practitioner_upgrades["wood_spirit"] * 0.05
 	if is_spirit_rain_active(field_index):
 		multiplier *= RealmConfig.SPIRIT_RAIN_GROWTH_MULT
-	multiplier *= reincarnation_mult * global_prod_mult
+	multiplier *= RealmConfig.production_mult(realm_index)
+	multiplier *= reincarnation_mult
+	multiplier *= event_production_mult
+	if is_active_buff():
+		multiplier *= active_buff_mult
 	return multiplier
 
 
@@ -239,27 +286,84 @@ func upgrade_guardian_array(field_index: int, cost := 100.0) -> bool:
 	return true
 
 
-func harvest_crop(field_index: int, crop_id: String, amount: int, qi_amount: float) -> bool:
-	if field_index < 0 or field_index >= fields.size() or amount <= 0:
+# 灵田升级（筑基解锁）：消耗 50*level 灵石，level += 1，提升 field_yield_mult。
+func upgrade_field(field_index: int) -> bool:
+	if not field_upgrade_unlocked:
 		return false
-	crop_inventory[crop_id] = int(crop_inventory.get(crop_id, 0)) + amount
-	var qi_gain := qi_amount
-	qi_gain *= get_season_multiplier("qi")
-	qi_gain *= 1.0 + practitioner_upgrades["qi_gathering"] * 0.08
-	qi_gain *= qi_gen_mult
-	qi_gain *= reincarnation_mult * global_prod_mult
-	qi += qi_gain
+	if field_index < 0 or field_index >= fields.size():
+		return false
+	var data: Dictionary = fields[field_index]
+	var level := int(data.get("level", 1))
+	var cost := FIELD_UPGRADE_BASE_COST * float(level)
+	if spirit_stones < cost:
+		return false
+	spirit_stones -= cost
+	data["level"] = level + 1
+	fields[field_index] = data
 	emit_state_changed()
 	return true
 
 
+# 灵脉化田（金丹解锁）：消耗 500 灵石，quality *= 3，spirit_vein=true（贡献 +10 灵气浓度）。
+func spirit_veinify_field(field_index: int) -> bool:
+	if not spirit_veinify_unlocked:
+		return false
+	if field_index < 0 or field_index >= fields.size():
+		return false
+	var data: Dictionary = fields[field_index]
+	if bool(data.get("spirit_vein", false)):
+		return false
+	if spirit_stones < SPIRIT_VEINIFY_COST:
+		return false
+	spirit_stones -= SPIRIT_VEINIFY_COST
+	data["quality"] = float(data.get("quality", 1.0)) * 3.0
+	data["spirit_vein"] = true
+	fields[field_index] = data
+	emit_state_changed()
+	return true
+
+
+# 收获结算（契约[3]）。产量与灵气均在此方法内统一计算，外部仅需传入田索引。
+# 返回 {"ok": bool, "crop_id": String, "amount": int, "qi": float} 供 UI 反馈。
+func harvest_crop(field_index: int) -> Dictionary:
+	var empty := {"ok": false, "crop_id": "", "amount": 0, "qi": 0.0}
+	if field_index < 0 or field_index >= fields.size():
+		return empty
+	var data: Dictionary = fields[field_index]
+	var crop_id := String(data.get("crop_id", ""))
+	if crop_id == "" or not CROPS.has(crop_id):
+		return empty
+	var crop: Dictionary = CROPS[crop_id]
+	# 产量 = 1 * field_yield_mult * season.yield * event_production_mult * buff * pest_factor。
+	var pest_level := int(insect_events[field_index].get("pest_level", 0))
+	var pest_factor := maxf(0.0, 1.0 - float(pest_level) * 0.25)
+	var buff_mult := active_buff_mult if is_active_buff() else 1.0
+	var yield_amount := maxi(1, int(floor(
+		field_yield_mult(field_index)
+		* get_season_multiplier("yield")
+		* event_production_mult
+		* buff_mult
+		* pest_factor
+	)))
+	crop_inventory[crop_id] = int(crop_inventory.get(crop_id, 0)) + yield_amount
+	# 灵气 = crop.qi * production_mult * reincarnation_mult * event_production_mult * season.qi * (1+qi_gathering*0.08)。
+	var qi_gain := float(crop.get("qi", 0.0))
+	qi_gain *= RealmConfig.production_mult(realm_index)
+	qi_gain *= reincarnation_mult
+	qi_gain *= event_production_mult
+	qi_gain *= get_season_multiplier("qi")
+	qi_gain *= 1.0 + practitioner_upgrades["qi_gathering"] * 0.08
+	qi += qi_gain
+	emit_state_changed()
+	return {"ok": true, "crop_id": crop_id, "amount": yield_amount, "qi": qi_gain}
+
+
+# 出售灵材（契约[6]）：去掉旧的 auspicious ×2 散落逻辑，event 加成已在收获时计入产量。
 func sell_crop(crop_id: String, amount: int) -> bool:
 	if not CROPS.has(crop_id) or amount <= 0 or int(crop_inventory.get(crop_id, 0)) < amount:
 		return false
-	var event_multiplier := 2.0 if is_random_event_active() and random_event == "auspicious" else 1.0
-	var final_multiplier := get_season_multiplier("yield") * event_multiplier
 	crop_inventory[crop_id] = int(crop_inventory.get(crop_id, 0)) - amount
-	spirit_stones += float(CROPS[crop_id]["sell_price"]) * amount * final_multiplier
+	spirit_stones += float(CROPS[crop_id]["sell_price"]) * amount
 	emit_state_changed()
 	return true
 
@@ -276,38 +380,53 @@ func buy_pill(pill_id: String, amount: int = 1) -> bool:
 	return true
 
 
-# 通用丹药服用：聚气丹 / 筑基丹 / 金元丹均可服用，修为基础值来自 PILLS 或炼丹配方。
+# 通用丹药服用（契约[4]）：
+#   - 狂暴丹(frenzy_pill)：不加修为，改为设置 active_buff_until/active_buff_mult。
+#   - 其余（聚气/筑基/金元）：修为 = base * cultivation_mult * (1 + farmer_insight*0.10)。
 func consume_pill(pill_id: String, amount: int = 1) -> bool:
 	if amount <= 0 or int(pills.get(pill_id, 0)) < amount:
 		return false
-	var cultivation_per := _get_pill_cultivation(pill_id)
-	if cultivation_per < 0.0:
+	# buff 类丹药：设置 active_buff，不加工区修为。
+	if alchemy.is_buff_recipe(pill_id):
+		var buff: Dictionary = alchemy.get_buff(pill_id)
+		var mult := float(buff.get("mult", 1.0))
+		var duration := float(buff.get("duration", 0.0))
+		pills[pill_id] = int(pills.get(pill_id, 0)) - amount
+		var now := Time.get_unix_time_from_system()
+		# 多次服用刷新为较远结束时间，倍率取本次。
+		active_buff_until = maxf(active_buff_until, now + duration * float(amount))
+		active_buff_mult = mult
+		emit_state_changed()
+		return true
+	var base := _get_pill_cultivation(pill_id)
+	if base < 0.0:
 		return false
-	var event_multiplier := 2.0 if is_random_event_active() and random_event == "auspicious" else 1.0
-	var cultivation_multiplier: float = (1.0 + practitioner_upgrades["farmer_insight"] * 0.10) * event_multiplier
 	pills[pill_id] = int(pills.get(pill_id, 0)) - amount
-	cultivation += cultivation_per * amount * cultivation_multiplier
+	var cultivation_multiplier: float = RealmConfig.cultivation_mult(realm_index) * (1.0 + float(practitioner_upgrades["farmer_insight"]) * 0.10)
+	cultivation += base * float(amount) * cultivation_multiplier
 	emit_state_changed()
 	return true
 
 
+# 丹药修为基础值：聚气丹走 PILLS；筑基/金元走 AlchemySystem 配方的 output_cultivation。
 func _get_pill_cultivation(pill_id: String) -> float:
 	if PILLS.has(pill_id):
 		return float(PILLS[pill_id]["cultivation"])
-	for recipe in alchemy.get_recipes():
-		if String(recipe.get("id", "")) == pill_id:
-			return float(recipe.get("cultivation", 0.0))
+	var recipe: Dictionary = alchemy.get_recipe(pill_id)
+	if not recipe.is_empty():
+		return float(recipe.get("output_cultivation", 0.0))
 	return -1.0
 
 
-# 用灵草炼制筑基丹 / 金元丹（配方见 AlchemySystem.RECIPES）。扣草与加丹由本方法应用。
+# 用灵草炼制筑基/金元/狂暴丹（配方见 AlchemySystem.RECIPES）。扣草与加丹由本方法应用。
+# 新签名：brew/can_brew 第 2 个参数是 crop_inventory:Dictionary。
 func brew_pill(recipe_id: String) -> bool:
-	var grass_count := int(crop_inventory.get(GRASS_ID, 0))
-	var result: Dictionary = alchemy.brew(recipe_id, grass_count, realm_index)
+	var result: Dictionary = alchemy.brew(recipe_id, crop_inventory, realm_index)
 	if not bool(result.get("ok", false)):
 		return false
-	var cost := int(result.get("grass_cost", 0))
-	crop_inventory[GRASS_ID] = grass_count - cost
+	var inputs: Dictionary = result.get("inputs", {})
+	for crop_id in inputs:
+		crop_inventory[crop_id] = int(crop_inventory.get(crop_id, 0)) - int(inputs[crop_id])
 	var pill_id := String(result.get("pill_id", ""))
 	pills[pill_id] = int(pills.get(pill_id, 0)) + 1
 	emit_state_changed()
@@ -315,31 +434,14 @@ func brew_pill(recipe_id: String) -> bool:
 
 
 func can_brew_pill(recipe_id: String) -> bool:
-	return alchemy.can_brew(recipe_id, int(crop_inventory.get(GRASS_ID, 0)), realm_index)
+	return alchemy.can_brew(recipe_id, crop_inventory, realm_index)
 
 
 func get_recipe_name(recipe_id: String) -> String:
-	for recipe in alchemy.get_recipes():
-		if String(recipe.get("id", "")) == recipe_id:
-			return String(recipe.get("name", recipe_id))
+	var recipe: Dictionary = alchemy.get_recipe(recipe_id)
+	if not recipe.is_empty():
+		return String(recipe.get("name", recipe_id))
 	return recipe_id
-
-
-func get_recipe_grass_cost(recipe_id: String) -> int:
-	for recipe in alchemy.get_recipes():
-		if String(recipe.get("id", "")) == recipe_id:
-			return int(recipe.get("grass_cost", 0))
-	return 0
-
-
-func add_rewards(stones: float, qi_amount: float, cultivation_amount: float, yield_multiplier := 1.0) -> void:
-	# 遗留实现（旧收获流程），新系统不应再调用。
-	var event_multiplier := 2.0 if is_random_event_active() and random_event == "auspicious" else 1.0
-	var final_multiplier := yield_multiplier * get_season_multiplier("yield") * event_multiplier
-	spirit_stones += stones * final_multiplier
-	qi += qi_amount * get_season_multiplier("qi") * (1.0 + practitioner_upgrades["qi_gathering"] * 0.08) * event_multiplier
-	cultivation += cultivation_amount * (1.0 + practitioner_upgrades["farmer_insight"] * 0.10) * event_multiplier
-	emit_state_changed()
 
 
 func update_world(delta: float) -> void:
@@ -356,8 +458,12 @@ func update_world(delta: float) -> void:
 		emit_state_changed()
 	elif random_event == "" and now >= random_event_cooldown_until:
 		random_event = "auspicious" if randi() % 2 == 0 else "warlord_birthday"
-		random_event_until = now + 60.0
+		random_event_until = now + RANDOM_EVENT_DURATION
 		emit_state_changed()
+	# 事件爆发窗（契约[6]）：祥瑞降世期间生产 ×5，其余（含兵主诞辰）归 1.0。
+	event_production_mult = AUSPICIOUS_PRODUCTION_MULT if (is_random_event_active() and random_event == "auspicious") else 1.0
+
+	# 噬金虫逻辑（保留，兵主诞辰期间攻击数 ×2、攻击间隔减半）。
 	for i in range(insect_events.size()):
 		if String(fields[i].get("crop_id", "")) == "":
 			continue
@@ -373,19 +479,27 @@ func update_world(delta: float) -> void:
 			event["next_attack_at"] = now + (30.0 if random_event == "warlord_birthday" and is_random_event_active() else 60.0)
 			insect_events[i] = event
 
-	# 灵脉被动产出（金丹解锁）：tick 用 reincarnation_mult，结果再乘 global_prod_mult。
-	if automation.is_spirit_vein_active():
-		var gain: Dictionary = automation.tick(delta, reincarnation_mult)
-		cultivation += float(gain.get("cultivation", 0.0)) * global_prod_mult
-		qi += float(gain.get("qi", 0.0)) * global_prod_mult
+	# 自动修炼（筑基解锁，契约[5]）：灵气浓度驱动，每帧累加修为/灵气。
+	if auto_cultivation_unlocked:
+		var density := AutomationSystem.compute_qi_density(fields, unlocked_fields)
+		var rates := automation.auto_rates(
+			density,
+			realm_index,
+			reincarnation_mult,
+			event_production_mult,
+			RealmConfig.production_mult(realm_index),
+			RealmConfig.cultivation_mult(realm_index)
+		)
+		cultivation += float(rates["cultivation_per_sec"]) * delta
+		qi += float(rates["qi_per_sec"]) * delta
 
 	# 自动收获（炼气解锁）：成熟地块自动收获并立即补种同种作物，循环不中断。
 	if auto_harvest_enabled:
 		_auto_harvest(now)
 
 	# 自动炼丹（金丹解锁）：每 AUTO_BREW_INTERVAL 秒尝试炼一枚筑基丹。
-	if spirit_vein_unlocked and now >= next_auto_brew_at:
-		if alchemy.can_brew("foundation_pill", int(crop_inventory.get(GRASS_ID, 0)), realm_index):
+	if spirit_veinify_unlocked and now >= next_auto_brew_at:
+		if alchemy.can_brew("foundation_pill", crop_inventory, realm_index):
 			brew_pill("foundation_pill")
 		next_auto_brew_at = now + AUTO_BREW_INTERVAL
 
@@ -400,16 +514,16 @@ func _auto_harvest(now: float) -> void:
 			continue
 		if now < float(data.get("ready_at", 0.0)):
 			continue
-		var crop: Dictionary = CROPS.get(crop_id, {})
-		var pest_level := int(insect_events[i].get("pest_level", 0))
-		var yield_amount := maxi(1, int(floor(maxf(0.0, 1.0 - pest_level * 0.25))))
-		var qi_amount := float(crop.get("qi", 0.0))
-		harvest_crop(i, crop_id, yield_amount, qi_amount)
+		harvest_crop(i)
 		# 自动补种：收完立刻种回同一种作物，并重置该田虫害，保证生产循环不中断。
-		# 行为与手动种植一致（手动种植也会在落种时把该田虫害事件重置为 180 秒后再来）。
+		# 保留田的 level/quality/spirit_vein，只重置作物与时间。
 		insect_events[i] = {"active": false, "attacks": 0, "pest_level": 0, "next_attack_at": now + 180.0}
+		var crop: Dictionary = CROPS.get(crop_id, {})
 		var growth_time := float(crop.get("growth", 5.0)) / get_growth_multiplier(i)
-		fields[i] = {"crop_id": crop_id, "planted_at": now, "ready_at": now + growth_time}
+		data["crop_id"] = crop_id
+		data["planted_at"] = now
+		data["ready_at"] = now + growth_time
+		fields[i] = data
 
 
 func register_insect_attack(field_index: int) -> void:
@@ -460,24 +574,27 @@ func get_knowledge_for_reincarnation() -> int:
 	return int((realm_index + 1) * 10 + cultivation / 100.0 + insect_corpses + (5 if lifespan_days > 0.0 else 0.0))
 
 
-# 转世：保留知识点 / 专精 / 转世次数与倍率；重置本世资源、境界、灵田与解锁标志。
+# 转世（契约[7]）：保留知识点/专精/转世次数与倍率；重置本世资源、境界、灵田与解锁标志。
 func reincarnate() -> bool:
 	knowledge_points += get_knowledge_for_reincarnation()
 	reincarnation_count += 1
 	reincarnation_mult = 1.0 + 0.5 * float(reincarnation_count)
-	global_prod_mult = 1.0
-	qi_gen_mult = 1.0
+	# 重置本世解锁标志。
 	spirit_rain_unlocked = false
 	auto_harvest_enabled = false
 	alchemy_unlocked = false
 	foundation_pill_unlocked = false
+	field_upgrade_unlocked = false
+	auto_cultivation_unlocked = false
 	golden_pill_unlocked = false
-	spirit_vein_unlocked = false
+	spirit_veinify_unlocked = false
+	# 重置 buff 与事件倍率。
+	active_buff_until = 0.0
+	active_buff_mult = 1.0
+	event_production_mult = 1.0
 	realm_index = 0
-	field_level = 1
 	unlocked_fields = 1
-	# 新建灵脉实例，使 spirit_vein_active 归 false。
-	automation = AutomationSystem.new()
+	# initialize_new_game 会把每田重置为 level=1/quality=1.0/spirit_vein=false/作物空。
 	initialize_new_game()
 	# initialize_new_game 会把灵石清零，转世给一点启动资金。
 	spirit_stones = 100.0
@@ -495,25 +612,48 @@ func get_random_event_display_name() -> String:
 	return "祥瑞降世" if random_event == "auspicious" else "兵主诞辰"
 
 
-# 灵脉每秒产出（基础 × 转世倍率 × 全局倍率），未激活返回 0，供 UI 展示。
-func get_spirit_vein_per_sec() -> Dictionary:
-	if not automation.is_spirit_vein_active():
-		return {"cultivation": 0.0, "qi": 0.0}
-	var mult := reincarnation_mult * global_prod_mult
+# 灵气浓度（契约[5]）：种植中普通田 +1，灵脉化田 +10。
+func get_qi_density() -> float:
+	return AutomationSystem.compute_qi_density(fields, unlocked_fields)
+
+
+# 自动修炼每秒产出（供 UI 展示）。未解锁返回 0，但仍返回当前浓度。
+func get_auto_cultivation_per_sec() -> Dictionary:
+	var density := get_qi_density()
+	if not auto_cultivation_unlocked:
+		return {"cultivation": 0.0, "qi": 0.0, "density": density}
+	var rates := automation.auto_rates(
+		density,
+		realm_index,
+		reincarnation_mult,
+		event_production_mult,
+		RealmConfig.production_mult(realm_index),
+		RealmConfig.cultivation_mult(realm_index)
+	)
 	return {
-		"cultivation": AutomationSystem.BASE_CULTIVATION_PER_SEC * mult,
-		"qi": AutomationSystem.BASE_QI_PER_SEC * mult,
+		"cultivation": float(rates["cultivation_per_sec"]),
+		"qi": float(rates["qi_per_sec"]),
+		"density": density,
 	}
 
 
-# 由 SaveManager 在加载后调用：结算离线灵脉产出并累加进 cultivation/qi，
-# 同时把摘要写入 last_offline_report 供 UI 展示。
+# 由 SaveManager 在加载后调用：用新 compute_offline 签名结算离线自动修炼（筑基起生效）。
 func apply_offline_report(saved_at: float) -> void:
 	var now := Time.get_unix_time_from_system()
 	var elapsed := maxf(0.0, now - saved_at)
-	var report: Dictionary = automation.compute_offline(elapsed, reincarnation_mult)
-	var offline_cultivation := float(report.get("cultivation", 0.0)) * global_prod_mult
-	var offline_qi := float(report.get("qi", 0.0)) * global_prod_mult
+	var density := get_qi_density()
+	# 加载时 event_production_mult 尚未运行 update_world，按 1.0 结算离线。
+	var report: Dictionary = automation.compute_offline(
+		density,
+		realm_index,
+		reincarnation_mult,
+		event_production_mult,
+		RealmConfig.production_mult(realm_index),
+		RealmConfig.cultivation_mult(realm_index),
+		elapsed
+	)
+	var offline_cultivation := float(report.get("cultivation", 0.0))
+	var offline_qi := float(report.get("qi", 0.0))
 	cultivation += offline_cultivation
 	qi += offline_qi
 	last_offline_report = {
@@ -523,6 +663,8 @@ func apply_offline_report(saved_at: float) -> void:
 		"credited_seconds": float(report.get("credited_seconds", 0.0)),
 		"elapsed_seconds": elapsed,
 		"cap_seconds": AutomationSystem.OFFLINE_CAP_SECONDS,
-		"active": automation.is_spirit_vein_active(),
+		# 筑基起自动修炼才生效，用于 UI 判断是否展示离线摘要。
+		"active": auto_cultivation_unlocked,
+		"qi_density": density,
 	}
 	emit_state_changed()

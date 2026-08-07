@@ -4,6 +4,7 @@ const CROP := {"id": "gathering_grass", "name": "聚灵草", "growth": 5.0, "qi"
 const PILL_ID := "qi_gathering_pill"
 const FOUNDATION_PILL := "foundation_pill"
 const GOLDEN_PILL := "golden_pill"
+const FRENZY_PILL := "frenzy_pill"
 
 @onready var guidance: Label = $Content/Guidance
 @onready var stats: Label = $Content/Stats
@@ -27,11 +28,13 @@ var selected_field := 0
 var save_accumulator := 0.0
 var feedback_time := 0.0
 
-# 炼丹相关动态按钮与灵脉信息（按境界解锁显示）。
+# 炼丹相关动态按钮与灵气浓度信息（按境界解锁显示）。
 var brew_foundation_button: Button
 var consume_foundation_button: Button
 var brew_golden_button: Button
 var consume_golden_button: Button
+var brew_frenzy_button: Button
+var consume_frenzy_button: Button
 var spirit_vein_label: Label
 
 func _ready() -> void:
@@ -43,7 +46,8 @@ func _ready() -> void:
 	consume_button.pressed.connect(_consume_one)
 	breakthrough_button.pressed.connect(_on_breakthrough_pressed)
 	save_button.pressed.connect(_on_save_pressed)
-	for label in ["灵雨诀", "庚金剑诀", "升级守护灵阵", "出售虫尸", "木灵根", "聚气效率", "农道悟性", "长生印记", "转世"]:
+	# 法术与系统动作按钮（含 v2 新增的升级灵田 / 灵脉化田）。
+	for label in ["灵雨诀", "庚金剑诀", "升级守护灵阵", "升级灵田", "灵脉化田", "出售虫尸", "木灵根", "聚气效率", "农道悟性", "长生印记", "转世"]:
 		_add_action_button(label)
 	_build_shop_extras()
 	_build_fields()
@@ -60,12 +64,14 @@ func _add_action_button(label: String) -> void:
 	button.pressed.connect(_on_action.bind(label))
 	actions.add_child(button)
 
-# 动态构建炼丹按钮与灵脉信息标签，附加到商店面板底部。
+# 动态构建炼丹按钮（含狂暴丹）与灵气浓度信息标签，附加到商店面板底部。
 func _build_shop_extras() -> void:
 	brew_foundation_button = _add_shop_button("炼制筑基丹（10 草 → +1000 修为）", _brew_foundation)
-	consume_foundation_button = _add_shop_button("服用筑基丹（+1000 修为）", _consume_foundation)
+	consume_foundation_button = _add_shop_button("服用筑基丹（+1000 修为 × 境界）", _consume_foundation)
 	brew_golden_button = _add_shop_button("炼制金元丹（100 草 → +30000 修为）", _brew_golden)
-	consume_golden_button = _add_shop_button("服用金元丹（+30000 修为）", _consume_golden)
+	consume_golden_button = _add_shop_button("服用金元丹（+30000 修为 × 境界）", _consume_golden)
+	brew_frenzy_button = _add_shop_button("炼制狂暴丹（30 草 → 60 秒生产 ×3）", _brew_frenzy)
+	consume_frenzy_button = _add_shop_button("服用狂暴丹（60 秒生产 ×3）", _consume_frenzy)
 	spirit_vein_label = Label.new()
 	spirit_vein_label.add_theme_font_size_override("font_size", 14)
 	spirit_vein_label.add_theme_color_override("font_color", Color(0.78, 0.88, 0.78, 1))
@@ -98,7 +104,7 @@ func _build_fields() -> void:
 	field_buttons.clear()
 	for i in range(GameState.fields.size()):
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(210, 125)
+		button.custom_minimum_size = Vector2(210, 140)
 		button.pressed.connect(_on_field_pressed.bind(i))
 		fields_grid.add_child(button)
 		field_buttons.append(button)
@@ -118,7 +124,17 @@ func _refresh_stats() -> void:
 	else:
 		progress.max_value = 1.0
 		progress.value = 1.0
-	stats.text = "灵石  %s    灵气  %s    修为  %s / %s    境界  %s\n时节：%s    事件：%s    虫尸：%d    知识点：%d    寿元：%.1f天" % [NumberFormat.format(GameState.spirit_stones), NumberFormat.format(GameState.qi), NumberFormat.format(current), NumberFormat.format(requirement), GameState.get_realm_name(), GameState.get_season_name(), GameState.get_random_event_display_name(), GameState.insect_corpses, GameState.knowledge_points, GameState.lifespan_days]
+	# 事件爆发窗：祥瑞降世期间显著标注 ×5 生产。
+	var event_tag := "  ★ 祥瑞降世·生产 ×5 ★" if (GameState.is_random_event_active() and GameState.random_event == "auspicious") else ""
+	var buff_tag := ""
+	if GameState.is_active_buff():
+		buff_tag = "  [狂暴 ×%.1f %ds]" % [GameState.active_buff_mult, int(GameState.get_active_buff_remaining())]
+	# 自动修炼信息（筑基起显示浓度与每秒产出）。
+	var auto := GameState.get_auto_cultivation_per_sec()
+	var auto_tag := ""
+	if GameState.auto_cultivation_unlocked:
+		auto_tag = "\n灵气浓度：%.0f    自动修炼：每秒 +%s 修为 +%s 灵气" % [float(auto["density"]), NumberFormat.format(float(auto["cultivation"])), NumberFormat.format(float(auto["qi"]))]
+	stats.text = "灵石  %s    灵气  %s    修为  %s / %s    境界  %s\n时节：%s    事件：%s    虫尸：%d    知识点：%d    寿元：%.1f天%s%s%s" % [NumberFormat.format(GameState.spirit_stones), NumberFormat.format(GameState.qi), NumberFormat.format(current), NumberFormat.format(requirement), GameState.get_realm_name(), GameState.get_season_name(), GameState.get_random_event_display_name(), GameState.insect_corpses, GameState.knowledge_points, GameState.lifespan_days, event_tag, buff_tag, auto_tag]
 	guidance.text = _get_guidance()
 
 func _refresh_shop() -> void:
@@ -126,8 +142,9 @@ func _refresh_shop() -> void:
 	var qi_pill_count := int(GameState.pills.get(PILL_ID, 0))
 	var foundation_count := int(GameState.pills.get(FOUNDATION_PILL, 0))
 	var golden_count := int(GameState.pills.get(GOLDEN_PILL, 0))
+	var frenzy_count := int(GameState.pills.get(FRENZY_PILL, 0))
 	inventory_label.text = "灵草库存：%d 株\n出售单价：5 灵石" % crop_count
-	pill_info.text = "聚气丹：%d 枚（5 灵石/枚，服用 +50 修为）\n筑基丹：%d 枚（服用 +1000 修为）\n金元丹：%d 枚（服用 +30000 修为）" % [qi_pill_count, foundation_count, golden_count]
+	pill_info.text = "聚气丹：%d 枚（5 灵石/枚，服用 +50 修为 × 境界）\n筑基丹：%d 枚（+1000 修为 × 境界）\n金元丹：%d 枚（+30000 修为 × 境界）\n狂暴丹：%d 枚（60 秒生产 ×3）" % [qi_pill_count, foundation_count, golden_count, frenzy_count]
 	sell_button.disabled = crop_count < 1
 	sell_all_button.disabled = crop_count < 1
 	buy_button.disabled = GameState.spirit_stones < 5.0
@@ -143,11 +160,16 @@ func _refresh_shop() -> void:
 	consume_golden_button.visible = GameState.golden_pill_unlocked
 	brew_golden_button.disabled = not GameState.can_brew_pill(GOLDEN_PILL)
 	consume_golden_button.disabled = golden_count < 1
+	# 狂暴丹与筑基丹同阶解锁（unlock_realm=2）。
+	brew_frenzy_button.visible = GameState.foundation_pill_unlocked
+	consume_frenzy_button.visible = GameState.foundation_pill_unlocked
+	brew_frenzy_button.disabled = not GameState.can_brew_pill(FRENZY_PILL)
+	consume_frenzy_button.disabled = frenzy_count < 1 or GameState.is_active_buff()
 
-	# 灵脉每秒产出（金丹后显示）。
-	if GameState.spirit_vein_unlocked:
-		var per_sec: Dictionary = GameState.get_spirit_vein_per_sec()
-		spirit_vein_label.text = "灵脉：每秒 +%s 修为 +%s 灵气" % [NumberFormat.format(float(per_sec["cultivation"])), NumberFormat.format(float(per_sec["qi"]))]
+	# 灵气浓度与自动修炼（筑基起显示）。
+	if GameState.auto_cultivation_unlocked:
+		var per_sec: Dictionary = GameState.get_auto_cultivation_per_sec()
+		spirit_vein_label.text = "灵气浓度：%.0f    自动修炼：每秒 +%s 修为 +%s 灵气" % [float(per_sec["density"]), NumberFormat.format(float(per_sec["cultivation"])), NumberFormat.format(float(per_sec["qi"]))]
 		spirit_vein_label.visible = true
 	else:
 		spirit_vein_label.visible = false
@@ -163,14 +185,18 @@ func _refresh_fields() -> void:
 			button.disabled = true
 			continue
 		button.disabled = false
+		# 田自身属性：等级 / 品质 / 灵脉化标记。
+		var level := int(data.get("level", 1))
+		var quality := float(data.get("quality", 1.0))
+		var field_tag := "Lv.%d · 品质×%.1f%s" % [level, quality, " · 灵脉" if bool(data.get("spirit_vein", false)) else ""]
 		var pest := "\n噬金虫：阵法 %d / 虫害 %d" % [GameState.guardian_array_charges[i], event.get("pest_level", 0)] if event.get("active", false) else ""
 		var rain := "\n灵雨诀生效中" if GameState.is_spirit_rain_active(i) else ""
 		if String(data.get("crop_id", "")) == "":
-			button.text = "灵田 %d\n空闲\n点击种植聚灵草" % (i + 1)
+			button.text = "灵田 %d\n%s\n空闲\n点击种植聚灵草" % [i + 1, field_tag]
 		elif now >= float(data.get("ready_at", 0.0)):
-			button.text = "灵田 %d\n聚灵草成熟！\n点击收获%s" % [i + 1, pest]
+			button.text = "灵田 %d\n%s\n聚灵草成熟！\n点击收获%s" % [i + 1, field_tag, pest]
 		else:
-			button.text = "灵田 %d\n生长中 %d 秒%s%s" % [i + 1, maxi(0, int(float(data["ready_at"]) - now)), pest, rain]
+			button.text = "灵田 %d\n%s\n生长中 %d 秒%s%s" % [i + 1, field_tag, maxi(0, int(float(data["ready_at"]) - now)), pest, rain]
 		button.modulate = Color(1.0, 0.82, 0.35) if i == selected_field else Color.WHITE
 
 func _on_field_pressed(index: int) -> void:
@@ -179,14 +205,23 @@ func _on_field_pressed(index: int) -> void:
 	var now := Time.get_unix_time_from_system()
 	if String(data.get("crop_id", "")) == "":
 		GameState.insect_events[index] = {"active": false, "attacks": 0, "pest_level": 0, "next_attack_at": now + 180.0}
-		GameState.fields[index] = {"crop_id": CROP.id, "planted_at": now, "ready_at": now + CROP.growth / GameState.get_growth_multiplier(index)}
+		# 种植：保留田的 level/quality/spirit_vein，只更新作物与时间。
+		data["crop_id"] = CROP.id
+		data["planted_at"] = now
+		data["ready_at"] = now + CROP.growth / GameState.get_growth_multiplier(index)
+		GameState.fields[index] = data
 		_set_feedback("种植成功：聚灵草将在约 5 秒后成熟。")
 	elif now >= float(data.get("ready_at", 0.0)):
-		var pest_level := int(GameState.insect_events[index].get("pest_level", 0))
-		var yield_amount := maxi(1, int(floor(maxf(0.0, 1.0 - pest_level * 0.25))))
-		GameState.harvest_crop(index, CROP.id, yield_amount, CROP.qi)
-		GameState.fields[index] = {"crop_id": "", "planted_at": 0.0, "ready_at": 0.0}
-		_set_feedback("收获成功：聚灵草 ×%d，灵气 +%s。现在去右侧商店出售。" % [yield_amount, NumberFormat.format(CROP.qi)])
+		var result: Dictionary = GameState.harvest_crop(index)
+		if bool(result.get("ok", false)):
+			# 收获后清空作物，保留田升级与灵脉属性。
+			data["crop_id"] = ""
+			data["planted_at"] = 0.0
+			data["ready_at"] = 0.0
+			GameState.fields[index] = data
+			_set_feedback("收获成功：聚灵草 ×%d，灵气 +%s。现在去右侧商店出售。" % [int(result["amount"]), NumberFormat.format(float(result["qi"]))])
+		else:
+			_set_feedback("这块灵田没有可收获的作物。")
 	else:
 		_set_feedback("这块灵田还在生长，剩余约 %d 秒。" % maxi(0, int(float(data["ready_at"]) - now)))
 	SaveManager.save_game()
@@ -224,7 +259,7 @@ func _buy_all() -> void:
 
 func _consume_one() -> void:
 	if GameState.consume_pill(PILL_ID, 1):
-		_set_feedback("服用成功：修为 +50。继续经营，达到目标后尝试突破。")
+		_set_feedback("服用成功：聚气丹转化为修为（随境界倍增）。继续经营，达到目标后尝试突破。")
 	else:
 		_set_feedback("没有聚气丹可服用，请先出售灵草并购买丹药。")
 	_after_action()
@@ -238,7 +273,7 @@ func _brew_foundation() -> void:
 
 func _consume_foundation() -> void:
 	if GameState.consume_pill(FOUNDATION_PILL, 1):
-		_set_feedback("服用筑基丹：修为 +1000。")
+		_set_feedback("服用筑基丹：修为大增（× 境界修炼倍率）。")
 	else:
 		_set_feedback("没有筑基丹可服用。")
 	_after_action()
@@ -252,9 +287,23 @@ func _brew_golden() -> void:
 
 func _consume_golden() -> void:
 	if GameState.consume_pill(GOLDEN_PILL, 1):
-		_set_feedback("服用金元丹：修为 +30000。")
+		_set_feedback("服用金元丹：修为暴涨（× 境界修炼倍率）。")
 	else:
 		_set_feedback("没有金元丹可服用。")
+	_after_action()
+
+func _brew_frenzy() -> void:
+	if GameState.brew_pill(FRENZY_PILL):
+		_set_feedback("炼制成功：狂暴丹 ×1。服用后 60 秒内生产 ×3。")
+	else:
+		_set_feedback("炼制失败：需要 30 株聚灵草。")
+	_after_action()
+
+func _consume_frenzy() -> void:
+	if GameState.consume_pill(FRENZY_PILL, 1):
+		_set_feedback("服用狂暴丹：60 秒内生长/产量/灵气 ×3。")
+	else:
+		_set_feedback("没有狂暴丹可服用，或狂暴效果已在生效中。")
 	_after_action()
 
 func _on_action(label: String) -> void:
@@ -280,6 +329,19 @@ func _on_action(label: String) -> void:
 			return
 		success = GameState.upgrade_guardian_array(selected_field)
 		_set_feedback("守护灵阵升级成功：抵抗次数提高。" if success else "升级需要 100 灵石。")
+	elif label == "升级灵田":
+		# 灵田升级：消耗 50*level 灵石，提升产量乘数。
+		success = GameState.upgrade_field(selected_field)
+		if success:
+			var lv := int(GameState.fields[selected_field].get("level", 1))
+			_set_feedback("灵田升级至 Lv.%d，产量进一步提升。下次消耗 %d 灵石。" % [lv, 50 * lv])
+		else:
+			var cur_lv := int(GameState.fields[selected_field].get("level", 1)) if selected_field < GameState.fields.size() else 1
+			_set_feedback("升级失败：需要灵田升级解锁，且持有 %d 灵石。" % (50 * cur_lv))
+	elif label == "灵脉化田":
+		# 灵脉化田：消耗 500 灵石，品质 ×3 且贡献 +10 灵气浓度。
+		success = GameState.spirit_veinify_field(selected_field)
+		_set_feedback("灵脉化田成功：品质 ×3，灵气浓度 +10。" if success else "灵脉化田失败：需金丹解锁、500 灵石，且该田尚未灵脉化。")
 	elif label == "出售虫尸":
 		success = GameState.sell_insect_corpses()
 		_set_feedback("虫尸出售成功：获得灵石。" if success else "当前没有虫尸。")
@@ -319,17 +381,15 @@ func _describe_breakthrough() -> String:
 	if bool(rewards.get("unlock_alchemy", false)):
 		parts.append("炼丹炉")
 	if bool(rewards.get("unlock_foundation_pill", false)):
-		parts.append("筑基丹配方")
+		parts.append("筑基丹/狂暴丹配方")
+	if bool(rewards.get("unlock_field_upgrade", false)):
+		parts.append("灵田升级")
+	if bool(rewards.get("unlock_auto_cultivation", false)):
+		parts.append("自动修炼（灵气浓度）")
 	if bool(rewards.get("unlock_golden_pill", false)):
 		parts.append("金元丹配方")
-	if bool(rewards.get("unlock_spirit_vein", false)):
-		parts.append("灵脉")
-	var qi_mult := float(rewards.get("qi_gen_mult", 1.0))
-	if qi_mult != 1.0:
-		parts.append("灵气产出 ×%.1f" % qi_mult)
-	var gmult := float(rewards.get("global_mult_delta", 1.0))
-	if gmult != 1.0:
-		parts.append("全局产出 ×%.1f" % gmult)
+	if bool(rewards.get("unlock_spirit_veinify", false)):
+		parts.append("灵脉化田")
 	if parts.is_empty():
 		return "突破成功：境界提升。"
 	return "突破成功！本次解锁/增益：" + ", ".join(parts)
@@ -356,13 +416,13 @@ func _get_guidance() -> String:
 			return "当前目标 4/4：点击右侧“服用 1 枚聚气丹”，把经营收益转成修为。"
 	if GameState.can_breakthrough():
 		return "阶段目标：修为已达标，点击“尝试突破”解锁新的成长空间。"
-	return "继续循环：收获 → 出售 → 买丹药 → 服用 → 修为突破。"
+	return "继续循环：收获 → 出售 → 买丹药 → 服用 → 修为突破。境界越高，生产与修炼倍率越强。"
 
 func _set_feedback(message: String) -> void:
 	feedback.text = message
 	feedback_time = 4.0
 
-# 加载后若有离线灵脉收益，弹出一次性摘要。
+# 加载后若有离线自动修炼收益，弹出一次性摘要（筑基起生效）。
 func _show_offline_report_if_any() -> void:
 	var report: Dictionary = GameState.last_offline_report
 	if not bool(report.get("active", false)):
@@ -373,4 +433,4 @@ func _show_offline_report_if_any() -> void:
 		return
 	var hours := float(report.get("credited_seconds", 0.0)) / 3600.0
 	var capped := bool(report.get("capped", false))
-	_set_feedback("离线结算（%.1f 小时%s）：修为 +%s，灵气 +%s。" % [hours, "，已达 8 小时上限" if capped else "", NumberFormat.format(gained_c), NumberFormat.format(gained_q)])
+	_set_feedback("离线结算（%.1f 小时%s）：灵气浓度 %.0f，修为 +%s，灵气 +%s。" % [hours, "，已达 8 小时上限" if capped else "", float(report.get("qi_density", 0.0)), NumberFormat.format(gained_c), NumberFormat.format(gained_q)])

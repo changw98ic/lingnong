@@ -1,7 +1,15 @@
 extends Node
 
 const SAVE_PATH := "user://lingnong_save.json"
-const SAVE_VERSION := 6
+# v7（契约[8]）：
+#   - fields 每项含 level/quality/spirit_vein；
+#   - 新增 active_buff_until / active_buff_mult；
+#   - pills 补 frenzy_pill 键；
+#   - 删除 global_prod_mult / qi_gen_mult / spirit_vein_active（v2 已移除该模型）；
+#   - 解锁标志改为 field_upgrade_unlocked / auto_cultivation_unlocked / spirit_veinify_unlocked。
+# load 兼容 v6：fields 旧项缺 level/quality/spirit_vein → 默认 1/1.0/false；
+#   忽略旧 global_prod_mult / qi_gen_mult / spirit_vein_active；reincarnation_mult 保留。
+const SAVE_VERSION := 7
 
 func save_game() -> bool:
 	var data := {
@@ -12,7 +20,6 @@ func save_game() -> bool:
 		"crop_inventory": GameState.crop_inventory,
 		"pills": GameState.pills,
 		"realm_index": GameState.realm_index,
-		"field_level": GameState.field_level,
 		"unlocked_fields": GameState.unlocked_fields,
 		"fields": GameState.fields,
 		"spirit_rain_until": GameState.spirit_rain_until,
@@ -30,15 +37,16 @@ func save_game() -> bool:
 		"knowledge_points": GameState.knowledge_points,
 		"reincarnation_count": GameState.reincarnation_count,
 		"reincarnation_mult": GameState.reincarnation_mult,
-		"global_prod_mult": GameState.global_prod_mult,
-		"qi_gen_mult": GameState.qi_gen_mult,
+		"active_buff_until": GameState.active_buff_until,
+		"active_buff_mult": GameState.active_buff_mult,
 		"spirit_rain_unlocked": GameState.spirit_rain_unlocked,
 		"auto_harvest_enabled": GameState.auto_harvest_enabled,
 		"alchemy_unlocked": GameState.alchemy_unlocked,
 		"foundation_pill_unlocked": GameState.foundation_pill_unlocked,
+		"field_upgrade_unlocked": GameState.field_upgrade_unlocked,
+		"auto_cultivation_unlocked": GameState.auto_cultivation_unlocked,
 		"golden_pill_unlocked": GameState.golden_pill_unlocked,
-		"spirit_vein_unlocked": GameState.spirit_vein_unlocked,
-		"spirit_vein_active": GameState.automation.is_spirit_vein_active(),
+		"spirit_veinify_unlocked": GameState.spirit_veinify_unlocked,
 		"next_auto_brew_at": GameState.next_auto_brew_at,
 		"lifespan_days": GameState.lifespan_days,
 		"saved_at": Time.get_unix_time_from_system(),
@@ -65,19 +73,27 @@ func load_game() -> bool:
 	GameState.cultivation = float(data.get("cultivation", 0.0))
 	GameState.crop_inventory = data.get("crop_inventory", {"gathering_grass": 0})
 	GameState.pills = data.get("pills", {"qi_gathering_pill": 0})
-	# 兼容旧存档：确保三枚丹药键齐全。
+	# 兼容旧存档：确保四枚丹药键齐全（v7 新增 frenzy_pill）。
 	GameState.pills["qi_gathering_pill"] = int(GameState.pills.get("qi_gathering_pill", 0))
 	GameState.pills["foundation_pill"] = int(GameState.pills.get("foundation_pill", 0))
 	GameState.pills["golden_pill"] = int(GameState.pills.get("golden_pill", 0))
+	GameState.pills["frenzy_pill"] = int(GameState.pills.get("frenzy_pill", 0))
 	GameState.realm_index = int(data.get("realm_index", 0))
-	GameState.field_level = int(data.get("field_level", 1))
 	GameState.unlocked_fields = int(data.get("unlocked_fields", 1))
+	# fields 兼容 v6：旧项缺 level/quality/spirit_vein → 默认 1/1.0/false。
 	var saved_fields = data.get("fields", [])
 	if saved_fields is Array:
 		GameState.fields.clear()
 		for field in saved_fields:
 			if field is Dictionary:
-				GameState.fields.append(field)
+				GameState.fields.append({
+					"crop_id": String(field.get("crop_id", "")),
+					"planted_at": float(field.get("planted_at", 0.0)),
+					"ready_at": float(field.get("ready_at", 0.0)),
+					"level": int(field.get("level", 1)),
+					"quality": float(field.get("quality", 1.0)),
+					"spirit_vein": bool(field.get("spirit_vein", false)),
+				})
 	var saved_rain = data.get("spirit_rain_until", [])
 	if saved_rain is Array:
 		GameState.spirit_rain_until.clear()
@@ -109,23 +125,26 @@ func load_game() -> bool:
 	GameState.practitioner_upgrades = data.get("practitioner_upgrades", GameState.practitioner_upgrades)
 	GameState.knowledge_points = int(data.get("knowledge_points", 0))
 	GameState.reincarnation_count = int(data.get("reincarnation_count", 0))
-	# version 6 新增字段，旧存档给默认值。
+	# reincarnation_mult 保留；旧存档缺省按次数推导。
 	GameState.reincarnation_mult = float(data.get("reincarnation_mult", 1.0 + 0.5 * float(GameState.reincarnation_count)))
-	GameState.global_prod_mult = float(data.get("global_prod_mult", 1.0))
-	GameState.qi_gen_mult = float(data.get("qi_gen_mult", 1.0))
+	# v7 新增：active_buff（旧存档默认未生效）。
+	GameState.active_buff_until = float(data.get("active_buff_until", 0.0))
+	GameState.active_buff_mult = float(data.get("active_buff_mult", 1.0))
+	# 解锁标志：v7 新增 field_upgrade/auto_cultivation/spirit_veinify；
+	# 旧 v6 的 spirit_vein_unlocked 概念已废弃（金丹现拆为 golden_pill + spirit_veinify）。
 	GameState.spirit_rain_unlocked = bool(data.get("spirit_rain_unlocked", GameState.realm_index >= 1))
 	GameState.auto_harvest_enabled = bool(data.get("auto_harvest_enabled", GameState.realm_index >= 1))
 	GameState.alchemy_unlocked = bool(data.get("alchemy_unlocked", GameState.realm_index >= 2))
 	GameState.foundation_pill_unlocked = bool(data.get("foundation_pill_unlocked", GameState.realm_index >= 2))
+	GameState.field_upgrade_unlocked = bool(data.get("field_upgrade_unlocked", GameState.realm_index >= 2))
+	GameState.auto_cultivation_unlocked = bool(data.get("auto_cultivation_unlocked", GameState.realm_index >= 2))
 	GameState.golden_pill_unlocked = bool(data.get("golden_pill_unlocked", GameState.realm_index >= 3))
-	GameState.spirit_vein_unlocked = bool(data.get("spirit_vein_unlocked", GameState.realm_index >= 3))
+	GameState.spirit_veinify_unlocked = bool(data.get("spirit_veinify_unlocked", GameState.realm_index >= 3))
 	GameState.next_auto_brew_at = float(data.get("next_auto_brew_at", 0.0))
-	# 灵脉激活状态回写。
-	if bool(data.get("spirit_vein_active", false)):
-		GameState.automation.activate_spirit_vein()
 	GameState.lifespan_days = float(data.get("lifespan_days", GameState.max_lifespan_days))
+	# 旧 global_prod_mult / qi_gen_mult / spirit_vein_active / field_level 不再读取（模型已删）。
 
-	# 离线结算：按 (现在 - saved_at) 结算灵脉产出（封顶 8 小时）。
+	# 离线结算（契约[5]）：用新 compute_offline 结算自动修炼（筑基起生效，封顶 8 小时）。
 	var saved_at := float(data.get("saved_at", Time.get_unix_time_from_system()))
 	GameState.apply_offline_report(saved_at)
 	GameState.emit_state_changed()
