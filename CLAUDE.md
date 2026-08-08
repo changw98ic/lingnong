@@ -2,84 +2,75 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project overview
+## 项目概览
 
-灵农修仙 (LingNong Xiuxian) is a Godot 4.x 2D single-player incremental farming/cultivation prototype. The current implementation is a small runnable vertical slice; `docs/GDD-v0.1.md` and `docs/IMPLEMENTATION-PLAN-v0.1.md` describe the broader demo/production target and should be treated as the design baseline when extending the prototype.
+《灵农修仙》是 Godot 4.7.1 的单机国风增量游戏原型。当前主循环是种植、收获、炼丹、突破和天赋树加点；长期成长不再使用转世或转世知识点。
 
-## Commands
+## 常用命令
 
-Run these from the repository root (`/Users/chengwen/increase`), with Godot available as `godot` (currently `/opt/homebrew/bin/godot`, Godot 4.7.1):
+在仓库根目录执行：
 
 ```bash
-# Open the project in the editor
-godot --editor --path .
-
-# Run the main scene
-godot --path .
-
-# Validate project loading and script parsing without opening a window
-godot --headless --path . --editor --quit
-
-# Run the project headlessly (useful for startup/runtime smoke checks)
-godot --headless --path . --quit
+/opt/homebrew/bin/godot --editor --path .
+/opt/homebrew/bin/godot --path .
+/opt/homebrew/bin/godot --headless --path . --editor --quit
+/opt/homebrew/bin/godot --headless --path . --quit
 ```
 
-There is currently no package manager, build script, linter configuration, or automated test suite in the repository. Therefore there is no project-specific lint command or single-test command yet. For a functional check, launch the main scene and exercise planting, harvesting, breakthrough, spell actions, insect handling, reincarnation, and save/load through the UI.
+数值平衡探针（修改 `BalanceConfig` 后必须跑；全部通过时输出 `BALANCE_PROBE_PASS`）：
 
-## Repository structure and architecture
+```bash
+/opt/homebrew/bin/godot --headless --path . res://scenes/probes/field_balance_probe.tscn
+```
 
-- `project.godot` is the project entry point. It sets `scenes/main/main.tscn` as the main scene and registers the two autoload singletons `GameState` and `SaveManager`.
-- `scenes/main/main.tscn` is intentionally thin: it defines the root `Control`, background, layout containers, labels, and the two static action buttons. Most field/action UI is created dynamically by the UI script.
-- `scripts/autoload/game_state.gd` is the authoritative gameplay model and simulation. It owns currencies, cultivation realms, unlocked fields, crop dictionaries, seasons, temporary events, insect events, guardian-array state, spells, reincarnation, and practitioner upgrades. It exposes state changes through `state_changed` and realm changes through `realm_changed`.
-- `scripts/ui/main.gd` is the controller/view for the prototype. It loads the save on startup, builds field buttons and action buttons, translates clicks into `GameState` calls, refreshes labels/buttons, advances the simulation each frame via `GameState.update_world(delta)`, and autosaves every 30 seconds. Keep gameplay rules out of this script as systems grow.
-- `scripts/autoload/save_manager.gd` serializes the relevant `GameState` fields to JSON at `user://lingnong_save.json`. `SAVE_VERSION` is currently `5`; the version-5 fields `crop_inventory` and `pills` default when loading older saves, and typed runtime arrays are rebuilt element-by-element for compatibility.
-- `.godot/` is generated Godot editor/import state and should not be treated as source. `.uid` files beside scripts are Godot-generated metadata.
+项目没有包管理器、构建脚本或自动化测试套件。修改脚本或场景后，至少运行两条 headless 命令，并通过主场景检查相关交互。
 
-The runtime flow is:
+## 代码结构
 
-1. Godot loads `main.tscn` and initializes the autoloads.
-2. `GameState._ready()` creates a new-game structure; `main.gd` then calls `SaveManager.load_game()`.
-3. UI clicks mutate the model through `GameState` methods and usually save immediately.
-4. Each frame, `main.gd` calls `GameState.update_world(delta)` for seasons, random events, lifespan, and insect timing, then refreshes the UI.
-5. `GameState.state_changed` also triggers UI refreshes after model mutations.
+- `project.godot`：项目入口和两个自动加载单例。
+- `scenes/main/main.tscn`：主场景骨架。
+- `scripts/autoload/game_state.gd`：唯一的运行时游戏状态和增量结算入口。
+- `scripts/autoload/save_manager.gd`：`user://lingnong_save.json` 的读写，当前存档版本为 13。
+- `scripts/systems/`：境界、作物、成就、自动化、倍率、商店、天赋树的规则。
+- `scripts/probes/field_balance_probe.gd`：headless 数值探针，配合 `scenes/probes/field_balance_probe.tscn` 使用。
+- `scripts/ui/main.gd`：标签页控制器和每帧推进。
+- `scripts/ui/panels/`：种植、突破、天赋树、成就、商店、法术/事件、数值模拟面板。
 
-Use Unix timestamps for persisted/real-time timers, as the current model does. The current vertical-slice balance is 3 field slots, only the `聚灵草` crop in the UI, 5-second growth, 5-stone crop sale, 5-stone `聚气丹`, 50 cultivation per pill, realm thresholds 50/500/5000 for 炼气/筑基/金丹, 180-second season/event timing, 60-second random events, 10-灵气 `灵雨诀`, 20-灵气/120-second-cooldown `庚金剑诀`, and guardian charges starting at 3. Confirm values against the docs before changing balance.
+## 数值与规则边界
 
-## Important design boundaries
+- **全部可调数值集中在 `scripts/systems/balance_config.gd` 的 `BalanceConfig`**：境界、作物、四季、灵田价格与倍率、天赋、成就、商店、事件、自动化和离线参数。改平衡只改这一个文件。
+- `GameState` 只保存状态并执行结算；`AchievementSystem`、`RealmConfig`、`CropConfig`、`TalentTree`、`AutomationSystem`、`ShopSystem` 只做规则查询，面板只负责显示和调用方法，不复制数值。
+- 真实结算与游戏内“数值模拟”标签页共同调用 `SimulationSystem`，不存在第二套数值表。修改 `BalanceConfig` 后跑探针即可确认两者同步。
 
-The intended resource loop is:
+## 当前规则
 
 ```text
-收获灵植
-→ 获得可出售的灵材/农产品
-→ 贩卖获得灵石
-→ 购买丹药
-→ 丹药转化为修为
-→ 境界突破并解锁系统
+种植 → 自动收获/补种或点击加速 → 灵石/修为直接入账
+    → 境界倍率 → 熟练度/修为里程碑/突破天赋点 → 天赋树分支
 ```
 
-Resource responsibilities in the target design are:
+- 默认自动收获并补种；点击只加速生长倒计时，成熟后仍由世界循环统一结算。
+- 当前灵气每满 100 点使收获提高 10%，基础收获加成上限为 ×3；灵气还支付法术消耗。
+- 寿元按真实运行时间每秒扣除，默认每秒 0.5 年；不按种植次数扣除。归零后进入大限，生产暂停；可用商店续命，或手动开启新局并保留长期成长。
+- 商店商品：长生丹续命、聚气玉补灵气、悟道残卷换天赋点、狂暴丹（生产 ×3 持续 5 秒，100 灵石起每次购买 ×1.5 递进、不设上限）换短时爆发；购买次数跨大限新局保留。
+- 天赋树是带前置和分支的图：农道、丹道、灵根三条路线；玩家在分支节点中选择路线，不是固定升级条。
+- 种植熟练度（10/50/150/400 次）按灵植发放产量、成熟时间和天赋点奖励，跨新局保留。
+- 成就由 `AchievementSystem` 统一检查，成就点独立于修为、灵石和天赋点，随存档和新局保留。
+- 自动修炼只在在线循环中按秒结算；离线结算不读取离线时长，只按轮回、晋级和总收获计数发放一次性天赋点与灵石差额，大限未续命时不发放。
 
-- Harvesting produces crop goods/materials; it does **not** directly grant cultivation.
-- Selling harvested goods grants spirit stones.
-- Spirit stones are spent on pills and facilities; pills are the main direct source of cultivation in this slice.
-- Qi pays for spells.
-- Knowledge points pay for cross-reincarnation permanent upgrades.
-- `灵雨诀` only accelerates growth; it must not remove insect events or grant cultivation directly.
-- `庚金剑诀` only drives away active `噬金虫` events and grants insect corpses; it must not accelerate growth.
-- Guardian arrays provide upgradeable tolerance against early insect attacks; they are not replaced by the sword spell.
-- Seasonal and random-event multipliers belong in centralized harvest/sale/pill calculations, not in button handlers.
+## 文档基线
 
-The shop loop is now implemented in the prototype: harvesting adds crop inventory, the UI can sell `聚灵草` for spirit stones, spirit stones can buy `聚气丹`, and consuming the pill grants cultivation. `GameState.add_rewards()` remains as legacy implementation debt and should not be used by new harvest flows.
+- `docs/CURRENT-GAME-FLOW.md`：依据当前可执行代码整理的运行逻辑图，是唯一以代码为准的基线；UI 文案和旧设计说明不算运行逻辑。
+- `docs/TARGET-GAME-FLOW.md`：下一版玩法设计基线，包含转世/飞升等**尚未实现**的方向；不要把目标版当作当前行为实现。
+- `docs/GDD-v0.1.md` 与 `docs/IMPLEMENTATION-PLAN-v0.1.md`：较早的设计与实施说明，改动以 CURRENT-GAME-FLOW.md 为准。
+- 数值或交互发生变化时，先更新 README，再更新 `docs/CURRENT-GAME-FLOW.md` 和本文件。
 
-The design target includes offline earnings, additional crops, alchemy, automation, a fuller reincarnation/endgame flow, gamepad navigation, and Steam distribution, but those are not all implemented in the current source. Do not document them as available features unless the implementation catches up.
+## 变更后的检查重点
 
-## Change guidance
-
-When adding a gameplay system, prefer extending `GameState` with explicit methods/data and updating `SaveManager` for persistence, then let `main.gd` render and invoke those methods. Keep all newly persisted arrays/dictionaries length-compatible with the three current field slots and provide defaults for older JSON saves. After script or scene changes, run the headless editor validation command above; because there is no automated test suite, also perform the relevant UI smoke flow in the running scene.
-
-The authoritative product/design references are:
-
-- `README.md`: current implemented feature list and player controls.
-- `docs/GDD-v0.1.md`: confirmed design baseline and demo acceptance criteria.
-- `docs/IMPLEMENTATION-PLAN-v0.1.md`: completed prototype systems, work packages, and current timing parameters.
+1. 新游戏默认显示“自动收获并补种”。
+2. 生长中的灵田点击后会减少成熟倒计时，成熟作物仍自动收获并补种。
+3. 连续调用 `update_world(delta)` 时寿元按秒下降，种植本身不扣寿元；归零后生产暂停。
+4. 天赋树面板显示连接线、节点状态、费用、前置条件和效果。
+5. 商店面板能购买四种商品（狂暴丹价格随购买次数递进），并正确保存资源变化。
+6. 成就面板显示完成度，收获、突破、熟练度、灵田、轮回和天赋目标能自动解锁且不重复发放成就点。
+7. 存档加载后保留天赋节点、天赋点、成就、成就点、灵田购买结果、寿元和商店产生的资源。
