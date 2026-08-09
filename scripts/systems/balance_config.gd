@@ -25,9 +25,10 @@ const DEFAULT_PLAYER_CLICKS_PER_SECOND := 4.0
 
 const REALMS: Array[Dictionary] = [
 	{"name": "凡人", "required_cultivation": 0.0, "production": 1.0, "cultivation": 1.0},
-	{"name": "炼气", "required_cultivation": 200.0, "production": 3.0, "cultivation": 3.0},
-	{"name": "筑基", "required_cultivation": 2000.0, "production": 8.0, "cultivation": 8.0},
-	{"name": "金丹", "required_cultivation": 50000.0, "production": 20.0, "cultivation": 20.0},
+	{"name": "炼气", "required_cultivation": 1000.0, "production": 3.0, "cultivation": 3.0},
+	{"name": "筑基", "required_cultivation": 80000.0, "production": 8.0, "cultivation": 8.0},
+	{"name": "金丹", "required_cultivation": 2000000.0, "production": 20.0, "cultivation": 20.0},
+	{"name": "元婴", "required_cultivation": 100000000.0, "production": 100.0, "cultivation": 100.0},
 ]
 
 const BREAKTHROUGH_REWARDS: Dictionary = {
@@ -36,12 +37,120 @@ const BREAKTHROUGH_REWARDS: Dictionary = {
 	},
 	2: {
 		"unlock_auto_cultivation": true,
-		"unlock_mind_flower": true,
 	},
-	3: {
-		"unlock_sun_fruit": true,
-		"unlock_heaven_lotus": true,
+	3: {},
+}
+
+# 突破材料只能在商店兑换，绝不进入 CROPS。
+# required_realm 表示当前境界达到后，商店才开放该材料兑换。
+const BREAKTHROUGH_MATERIALS: Dictionary = {
+	"fu_qi_dan": {
+		"name": "服气丹", "icon": "丹", "cost": 20.0, "required_realm": 0,
+		"desc": "炼气突破材料，只能在商店兑换。",
 	},
+	"jin_yang_hua": {
+		"name": "金阳花", "icon": "阳", "cost": 100.0, "required_realm": 1,
+		"desc": "筑基突破材料，只能在商店兑换。",
+	},
+	"zi_mu_gen": {
+		"name": "紫木根", "icon": "木", "cost": 100.0, "required_realm": 1,
+		"desc": "筑基突破材料，只能在商店兑换。",
+	},
+	"bi_shui_lian": {
+		"name": "碧水莲", "icon": "水", "cost": 100.0, "required_realm": 1,
+		"desc": "筑基突破材料，只能在商店兑换。",
+	},
+	"yan_ling_shu_xin": {
+		"name": "炎灵树心", "icon": "火", "cost": 100.0, "required_realm": 1,
+		"desc": "筑基突破材料，只能在商店兑换。",
+	},
+	"da_di_ku_cao": {
+		"name": "大地苦草", "icon": "土", "cost": 100.0, "required_realm": 1,
+		"desc": "筑基突破材料，只能在商店兑换。",
+	},
+	"lei_ji_tao_mu": {
+		"name": "雷击桃木", "icon": "雷", "cost": 500.0, "required_realm": 2,
+		"desc": "金丹突破材料，只能在商店兑换。",
+	},
+	"fu_lu_zhou": {
+		"name": "福禄咒", "icon": "符", "cost": 500.0, "required_realm": 2,
+		"desc": "金丹突破材料，只能在商店兑换。",
+	},
+	"san_qing_chi_ling": {
+		"name": "三清敕令", "icon": "令", "cost": 500.0, "required_realm": 2,
+		"desc": "金丹突破材料，只能在商店兑换。",
+	},
+	"yang_ji_di_xin": {
+		"name": "阳极地心", "icon": "阳", "cost": 500.0, "required_realm": 2,
+		"desc": "金丹突破材料，只能在商店兑换。",
+	},
+	"yin_ji_yue_hua": {
+		"name": "阴极月华", "icon": "阴", "cost": 500.0, "required_realm": 2,
+		"desc": "金丹突破材料，只能在商店兑换。",
+	},
+	"cang_tian_zi_qi": {
+		"name": "苍天紫气", "icon": "紫", "cost": 500.0, "required_realm": 2,
+		"desc": "金丹突破材料，只能在商店兑换。",
+	},
+	"zi_fu_yu_sui": {
+		"name": "紫府玉髓", "icon": "髓", "cost": 2000000.0, "required_realm": 3,
+		"desc": "元婴突破材料，只能在商店兑换。",
+	},
+	"yuan_ying_dao_guo": {
+		"name": "元婴道果", "icon": "婴", "cost": 2000000.0, "required_realm": 3,
+		"desc": "元婴突破材料，只能在商店兑换。",
+	},
+	"lei_jie_cui_ti": {
+		"name": "雷劫淬体", "icon": "雷", "cost": 2000000.0, "required_realm": 3,
+		"desc": "元婴突破材料，只能在商店兑换。",
+	},
+	"tian_jie_lei_jing": {
+		"name": "天劫雷晶", "icon": "晶", "cost": 2000000.0, "required_realm": 3,
+		"desc": "元婴突破材料，只能在商店兑换。",
+	},
+	"tai_xu_yi_qi": {
+		"name": "太虚一气", "icon": "虚", "cost": 2000000.0, "required_realm": 3,
+		"desc": "元婴突破材料，只能在商店兑换。",
+	},
+	"jiu_zhuan_huan_hun_cao": {
+		"name": "九转还魂草", "icon": "魂", "cost": 2000000.0, "required_realm": 3,
+		"desc": "元婴突破材料，只能在商店兑换。",
+	},
+	"tian_ji_fu_shi": {
+		"name": "天机符石", "icon": "机", "cost": 2000000.0, "required_realm": 3,
+		"desc": "元婴突破材料，只能在商店兑换。",
+	},
+}
+
+# 每种材料默认各 1 份；服气丹需要 10 颗。数量也集中在这里，突破逻辑不写死。
+const BREAKTHROUGH_REQUIREMENTS: Dictionary = {
+	1: [
+		{"material_id": "fu_qi_dan", "amount": 10},
+	],
+	2: [
+		{"material_id": "jin_yang_hua", "amount": 1},
+		{"material_id": "zi_mu_gen", "amount": 1},
+		{"material_id": "bi_shui_lian", "amount": 1},
+		{"material_id": "yan_ling_shu_xin", "amount": 1},
+		{"material_id": "da_di_ku_cao", "amount": 1},
+	],
+	3: [
+		{"material_id": "lei_ji_tao_mu", "amount": 1},
+		{"material_id": "fu_lu_zhou", "amount": 1},
+		{"material_id": "san_qing_chi_ling", "amount": 1},
+		{"material_id": "yang_ji_di_xin", "amount": 1},
+		{"material_id": "yin_ji_yue_hua", "amount": 1},
+		{"material_id": "cang_tian_zi_qi", "amount": 1},
+	],
+	4: [
+		{"material_id": "zi_fu_yu_sui", "amount": 1},
+		{"material_id": "yuan_ying_dao_guo", "amount": 1},
+		{"material_id": "lei_jie_cui_ti", "amount": 1},
+		{"material_id": "tian_jie_lei_jing", "amount": 1},
+		{"material_id": "tai_xu_yi_qi", "amount": 1},
+		{"material_id": "jiu_zhuan_huan_hun_cao", "amount": 1},
+		{"material_id": "tian_ji_fu_shi", "amount": 1},
+	],
 }
 
 
@@ -53,6 +162,7 @@ const CROPS: Dictionary = {
 	"mind_flower": {"name": "凝神花", "growth": 30.0, "cultivation": 10.0, "sell_price": 20.0, "unlock_realm": 2},
 	"sun_fruit": {"name": "赤阳果", "growth": 120.0, "cultivation": 50.0, "sell_price": 100.0, "unlock_realm": 3},
 	"heaven_lotus": {"name": "天道莲", "growth": 1800.0, "cultivation": 500.0, "sell_price": 1000.0, "unlock_realm": 3},
+	"zi_zhi": {"name": "紫芝", "growth": 900.0, "cultivation": 2000.0, "sell_price": 5000.0, "unlock_realm": 4},
 }
 
 # 灵植熟练度是跨大限、跨新局保留的长期进度。
@@ -84,9 +194,13 @@ const CROP_PROFICIENCY_REWARDS: Dictionary = {
 		{"yield_bonus": 2, "growth_reduction": 0.0, "talent_points": 3},
 		{"yield_bonus": 3, "growth_reduction": 60.0, "talent_points": 5},
 	],
+	"zi_zhi": [
+		{"yield_bonus": 1, "growth_reduction": 0.0, "talent_points": 1},
+		{"yield_bonus": 1, "growth_reduction": 30.0, "talent_points": 2},
+		{"yield_bonus": 2, "growth_reduction": 0.0, "talent_points": 3},
+		{"yield_bonus": 3, "growth_reduction": 30.0, "talent_points": 5},
+	],
 }
-const CROP_PROFICIENCY_TOTAL_TALENT_POINTS := 44
-
 const SEASONS: Array[Dictionary] = [
 	{"name": "春·万物萌发", "growth": 1.25, "yield": 1.0},
 	{"name": "夏·灵气鼎盛", "growth": 1.0, "yield": 1.0},
@@ -113,7 +227,7 @@ const MAX_PEST_LEVEL := 3
 
 # ───────────────────────── 寿元 / 灵气 / 天赋里程碑 ─────────────────────────
 
-const LIFESPAN_YEARS_BY_REALM: Array[float] = [60.0, 120.0, 200.0, 500.0]
+const LIFESPAN_YEARS_BY_REALM: Array[float] = [60.0, 120.0, 200.0, 500.0, 2000.0]
 const LIFESPAN_DECAY_PER_SECOND := 0.5
 const QI_HARVEST_STEP := 100.0
 const QI_HARVEST_BONUS_PER_STEP := 0.10
@@ -129,7 +243,35 @@ const TALENT_MILESTONES: Array[float] = [
 	100000000.0,
 	1000000000.0,
 ]
-const TALENT_BREAKTHROUGH_POINTS_BY_REALM: Array[int] = [0, 3, 7, 15]
+const TALENT_BREAKTHROUGH_POINTS_BY_REALM: Array[int] = [0, 3, 7, 15, 31]
+
+
+# ───────────────────────── 天劫 ─────────────────────────
+
+# 突破按钮只会开启天劫；完成全部劫数后才真正进入下一境界。
+# 天劫期间暂停灵田、事件和自动修炼，避免玩家一边渡劫一边继续生产。
+const TRIBULATION_BASE_STRIKES := 99
+const TRIBULATION_SIX_NINE_STRIKES := 69
+const TRIBULATION_THREE_NINE_STRIKES := 39
+const TRIBULATION_SIX_NINE_TALENT_THRESHOLD := 10
+const TRIBULATION_THREE_NINE_TALENT_THRESHOLD := 25
+const TRIBULATION_INTERVAL_SECONDS := 1.0
+const TRIBULATION_BASE_HEALTH := 100.0
+const TRIBULATION_ENHANCEMENT_HEALTH_BONUS := 50.0
+const TRIBULATION_STRIKE_DAMAGE := 2.0
+const TRIBULATION_RESISTANCE_CHARGES := 10
+const TRIBULATION_RESISTANCE_DAMAGE_MULT := 0.5
+const TRIBULATION_ENHANCEMENT_DAMAGE_MULT := 0.8
+const TRIBULATION_HEAL_AMOUNT := 30.0
+
+
+static func tribulation_strikes_for_talent(talent_point_count: int) -> int:
+	var points := maxi(0, talent_point_count)
+	if points >= TRIBULATION_THREE_NINE_TALENT_THRESHOLD:
+		return TRIBULATION_THREE_NINE_STRIKES
+	if points >= TRIBULATION_SIX_NINE_TALENT_THRESHOLD:
+		return TRIBULATION_SIX_NINE_STRIKES
+	return TRIBULATION_BASE_STRIKES
 
 
 # ───────────────────────── 成就 ─────────────────────────
@@ -156,6 +298,26 @@ const ACHIEVEMENTS: Array[Dictionary] = [
 	{"id": "first_new_run", "name": "再起一局", "category": "轮回", "desc": "大限后开始第 1 次新局。", "metric": "reincarnation_count", "target": 1.0, "points": 2},
 	{"id": "new_run_3", "name": "三世求道", "category": "轮回", "desc": "累计开始 3 次新局。", "metric": "reincarnation_count", "target": 3.0, "points": 4},
 	{"id": "talent_5", "name": "道心渐明", "category": "天赋", "desc": "解锁 5 个天赋节点。", "metric": "talent_nodes", "target": 5.0, "points": 3},
+	{"id": "harvest_5000", "name": "千锤百炼", "category": "灵田", "desc": "累计完成 5,000 次灵田收获。", "metric": "total_harvest_count", "target": 5000.0, "points": 5},
+	{"id": "harvest_10000", "name": "万顷良田", "category": "灵田", "desc": "累计完成 10,000 次灵田收获。", "metric": "total_harvest_count", "target": 10000.0, "points": 8},
+	{"id": "field_all_immortal", "name": "三田成仙", "category": "灵田", "desc": "3 块灵田全部升至仙田。", "metric": "all_fields_max_tier", "target": 1.0, "points": 6},
+	{"id": "cultivation_100m", "name": "修海无涯", "category": "修行", "desc": "累计获得 100,000,000 点修为。", "metric": "total_cultivation_earned", "target": 100000000.0, "points": 8},
+	{"id": "cultivation_1b", "name": "道贯十亿", "category": "修行", "desc": "累计获得 1,000,000,000 点修为。", "metric": "total_cultivation_earned", "target": 1000000000.0, "points": 12},
+	{"id": "reach_yuanying", "name": "元婴出世", "category": "境界", "desc": "首次达到元婴境。", "metric": "realm_index", "target": 4.0, "points": 10},
+	{"id": "mind_master", "name": "凝神花宗师", "category": "熟练度", "desc": "凝神花熟练度达到 400 次。", "metric": "crop_proficiency", "crop_id": "mind_flower", "target": 400.0, "points": 4},
+	{"id": "sun_master", "name": "赤阳果宗师", "category": "熟练度", "desc": "赤阳果熟练度达到 400 次。", "metric": "crop_proficiency", "crop_id": "sun_fruit", "target": 400.0, "points": 4},
+	{"id": "grass_grandmaster", "name": "聚灵草大宗师", "category": "熟练度", "desc": "聚灵草熟练度达到 1,000 次。", "metric": "crop_proficiency", "crop_id": "gathering_grass", "target": 1000.0, "points": 6},
+	{"id": "mind_grandmaster", "name": "凝神花大宗师", "category": "熟练度", "desc": "凝神花熟练度达到 1,000 次。", "metric": "crop_proficiency", "crop_id": "mind_flower", "target": 1000.0, "points": 6},
+	{"id": "sun_grandmaster", "name": "赤阳果大宗师", "category": "熟练度", "desc": "赤阳果熟练度达到 1,000 次。", "metric": "crop_proficiency", "crop_id": "sun_fruit", "target": 1000.0, "points": 6},
+	{"id": "lotus_grandmaster", "name": "天道莲大宗师", "category": "熟练度", "desc": "天道莲熟练度达到 1,000 次。", "metric": "crop_proficiency", "crop_id": "heaven_lotus", "target": 1000.0, "points": 6},
+	{"id": "zi_zhi_proficiency_10", "name": "紫芝入门", "category": "熟练度", "desc": "紫芝熟练度达到 10 次。", "metric": "crop_proficiency", "crop_id": "zi_zhi", "target": 10.0, "points": 1},
+	{"id": "crit_10", "name": "福星初照", "category": "幸运", "desc": "触发 10 次收获暴击。", "metric": "crit_count", "target": 10.0, "points": 3},
+	{"id": "crit_500", "name": "暴击如潮", "category": "幸运", "desc": "触发 500 次收获暴击。", "metric": "crit_count", "target": 500.0, "points": 6},
+	{"id": "rare_crit_50", "name": "天眷一击", "category": "幸运", "desc": "触发 50 次稀有暴击。", "metric": "rare_crit_count", "target": 50.0, "points": 5},
+	{"id": "windfall_50", "name": "横财连连", "category": "幸运", "desc": "触发 50 次天降横财。", "metric": "windfall_count", "target": 50.0, "points": 5},
+	{"id": "new_run_10", "name": "十世修行", "category": "轮回", "desc": "累计开始 10 次新局。", "metric": "reincarnation_count", "target": 10.0, "points": 6},
+	{"id": "talent_10", "name": "天赋异禀", "category": "天赋", "desc": "解锁 10 个天赋节点。", "metric": "talent_nodes", "target": 10.0, "points": 5},
+	{"id": "frenzy_pill_10", "name": "狂丹常客", "category": "商店", "desc": "累计购买 10 次狂暴丹。", "metric": "shop_purchase_count", "item_id": "frenzy_pill", "target": 10.0, "points": 4},
 ]
 
 
@@ -178,7 +340,6 @@ const WORLD_STATE_EMIT_INTERVAL_SECONDS := 0.25
 
 # ───────────────────────── 自动化 ─────────────────────────
 
-const AUTO_BREW_INTERVAL_SECONDS := 5.0
 const AUTO_CULT_RATE := 0.5
 const AUTO_QI_RATE := 0.2
 const AUTO_REALM_INDEX_MIN := 2
@@ -199,6 +360,16 @@ const OFFLINE_PROMOTION_STONES := 100.0
 const OFFLINE_HARVEST_STONES := 2.0
 
 
+# ───────────────────────── 幸运系 / 收获暴击 ─────────────────────────
+
+# 暴击在真实收获时 roll：普通暴击产量 ×2，稀有暴击产量 ×5。
+# 概率由幸运系天赋提供（bonus 相加语义），模拟器按期望值展示。
+const LUCK_CRIT_MULT := 2.0
+const LUCK_RARE_CRIT_MULT := 5.0
+# 天降横财：收获时按 windfall_chance 额外获得本次灵石 × windfall_ratio。
+const LUCK_WINDFALL_RATIO := 0.5
+
+
 # ───────────────────────── 法术 / 守护灵阵 / 噬金虫 ─────────────────────────
 
 const SPIRIT_RAIN_DURATION_SECONDS := 60.0
@@ -211,9 +382,10 @@ const GUARDIAN_UPGRADE_COST := 100.0
 const GUARDIAN_BASE_LEVEL := 1
 const GUARDIAN_BASE_CHARGES := 3
 const GUARDIAN_CHARGES_BASE_OFFSET := 2
-const INSECT_INITIAL_DELAY_SECONDS := 180.0
-const INSECT_ATTACK_INTERVAL_SECONDS := 60.0
-const INSECT_WARLORD_ATTACK_INTERVAL_SECONDS := 30.0
+# 种下作物 30 秒后先出现虫灾预警，再过 30 秒首次攻击；凡人 120 秒寿元内可见。
+const INSECT_INITIAL_DELAY_SECONDS := 30.0
+const INSECT_ATTACK_INTERVAL_SECONDS := 30.0
+const INSECT_WARLORD_ATTACK_INTERVAL_SECONDS := 15.0
 const INSECT_WARLORD_ATTACK_COUNT := 2
 const INSECT_CORPSE_SELL_PRICE := 8.0
 
@@ -224,7 +396,7 @@ const SHOP_ITEMS: Array[Dictionary] = [
 	{
 		"id": "longevity_pill",
 		"name": "长生丹",
-		"cost": 100.0,
+		"cost": 1000.0,
 		"icon": "寿",
 		"desc": "恢复 30 年寿元，寿元归零时也可使用。",
 		"effect": "lifespan",
@@ -233,11 +405,38 @@ const SHOP_ITEMS: Array[Dictionary] = [
 	{
 		"id": "qi_jade",
 		"name": "聚气玉",
-		"cost": 80.0,
+		"cost": 1000.0,
 		"icon": "气",
 		"desc": "立即获得 200 灵气，提升当前收获倍率。",
 		"effect": "qi",
 		"amount": 200.0,
+	},
+	{
+		"id": "healing_pill",
+		"name": "治疗丹",
+		"cost": 1500.0,
+		"icon": "疗",
+		"desc": "渡劫中恢复 30 点劫体，不能超过劫体上限。",
+		"effect": "tribulation_healing",
+		"amount": TRIBULATION_HEAL_AMOUNT,
+	},
+	{
+		"id": "resistance_pill",
+		"name": "抗性丹",
+		"cost": 2000.0,
+		"icon": "抗",
+		"desc": "渡劫中获得 10 道抗性，接下来所受雷劫伤害减半。",
+		"effect": "tribulation_resistance",
+		"amount": TRIBULATION_RESISTANCE_CHARGES,
+	},
+	{
+		"id": "enhancement_pill",
+		"name": "强化丹",
+		"cost": 2500.0,
+		"icon": "强",
+		"desc": "本次渡劫劫体上限 +50，雷劫伤害 ×0.8，每次渡劫限用 1 枚。",
+		"effect": "tribulation_enhancement",
+		"amount": 1.0,
 	},
 	{
 		"id": "insight_scroll",
@@ -267,9 +466,10 @@ const SHOP_ITEMS: Array[Dictionary] = [
 
 const TALENT_NODE_ORDER: Array[String] = [
 	"root",
-	"farming_start", "farming_yield", "farming_speed", "farming_capstone",
-	"alchemy_start", "alchemy_power", "alchemy_quality", "alchemy_capstone",
-	"spirit_start", "spirit_qi", "spirit_lifespan", "spirit_capstone",
+	"farming_start", "farming_yield", "farming_speed", "farming_capstone", "farming_grand",
+	"alchemy_start", "alchemy_power", "alchemy_quality", "alchemy_capstone", "alchemy_grand",
+	"spirit_start", "spirit_qi", "spirit_lifespan", "spirit_capstone", "spirit_grand",
+	"luck_start", "luck_wealth", "luck_crit", "luck_capstone",
 ]
 
 const TALENT_NODES: Dictionary = {
@@ -340,6 +540,47 @@ const TALENT_NODES: Dictionary = {
 		"requires": [], "requires_any": ["spirit_qi", "spirit_lifespan"],
 		"desc": "灵气收获加成效果 ×1.50。",
 		"effects": {"qi_harvest_mult": 1.50},
+	},
+	# 三系加深：顶点之后的元婴级终点，需要先完成各系顶点。
+	"farming_grand": {
+		"name": "丰收大道", "icon": "丰", "branch": "farming", "cost": 5,
+		"requires": ["farming_capstone"], "requires_any": [],
+		"desc": "所有灵田产出再 ×2.00。",
+		"effects": {"production_mult": 2.00},
+	},
+	"alchemy_grand": {
+		"name": "问道丹心", "icon": "问", "branch": "alchemy", "cost": 5,
+		"requires": ["alchemy_capstone"], "requires_any": [],
+		"desc": "灵田收获修为再 ×2.00。",
+		"effects": {"cultivation_mult": 2.00},
+	},
+	"spirit_grand": {
+		"name": "紫府开辟", "icon": "紫", "branch": "spirit", "cost": 5,
+		"requires": ["spirit_capstone"], "requires_any": [],
+		"desc": "自动修炼效率 ×2.00。",
+		"effects": {"auto_cultivation_mult": 2.00},
+	},
+	# 第四系·幸运系：概率效果用相加语义（TalentTree.bonus）。
+	"luck_start": {
+		"name": "幸运入门", "icon": "运", "branch": "luck", "cost": 1,
+		"requires": ["root"], "requires_any": [], "desc": "收获暴击率 +5%。",
+		"effects": {"crit_chance": 0.05},
+	},
+	"luck_wealth": {
+		"name": "天降横财", "icon": "财", "branch": "luck", "cost": 2,
+		"requires": ["luck_start"], "requires_any": [], "desc": "收获时 10% 概率额外获得本次灵石 ×50%。",
+		"effects": {"windfall_chance": 0.10},
+	},
+	"luck_crit": {
+		"name": "福星高照", "icon": "福", "branch": "luck", "cost": 2,
+		"requires": ["luck_start"], "requires_any": [], "desc": "暴击时 20% 概率升级为稀有暴击（产量 ×5）。",
+		"effects": {"rare_crit_chance": 0.20},
+	},
+	"luck_capstone": {
+		"name": "天道眷顾", "icon": "眷", "branch": "luck", "cost": 5,
+		"requires": [], "requires_any": ["luck_wealth", "luck_crit"],
+		"desc": "暴击率再 +10%，稀有暴击概率再 +15%。",
+		"effects": {"crit_chance": 0.10, "rare_crit_chance": 0.15},
 	},
 }
 
@@ -415,9 +656,6 @@ static func default_unlock_flags(realm_index: int) -> Dictionary:
 	var flags := {
 		"spirit_rain_unlocked": false,
 		"unlock_auto_cultivation": false,
-		"unlock_mind_flower": false,
-		"unlock_sun_fruit": false,
-		"unlock_heaven_lotus": false,
 	}
 	for reward_realm in BREAKTHROUGH_REWARDS:
 		if int(reward_realm) > realm_index:

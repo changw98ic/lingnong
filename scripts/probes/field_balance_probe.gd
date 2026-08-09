@@ -95,11 +95,12 @@ func _ready() -> void:
 	print("=== 灵田升档：单块田的产出和回本时间 ===")
 	for realm in range(1, RealmConfig.realm_count()):
 		gs.realm_index = realm
-		for tier in range(realm + 1):
+		var probe_max_tier := BalanceConfig.FIELD_TIER_MULTS.size() - 1
+		for tier in range(mini(realm + 1, probe_max_tier + 1)):
 			var result := _harvest_once(gs, 0, tier)
 			var amount := float(result.get("amount", 0))
 			var rate := amount * CROP_SELL_PRICE / CROP_GROWTH_SECONDS
-			if tier >= realm:
+			if tier >= realm or tier >= probe_max_tier:
 				print("realm=%d tier=%d 产量=%d/轮 灵石/秒=%.2f" % [realm, tier, int(amount), rate])
 				continue
 			var next_result := _harvest_once(gs, 0, tier + 1)
@@ -110,7 +111,8 @@ func _ready() -> void:
 			print("realm=%d tier=%d->%d  %.0f→%.0f 灵石/秒 费用=%.0f 回本=%.2f秒" % [
 				realm, tier, tier + 1, rate, next_rate, cost, payback,
 			])
-			if tier == realm - 1:
+			# 元婴是终点层（倍率 ×100），档位回本大幅快于 120~180 秒标定区间，跳过区间断言。
+			if tier == realm - 1 and realm < RealmConfig.realm_count() - 1:
 				_check(payback >= BASE_PAYBACK_MIN_SECONDS and payback <= BASE_PAYBACK_MAX_SECONDS, "realm=%d tier=%d→%d 无农道回本在目标区间" % [realm, tier, tier + 1])
 
 	print("=== 自动修炼：灵田数量和档位对浓度的影响 ===")
@@ -152,7 +154,7 @@ func _ready() -> void:
 		var payback_text := PackedStringArray()
 		for realm in range(1, RealmConfig.realm_count()):
 			gs.realm_index = realm
-			var tier := realm - 1
+			var tier := mini(realm - 1, BalanceConfig.FIELD_TIER_UPGRADE_COSTS.size() - 1)
 			var slot_rate := _sell_rate(gs, 0)
 			var slot2_payback := float(gs.get_field_slot_cost(1).get("spirit_stones", 0.0)) / maxf(0.001, slot_rate)
 			var slot3_payback := float(gs.get_field_slot_cost(2).get("spirit_stones", 0.0)) / maxf(0.001, slot_rate)
@@ -161,7 +163,7 @@ func _ready() -> void:
 			var cost := float(BalanceConfig.FIELD_TIER_UPGRADE_COSTS[tier].get("spirit_stones", 0.0))
 			var payback := cost / maxf(0.001, to_rate - from_rate)
 			payback_text.append("%d→%d %.1f秒，槽位 %.1f/%.1f秒" % [tier, tier + 1, payback, slot2_payback, slot3_payback])
-			if profile_name == "farming_core":
+			if profile_name == "farming_core" and realm < RealmConfig.realm_count() - 1:
 				_check(payback >= PAYBACK_MIN_SECONDS and payback <= PAYBACK_MAX_SECONDS, "农道核心 realm=%d tier=%d→%d 回本在目标区间" % [realm, tier, tier + 1])
 		print("profile=%s 生产天赋×%.2f 生长×%.2f  升档回本：%s" % [
 			profile_name,
@@ -198,6 +200,8 @@ func _ready() -> void:
 				"event_prod_mult": BalanceConfig.DEFAULT_MULTIPLIER,
 				"event_cult_mult": BalanceConfig.DEFAULT_MULTIPLIER,
 				"include_auto_cultivation": true,
+				"enforce_breakthrough_materials": false,
+				"enforce_tribulation_supplies": false,
 			})
 			var stage_text := PackedStringArray()
 			for stage in breakthrough_flow.get("stages", []):
@@ -206,15 +210,16 @@ func _ready() -> void:
 					String(stage.get("to_realm_name", "")),
 					float(stage.get("duration_seconds", 0.0)),
 				])
-			print("profile=%s 田=%d 总耗时=%.2f秒 总点击=%d 阶段=%s 完成=%s" % [
+			print("profile=%s 田=%d 总耗时=%.2f秒 总点击=%d 阶段=%s 真实完成=%s 时间估算=%s" % [
 				String(profile.get("id", "")),
 				field_count,
 				float(breakthrough_flow.get("total_seconds", 0.0)),
 				int(breakthrough_flow.get("total_clicks", 0)),
 				" / ".join(stage_text),
 				str(bool(breakthrough_flow.get("completed", false))),
+				str(bool(breakthrough_flow.get("estimated_completed", false))),
 			])
-			_check(bool(breakthrough_flow.get("completed", false)), "4次/秒突破模拟完成：%s / %d块" % [String(profile.get("id", "")), field_count])
+			_check(bool(breakthrough_flow.get("estimated_completed", false)) and not bool(breakthrough_flow.get("completed", false)), "4次/秒突破时间估算完成且明确标记为估算：%s / %d块" % [String(profile.get("id", "")), field_count])
 	var per_field_flow := gs.get_breakthrough_simulation({
 		"start_realm": BalanceConfig.INITIAL_REALM_INDEX,
 		"target_realm": max_realm,
@@ -226,9 +231,11 @@ func _ready() -> void:
 		"season_index": winter_season,
 		"clicks_per_second": BalanceConfig.DEFAULT_PLAYER_CLICKS_PER_SECOND,
 		"click_scope": "per_field",
+		"enforce_breakthrough_materials": false,
+		"enforce_tribulation_supplies": false,
 	})
 	print("root 3块田切换为每块独立 4次/秒：总耗时=%.2f秒" % float(per_field_flow.get("total_seconds", 0.0)))
-	_check(bool(per_field_flow.get("completed", false)), "每块灵田独立点击模式完成突破")
+	_check(bool(per_field_flow.get("estimated_completed", false)) and not bool(per_field_flow.get("completed", false)), "每块灵田独立点击模式完成时间估算")
 
 	print("=== 游戏内模拟器矩阵入口 ===")
 	var realm_rows := gs.get_simulation_matrix("realm", {"crop_id": CROP_ID, "tier": 0, "qi": 0.0})
@@ -248,6 +255,8 @@ func _ready() -> void:
 		"season_index": winter_season,
 		"clicks_per_second": BalanceConfig.DEFAULT_PLAYER_CLICKS_PER_SECOND,
 		"click_scope": "global",
+		"enforce_breakthrough_materials": false,
+		"enforce_tribulation_supplies": false,
 	})
 	var proficiency_rows := gs.get_simulation_matrix("proficiency", {
 		"realm_index": max_realm,
@@ -258,19 +267,24 @@ func _ready() -> void:
 	var full_rows := gs.get_simulation_matrix("full", {"qi": 0.0, "event_id": "normal"})
 	var expected_full_rows := 0
 	for realm in range(RealmConfig.realm_count()):
-		expected_full_rows += CropConfig.get_unlocked(realm).size() * BalanceConfig.SEASONS.size() * SimulationSystem.talent_profiles(gs).size() * gs.fields.size() * (realm + 1)
+		expected_full_rows += CropConfig.get_unlocked(realm).size() * BalanceConfig.SEASONS.size() * SimulationSystem.talent_profiles(gs).size() * gs.fields.size() * mini(realm + 1, BalanceConfig.FIELD_TIER_MULTS.size())
 	_check(realm_rows.size() == RealmConfig.realm_count() * gs.fields.size(), "境界矩阵覆盖全部境界和田数")
 	_check(crop_rows.size() == CropConfig.get_unlocked(max_realm).size(), "作物矩阵覆盖金丹全部作物")
 	_check(season_rows.size() == BalanceConfig.SEASONS.size(), "四季矩阵覆盖全部时节")
 	_check(talent_rows.size() == SimulationSystem.talent_profiles(gs).size(), "天赋矩阵读取天赋树预设")
 	_check(event_rows.size() == SimulationSystem.event_profiles(gs).size(), "事件矩阵覆盖全部事件")
 	_check(progression_rows.size() == RealmConfig.realm_count(), "境界总表覆盖全部境界")
-	_check(breakthrough_rows.size() == 1 and bool(breakthrough_rows[0].get("completed", false)), "突破流程矩阵完成从凡人到金丹")
+	_check(breakthrough_rows.size() == 1 and bool(breakthrough_rows[0].get("estimated_completed", false)), "突破流程矩阵完成从凡人到金丹时间估算")
 	_check(proficiency_rows.size() == CropConfig.get_all().size() * (BalanceConfig.CROP_PROFICIENCY_THRESHOLDS.size() + 1), "熟练度矩阵覆盖全部作物和档位")
 	_check(full_rows.size() == expected_full_rows, "全量核心矩阵覆盖境界/作物/四季/天赋/田数/档位")
 	_check_section_one(gs)
+	_check_breakthrough_pacing(gs)
+	_check_crop_switch_and_breakthrough_materials(gs)
+	_check_tribulation_and_pills(gs)
+	_check_insect_disaster(gs)
 	_check_achievements(gs)
 	_check_frenzy_pill(gs)
+	_check_expansion(gs)
 	var simulation_panel := SimulationPanel.new()
 	add_child(simulation_panel)
 	var formatted_live: String = String(simulation_panel.call("_format_report", linked_report))
@@ -319,10 +333,145 @@ func _sell_rate(gs: Node, tier: int, crop_id: String = CROP_ID, qi_stock: float 
 	return float(result.get("amount", 0)) * float(crop.get("sell_price", CROP_SELL_PRICE)) / maxf(0.001, growth_seconds)
 
 
+func _check_insect_disaster(gs: Node) -> void:
+	print("=== 噬金虫灾害可见性 ===")
+	var mortal_run_seconds := float(BalanceConfig.LIFESPAN_YEARS_BY_REALM[BalanceConfig.INITIAL_REALM_INDEX]) / BalanceConfig.LIFESPAN_DECAY_PER_SECOND
+	_check(
+		BalanceConfig.INSECT_INITIAL_DELAY_SECONDS + BalanceConfig.INSECT_ATTACK_INTERVAL_SECONDS <= mortal_run_seconds,
+		"凡人一轮寿元内能看到首轮噬金虫"
+	)
+	gs.initialize_new_game()
+	gs.realm_index = 2
+	var fixed_next := Time.get_unix_time_from_system() + 20.0
+	gs.insect_events[0] = {"active": false, "attacks": 0, "pest_level": 0, "next_attack_at": fixed_next}
+	_check(gs.plant_crop(0, CROP_ID), "固定虫灾测试种植成功")
+	var after_plant := float(gs.insect_events[0].get("next_attack_at", 0.0))
+	_check(absf(after_plant - fixed_next) < 0.1, "手动种植不重置噬金虫计时")
+	fixed_next = Time.get_unix_time_from_system() + 20.0
+	gs.insect_events[0]["next_attack_at"] = fixed_next
+	_check(gs.switch_crop(0, "mind_flower"), "固定虫灾测试切换成功")
+	var after_switch := float(gs.insect_events[0].get("next_attack_at", 0.0))
+	_check(absf(after_switch - fixed_next) < 0.1, "手动切换不重置噬金虫计时")
+
+	# 聚灵草会频繁自动补种；补种不能把同一块田的虫害计时反复推迟。
+	gs.initialize_new_game()
+	gs.unlocked_fields = 1
+	gs.fields[0]["crop_id"] = CROP_ID
+	gs.fields[0]["tier"] = 0
+	gs.fields[0]["ready_at"] = 0.0
+	var next_before := Time.get_unix_time_from_system() + 20.0
+	gs.insect_events[0] = {"active": false, "attacks": 0, "pest_level": 0, "next_attack_at": next_before}
+	var harvest: Dictionary = gs.harvest_crop(0)
+	_check(bool(harvest.get("ok", false)), "噬金虫回归测试收获成功")
+	var next_after := float(gs.insect_events[0].get("next_attack_at", 0.0))
+	_check(absf(next_after - next_before) < 0.1, "自动补种不重置噬金虫计时")
+	gs.insect_events[0]["next_attack_at"] = Time.get_unix_time_from_system() - 1.0
+	gs.update_world(0.1)
+	_check(bool(gs.insect_events[0].get("active", false)), "虫灾计时到点后进入预警状态")
+
+
+func _check_breakthrough_pacing(gs: Node) -> void:
+	print("=== 突破节奏 ===")
+	gs.initialize_new_game()
+	gs.talent_nodes = {"root": true}
+	var flow: Dictionary = gs.get_breakthrough_simulation({
+		"start_realm": 0,
+		"target_realm": 3,
+		"profile_id": "root",
+		"field_count": 3,
+		"tier": 0,
+		"season_index": BalanceConfig.SEASONS.size() - 1,
+		"clicks_per_second": BalanceConfig.DEFAULT_PLAYER_CLICKS_PER_SECOND,
+		"click_scope": "global",
+		"include_auto_cultivation": true,
+		"enforce_breakthrough_materials": false,
+		"enforce_tribulation_supplies": false,
+	})
+	var stages: Array = flow.get("stages", [])
+	var qi_to_zhuji_seconds := 0.0
+	var zhuji_to_jindan_seconds := 0.0
+	if stages.size() > 1:
+		qi_to_zhuji_seconds = float(stages[1].get("cultivation_seconds", stages[1].get("duration_seconds", 0.0)))
+	if stages.size() > 2:
+		zhuji_to_jindan_seconds = float(stages[2].get("cultivation_seconds", stages[2].get("duration_seconds", 0.0)))
+	print("根骨、3块凡田、4次/秒：总耗时=%.2f秒；炼气→筑基修炼=%.2f秒；筑基→金丹修炼=%.2f秒" % [
+		float(flow.get("total_seconds", 0.0)), qi_to_zhuji_seconds, zhuji_to_jindan_seconds,
+	])
+	_check(qi_to_zhuji_seconds >= 1440.0, "炼气→筑基至少 1440 秒")
+	_check(zhuji_to_jindan_seconds >= qi_to_zhuji_seconds * 2.0, "筑基→金丹修炼段至少为炼气→筑基两倍")
+	_check(int(stages[1].get("tribulation_strikes", 0)) > 0 and int(stages[2].get("tribulation_strikes", 0)) > 0, "模拟器把各阶段天劫计入总耗时")
+
+	# 模拟器必须同步真实收获结算：熟练度跨档和修为里程碑都要发放天赋点。
+	gs.initialize_new_game()
+	gs.crop_proficiency["gathering_grass"] = 9
+	var talent_flow: Dictionary = gs.get_breakthrough_simulation({
+		"start_realm": 0,
+		"target_realm": 1,
+		"start_cultivation": 999.0,
+		"start_total_cultivation_earned": 999.0,
+		"start_talent_milestone_index": 0,
+		"clicks_per_second": 0.0,
+		"include_auto_cultivation": false,
+		"season_index": BalanceConfig.SEASONS.size() - 1,
+		"enforce_breakthrough_materials": false,
+		"enforce_tribulation_supplies": false,
+	})
+	var talent_stage: Dictionary = talent_flow.get("stages", [])[0]
+	_check(int(talent_stage.get("talent_points_before_tribulation", 0)) == 2, "模拟器同步熟练度与修为里程碑天赋点")
+	_check(String(talent_flow.get("completion_mode", "")) == "estimate" and bool(talent_flow.get("estimated_completed", false)) and not bool(talent_flow.get("completed", false)), "模拟器估算结果不冒充真实完成")
+
+	# 最大化模式：点数到账立即投入最能缩短当前突破时间的节点，灵石先买寿元/材料/渡劫丹，
+	# 剩余灵石再买聚气玉；整个过程只读模型，不修改真实 GameState。
+	gs.initialize_new_game()
+	var maximized_flow: Dictionary = gs.get_breakthrough_simulation({
+		"maximize_progression": true,
+		"start_realm": 0,
+		"target_realm": 3,
+		"field_count": 3,
+		"tier": 0,
+		"season_index": BalanceConfig.SEASONS.size() - 1,
+		"clicks_per_second": BalanceConfig.DEFAULT_PLAYER_CLICKS_PER_SECOND,
+		"click_scope": "global",
+		"include_auto_cultivation": true,
+		"enforce_breakthrough_materials": true,
+		"enforce_tribulation_supplies": true,
+		"auto_buy_shop_resources": true,
+		"auto_use_tribulation_pills": true,
+		"start_spirit_stones": 10000.0,
+	})
+	_check(bool(maximized_flow.get("completed", false)), "最大化模拟完成三段真实突破流程")
+	var maximized_earned: int = int(maximized_flow.get("talent_points_earned", 0))
+	var maximized_spent: int = int(maximized_flow.get("talent_points_spent", 0))
+	var maximized_left: int = int(maximized_flow.get("talent_points", -1))
+	_check(
+		maximized_earned > 0 and maximized_spent > 0
+			and maximized_spent <= maximized_earned
+			and maximized_left == maximized_earned - maximized_spent,
+		"最大化模拟立即消费天赋点且点数账平衡"
+	)
+	var maximized_purchases: Array = maximized_flow.get("shop_purchases", [])
+	var bought_qi := false
+	var bought_material := false
+	for purchase_variant in maximized_purchases:
+		var purchase: Dictionary = purchase_variant
+		bought_qi = bought_qi or String(purchase.get("item_id", "")) == "qi_jade"
+		bought_material = bought_material or String(purchase.get("item_id", "")).begins_with("breakthrough_")
+	_check(bought_qi and bought_material, "最大化模拟用灵石购买灵气和突破材料")
+	_check(is_zero_approx(gs.spirit_stones), "最大化模拟不修改真实灵石库存")
+
+
 func _check_section_one(gs: Node) -> void:
 	print("=== 第 1 节数值规则 ===")
+	gs.initialize_new_game()
+	gs.realm_index = 1
+	_check(not gs.get_crop_options().has("mind_flower"), "凝神花只由作物配置的筑基门槛解锁")
+	gs.realm_index = 2
+	_check(gs.get_crop_options().has("mind_flower"), "筑基解锁凝神花")
+	gs.realm_index = 3
+	_check(gs.get_crop_options().has("sun_fruit") and gs.get_crop_options().has("heaven_lotus"), "金丹解锁赤阳果和天道莲")
 	_check(is_equal_approx(float(BalanceConfig.LIFESPAN_DECAY_PER_SECOND), 0.5), "寿元衰减为 0.5 年/秒")
-	_check(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM == [0, 3, 7, 15], "突破天赋点表为 [0,3,7,15]")
+	_check(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM == [0, 3, 7, 15, 31], "突破天赋点表为 [0,3,7,15,31]")
+	_check(is_equal_approx(float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0)), 1000.0) and is_equal_approx(float(BalanceConfig.REALMS[2].get("required_cultivation", 0.0)), 80000.0) and is_equal_approx(float(BalanceConfig.REALMS[3].get("required_cultivation", 0.0)), 2000000.0), "境界修为门槛提高为 1000/80000/2000000")
 	_check(is_equal_approx(60.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 120.0), "凡人一轮寿元为 2 分钟")
 	_check(is_equal_approx(120.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 240.0), "炼气一轮寿元为 4 分钟")
 	_check(is_equal_approx(200.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 400.0), "筑基一轮寿元约 6.7 分钟")
@@ -339,7 +488,10 @@ func _check_section_one(gs: Node) -> void:
 		_check(int(at_150.get("yield_bonus", 0)) == 2 and int(at_150.get("talent_points", 0)) == 6, "%s 150次奖励与累计天赋" % crop_id)
 		_check(int(at_400.get("yield_bonus", 0)) == 3 and int(at_400.get("talent_points", 0)) == 11, "%s 400次奖励与累计天赋" % crop_id)
 		_check(BalanceConfig.crop_proficiency_talent_points(crop_id, 0, 400) == 11, "%s 四档天赋点总和" % crop_id)
-	_check(BalanceConfig.CROP_PROFICIENCY_TOTAL_TALENT_POINTS == 44, "四种作物熟练度天赋点总计 44")
+	var proficiency_talent_total := 0
+	for crop_id_variant in CropConfig.get_all():
+		proficiency_talent_total += BalanceConfig.crop_proficiency_talent_points(String(crop_id_variant), 0, 400)
+	_check(proficiency_talent_total == 55, "五种作物熟练度天赋点总计 55")
 	_check(is_equal_approx(BalanceConfig.crop_base_growth_seconds("gathering_grass", 400), 4.0), "聚灵草最终基础成熟时间 4 秒")
 	_check(is_equal_approx(BalanceConfig.crop_base_growth_seconds("mind_flower", 400), 28.0), "凝神花最终基础成熟时间 28 秒")
 	_check(is_equal_approx(BalanceConfig.crop_base_growth_seconds("sun_fruit", 400), 115.0), "赤阳果最终基础成熟时间 115 秒")
@@ -361,11 +513,15 @@ func _check_section_one(gs: Node) -> void:
 	for realm in range(1, RealmConfig.realm_count()):
 		gs.realm_index = realm - 1
 		gs.cultivation = float(BalanceConfig.REALMS[realm].get("required_cultivation", 0.0))
+		_grant_breakthrough_materials(gs, realm)
 		var before: int = gs.talent_points
-		_check(gs.breakthrough(), "实际突破到 %s" % String(BalanceConfig.REALMS[realm].get("name", "")))
+		_check(gs.breakthrough(), "开始%s天劫" % String(BalanceConfig.REALMS[realm].get("name", "")))
+		_check(gs.realm_index == realm - 1 and gs.tribulation_active, "天劫完成前境界不提前增加")
+		_finish_tribulation_for_probe(gs)
+		_check(gs.realm_index == realm, "天劫成功后进入%s" % String(BalanceConfig.REALMS[realm].get("name", "")))
 		breakthrough_points.append(gs.talent_points - before)
-	_check(breakthrough_points == [3, 7, 15], "实际突破发放 3/7/15 点")
-	_check(gs.promotion_count == 3, "实际突破累计晋级次数")
+	_check(breakthrough_points == [3, 7, 15, 31], "实际突破发放 3/7/15/31 点")
+	_check(gs.promotion_count == 4, "实际突破累计晋级次数")
 
 	gs.initialize_new_game()
 	gs.crop_proficiency["gathering_grass"] = 400
@@ -402,6 +558,124 @@ func _check_section_one(gs: Node) -> void:
 	var stones_before_depleted: float = gs.spirit_stones
 	gs.apply_offline_report()
 	_check(is_equal_approx(gs.spirit_stones, stones_before_depleted), "大限未续命不结算离线奖励")
+
+
+func _check_crop_switch_and_breakthrough_materials(gs: Node) -> void:
+	print("=== 作物切换与突破材料 ===")
+	gs.initialize_new_game()
+	gs.realm_index = 2
+	_check(not gs.plant_crop(0, "fu_qi_dan"), "突破材料不能种植")
+	_check(gs.plant_crop(0, CROP_ID), "切换测试先种植聚灵草")
+	var old_ready_at := float(gs.fields[0].get("ready_at", 0.0))
+	_check(gs.switch_crop(0, "mind_flower"), "已种植灵田可以切换作物")
+	_check(String(gs.fields[0].get("crop_id", "")) == "mind_flower", "切换后作物已更新")
+	_check(float(gs.fields[0].get("ready_at", 0.0)) > old_ready_at, "切换后按新作物重新计时")
+
+	gs.initialize_new_game()
+	gs.spirit_stones = 1000.0
+	gs.cultivation = float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0))
+	var blocked_flow: Dictionary = gs.get_breakthrough_simulation({
+		"start_realm": 0,
+		"target_realm": 1,
+		"start_cultivation": gs.cultivation,
+		"clicks_per_second": 4.0,
+		"include_auto_cultivation": false,
+		"enforce_breakthrough_materials": true,
+		"enforce_tribulation_supplies": true,
+	})
+	_check(not bool(blocked_flow.get("completed", false)) and String(blocked_flow.get("blocked_reason", "")) == "突破材料不足", "模拟器按当前库存拦截突破")
+	var prepared_flow: Dictionary = gs.get_breakthrough_simulation({
+		"start_realm": 0,
+		"target_realm": 1,
+		"start_cultivation": gs.cultivation,
+		"clicks_per_second": 4.0,
+		"include_auto_cultivation": false,
+		"enforce_breakthrough_materials": true,
+		"start_breakthrough_materials": {"fu_qi_dan": 10},
+		"enforce_tribulation_supplies": true,
+		"start_healing_pills": 4,
+	})
+	_check(bool(prepared_flow.get("completed", false)), "模拟器使用已备齐材料和渡劫丹完成突破")
+	_check(not gs.can_breakthrough(), "缺少突破材料不能突破")
+	_check(gs.get_breakthrough_block_reason().begins_with("缺少服气丹"), "突破界面显示缺少的材料")
+	var bought_fu_qi := true
+	for _i in range(10):
+		bought_fu_qi = gs.buy_shop_item("breakthrough_fu_qi_dan") and bought_fu_qi
+	_check(bought_fu_qi, "服气丹只能通过商店兑换")
+	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 10, "服气丹库存达到炼气突破需求")
+	_check(gs.can_breakthrough(), "修为和服气丹齐备后可以突破")
+	_check(gs.breakthrough(), "消耗材料后开始炼气天劫")
+	_check(gs.tribulation_active and gs.realm_index == 0, "炼气天劫期间仍保持凡人境界")
+	_finish_tribulation_for_probe(gs)
+	_check(gs.realm_index == 1, "完成炼气天劫后进入炼气")
+	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 0, "炼气突破消耗 10 颗服气丹")
+
+	gs.initialize_new_game()
+	gs.spirit_stones = 100000.0
+	_check(not gs.buy_shop_item("breakthrough_jin_yang_hua"), "未到炼气不能兑换筑基材料")
+	_check(BalanceConfig.BREAKTHROUGH_REQUIREMENTS[1].size() == 1 and BalanceConfig.BREAKTHROUGH_REQUIREMENTS[2].size() == 5 and BalanceConfig.BREAKTHROUGH_REQUIREMENTS[3].size() == 6, "三段突破材料数量配置正确")
+	_check(BalanceConfig.BREAKTHROUGH_MATERIALS.has("lei_ji_tao_mu"), "金丹突破材料已纳入统一数值表")
+	var material_cost_flow: Dictionary = gs.get_breakthrough_simulation({
+		"start_realm": 0,
+		"target_realm": 3,
+		"field_count": 1,
+		"clicks_per_second": 0.0,
+		"include_auto_cultivation": false,
+		"enforce_breakthrough_materials": false,
+		"enforce_tribulation_supplies": false,
+	})
+	_check(is_equal_approx(float(material_cost_flow.get("breakthrough_material_shop_cost", 0.0)), 3700.0), "三段突破材料需单独购买共 3700 灵石")
+
+
+func _check_tribulation_and_pills(gs: Node) -> void:
+	print("=== 天劫与渡劫丹 ===")
+	gs.initialize_new_game()
+	gs.cultivation = float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0))
+	_grant_breakthrough_materials(gs, 1)
+	gs.talent_points = 0
+	gs.talent_points_earned = 0
+	_check(gs.get_tribulation_strikes_for_target(1) == BalanceConfig.TRIBULATION_BASE_STRIKES, "0天赋点触发九九天劫")
+	_check(gs.breakthrough(), "材料齐备后开始九九天劫")
+	_check(gs.realm_index == 0 and gs.tribulation_active, "天劫完成前不递增境界")
+	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 0, "天劫开始时消耗突破材料")
+
+	gs.spirit_stones = 100000.0
+	_check(gs.buy_shop_item("healing_pill"), "商店购买治疗丹")
+	_check(gs.buy_shop_item("resistance_pill"), "商店购买抗性丹")
+	_check(gs.buy_shop_item("enhancement_pill"), "商店购买强化丹")
+	_check(gs.enhancement_pills == 1 and gs.resistance_pills == 1 and gs.healing_pills == 1, "三类渡劫丹进入库存")
+	_check(gs.use_enhancement_pill(), "渡劫中使用强化丹")
+	_check(is_equal_approx(gs.tribulation_health_max, BalanceConfig.TRIBULATION_BASE_HEALTH + BalanceConfig.TRIBULATION_ENHANCEMENT_HEALTH_BONUS), "强化丹提高劫体上限")
+	_check(gs.use_resistance_pill() and gs.tribulation_resistance_charges == BalanceConfig.TRIBULATION_RESISTANCE_CHARGES, "抗性丹增加抗性次数")
+	_check(gs.advance_tribulation(), "手动迎接一道天劫")
+	_check(gs.use_healing_pill() and gs.tribulation_health > gs.tribulation_health_max - BalanceConfig.TRIBULATION_HEAL_AMOUNT, "治疗丹恢复劫体")
+	_finish_tribulation_for_probe(gs)
+	_check(gs.realm_index == 1 and not gs.tribulation_active, "完成九九天劫后进入炼气")
+
+	gs.talent_points = BalanceConfig.TRIBULATION_SIX_NINE_TALENT_THRESHOLD
+	gs.talent_points_earned = BalanceConfig.TRIBULATION_SIX_NINE_TALENT_THRESHOLD
+	_check(gs.get_tribulation_strikes_for_target(2) == BalanceConfig.TRIBULATION_SIX_NINE_STRIKES, "10天赋点降低为六九天劫")
+	gs.talent_nodes = {"root": true}
+	_check(gs.unlock_talent("farming_start"), "天赋点可以立即点亮节点")
+	_check(gs.talent_points < BalanceConfig.TRIBULATION_SIX_NINE_TALENT_THRESHOLD and gs.get_tribulation_strikes_for_target(2) == BalanceConfig.TRIBULATION_SIX_NINE_STRIKES, "消费天赋点后天劫仍按累计获得点数计算")
+	gs.talent_points = BalanceConfig.TRIBULATION_THREE_NINE_TALENT_THRESHOLD
+	gs.talent_points_earned = BalanceConfig.TRIBULATION_THREE_NINE_TALENT_THRESHOLD
+	_check(gs.get_tribulation_strikes_for_target(2) == BalanceConfig.TRIBULATION_THREE_NINE_STRIKES, "25天赋点降低为三九天劫")
+
+
+func _finish_tribulation_for_probe(gs: Node) -> void:
+	if not gs.tribulation_active:
+		return
+	# 探针只验证流程，不把 99 次手动按钮操作写成测试噪声。
+	gs.tribulation_health = 999999.0
+	while gs.tribulation_active:
+		gs.advance_tribulation()
+
+
+func _grant_breakthrough_materials(gs: Node, target_realm: int) -> void:
+	for requirement in gs.get_breakthrough_requirements(target_realm):
+		var material_id := String(requirement.get("material_id", ""))
+		gs.breakthrough_materials[material_id] = int(requirement.get("amount", 0))
 
 
 func _check_achievements(gs: Node) -> void:
@@ -444,7 +718,8 @@ func _check_frenzy_pill(gs: Node) -> void:
 	_check(is_equal_approx(shop.get_cost("frenzy_pill", 1), 150.0), "狂暴丹第 2 次价格 150")
 	_check(is_equal_approx(shop.get_cost("frenzy_pill", 2), 230.0), "狂暴丹第 3 次价格 230（225 四舍五入到 10）")
 	_check(is_equal_approx(shop.get_cost("frenzy_pill", 3), 340.0), "狂暴丹第 4 次价格 340")
-	_check(shop.get_cost("longevity_pill", 999) == 100.0, "固定价格商品不受购买次数影响")
+	_check(shop.get_cost("longevity_pill", 999) == 1000.0, "长生丹价格为 1000 灵石")
+	_check(shop.get_cost("qi_jade", 999) == 1000.0, "聚气玉价格为 1000 灵石")
 	gs.initialize_new_game()
 	gs.spirit_stones = 100000.0
 	var before_count := int(gs.shop_purchase_counts.get("frenzy_pill", 0))
@@ -463,6 +738,81 @@ func _check_frenzy_pill(gs: Node) -> void:
 	gs.spirit_stones = 100000.0
 	_check(is_equal_approx(shop.get_cost("frenzy_pill", before_count + 1), 150.0), "新局价格按累计购买次数递进")
 	_check(gs.buy_shop_item("frenzy_pill"), "新局可继续购买狂暴丹")
+
+
+# 元婴层级 / 紫芝 / 天赋扩展 / 幸运暴击 / 新成就。
+func _check_expansion(gs: Node) -> void:
+	_check(RealmConfig.realm_count() == 5, "境界扩展到 5 层")
+	_check(is_equal_approx(float(BalanceConfig.REALMS[4].get("required_cultivation", 0.0)), 100000000.0), "元婴门槛 1 亿修为")
+	_check(is_equal_approx(float(BalanceConfig.REALMS[4].get("production", 0.0)), 100.0), "元婴生产倍率 ×100")
+	_check(is_equal_approx(float(BalanceConfig.LIFESPAN_YEARS_BY_REALM[4]), 2000.0), "元婴寿元 2000 年")
+	_check(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM[4] == 31, "元婴突破 +31 天赋点")
+	var yuanying_reqs: Array = gs.get_breakthrough_requirements(4)
+	_check(yuanying_reqs.size() == 7, "元婴突破需要 7 种材料")
+	var total_material_cost := 0.0
+	for requirement in yuanying_reqs:
+		var material: Variant = BalanceConfig.BREAKTHROUGH_MATERIALS.get(String(requirement.get("material_id", "")), {})
+		total_material_cost += float(material.get("cost", 0.0)) if material is Dictionary else 0.0
+	_check(is_equal_approx(total_material_cost, 14000000.0), "元婴材料总成本 1400 万灵石")
+	_check(not CropConfig.get_unlocked(3).has("zi_zhi"), "金丹不解锁紫芝")
+	_check(CropConfig.get_unlocked(4).has("zi_zhi"), "元婴解锁紫芝")
+	_check(BalanceConfig.CROP_PROFICIENCY_REWARDS.has("zi_zhi"), "紫芝有熟练度表")
+	var grand_mult: float = TalentTree.multiplier("production_mult", {
+		"root": true, "farming_start": true, "farming_yield": true, "farming_speed": true,
+		"farming_capstone": true, "farming_grand": true,
+	})
+	_check(is_equal_approx(grand_mult, 1.2 * 1.5 * 2.0), "丰收大道生产 ×2.0 生效")
+	var crit_bonus: float = TalentTree.bonus("crit_chance", {"root": true, "luck_start": true, "luck_capstone": true})
+	_check(is_equal_approx(crit_bonus, 0.15), "幸运系暴击率相加 15%")
+	var rare_bonus: float = TalentTree.bonus("rare_crit_chance", {"root": true, "luck_start": true, "luck_crit": true, "luck_capstone": true})
+	_check(is_equal_approx(rare_bonus, 0.35), "稀有暴击率相加 35%")
+	var luck_nodes: Dictionary = {"root": true, "luck_start": true, "luck_wealth": true, "luck_crit": true, "luck_capstone": true}
+	var luck_report: Dictionary = gs.get_simulation_report({
+		"mode": "uniform", "realm_index": 0, "season_index": 0, "talent_nodes": luck_nodes,
+		"crop_id": "gathering_grass", "tier": 0, "field_count": 1, "qi": 0.0,
+		"event_prod_mult": BalanceConfig.DEFAULT_MULTIPLIER, "event_cult_mult": BalanceConfig.DEFAULT_MULTIPLIER,
+		"buff_mult": BalanceConfig.DEFAULT_MULTIPLIER,
+	})
+	var luck_rep: Dictionary = luck_report.get("representative", {})
+	var expected_crit := 1.0 + 0.15 * (BalanceConfig.LUCK_CRIT_MULT * 0.65 + BalanceConfig.LUCK_RARE_CRIT_MULT * 0.35)
+	_check(is_equal_approx(float(luck_rep.get("expected_crit_mult", 0.0)), expected_crit), "模拟器暴击期望倍率正确")
+	_check(is_equal_approx(float(luck_rep.get("expected_stones_mult", 0.0)), expected_crit + 0.10 * 0.5), "模拟器横财期望倍率正确")
+
+	# 真实收获暴击：固定随机种子，统计 200 次收获的暴击/横财触发。
+	gs.initialize_new_game()
+	_set_talents(gs, ["root", "luck_start", "luck_wealth", "luck_crit", "luck_capstone"])
+	gs.realm_index = 0
+	gs.season_index = 0
+	gs.lifespan_depleted = false
+	gs.fields[0]["crop_id"] = "gathering_grass"
+	gs.fields[0]["tier"] = 0
+	gs.insect_events[0] = {"active": false, "attacks": 0, "pest_level": 0, "next_attack_at": 9999999999.0}
+	var crit_before := int(gs.crit_count)
+	var rare_before := int(gs.rare_crit_count)
+	var windfall_before := int(gs.windfall_count)
+	seed(20260809)
+	var luck_total := 0.0
+	for _i in range(200):
+		gs.fields[0]["ready_at"] = 0.0
+		luck_total += float(gs.harvest_crop(0).get("luck_mult", 1.0))
+	_check(gs.crit_count > crit_before, "200 次收获触发过暴击")
+	_check(gs.rare_crit_count > rare_before, "稀有暴击可触发")
+	_check(gs.windfall_count > windfall_before, "天降横财可触发")
+	var avg_luck := luck_total / 200.0
+	_check(avg_luck > 1.3 and avg_luck < 1.7, "200 次收获平均暴击倍率在期望区间")
+	_check(gs.achievements.has("crit_10"), "暴击成就自动解锁")
+
+	# 新成就 metric：商店购买次数与全仙田。
+	gs.initialize_new_game()
+	gs.spirit_stones = 10000000.0
+	for _i in range(10):
+		gs.buy_shop_item("frenzy_pill")
+	_check(gs.achievements.has("frenzy_pill_10"), "购买 10 次狂暴丹成就解锁")
+	for field_index in range(BalanceConfig.FIELD_COUNT):
+		gs.fields[field_index]["tier"] = BalanceConfig.FIELD_TIER_MULTS.size() - 1
+	gs.emit_state_changed()
+	_check(gs.achievements.has("field_all_immortal"), "三田全仙田成就解锁")
+	_check(gs.get_achievement_rows().size() == BalanceConfig.ACHIEVEMENTS.size(), "成就表扩展到 36 项全部可见")
 
 
 func _set_talents(gs: Node, node_ids: Array) -> void:

@@ -4,7 +4,7 @@ class_name TalentPanel
 extends Control
 
 
-const GRAPH_SIZE := Vector2(920.0, 560.0)
+const GRAPH_SIZE := Vector2(1150.0, 640.0)
 const NODE_SIZE := Vector2(150.0, 72.0)
 const NODE_POSITIONS: Dictionary = {
 	"root": Vector2(385.0, 18.0),
@@ -12,14 +12,21 @@ const NODE_POSITIONS: Dictionary = {
 	"farming_yield": Vector2(0.0, 275.0),
 	"farming_speed": Vector2(165.0, 275.0),
 	"farming_capstone": Vector2(80.0, 430.0),
+	"farming_grand": Vector2(80.0, 555.0),
 	"alchemy_start": Vector2(385.0, 130.0),
 	"alchemy_power": Vector2(300.0, 275.0),
 	"alchemy_quality": Vector2(465.0, 275.0),
 	"alchemy_capstone": Vector2(382.0, 430.0),
+	"alchemy_grand": Vector2(382.0, 555.0),
 	"spirit_start": Vector2(715.0, 130.0),
 	"spirit_qi": Vector2(630.0, 275.0),
 	"spirit_lifespan": Vector2(795.0, 275.0),
 	"spirit_capstone": Vector2(712.0, 430.0),
+	"spirit_grand": Vector2(712.0, 555.0),
+	"luck_start": Vector2(950.0, 130.0),
+	"luck_wealth": Vector2(880.0, 275.0),
+	"luck_crit": Vector2(1015.0, 275.0),
+	"luck_capstone": Vector2(948.0, 430.0),
 }
 
 var _root_vbox: VBoxContainer
@@ -117,8 +124,9 @@ func _build_nodes() -> void:
 
 
 func _refresh() -> void:
-	_points_label.text = "可用天赋点：%d    已点亮节点：%d/%d" % [
+	_points_label.text = "可用天赋点：%d    累计获得：%d    已点亮节点：%d/%d" % [
 		int(GameState.talent_points),
+		int(GameState.talent_points_earned),
 		GameState.talent_nodes.size(),
 		TalentTree.node_ids().size(),
 	]

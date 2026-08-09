@@ -16,15 +16,12 @@ static func node_def(node_id: String) -> Dictionary:
 	return BalanceConfig.TALENT_NODES[node_id] as Dictionary
 
 
-static func branch_name(branch: String) -> String:
-	match branch:
-		"farming":
-			return "农道"
-		"alchemy":
-			return "丹道"
-		"spirit":
-			return "灵根"
-	return "道心"
+static func unlocked_cost(unlocked_nodes: Dictionary) -> int:
+	var total := 0
+	for node_id in node_ids():
+		if is_unlocked(node_id, unlocked_nodes):
+			total += int(node_def(node_id).get("cost", 0))
+	return total
 
 
 static func is_unlocked(node_id: String, unlocked_nodes: Dictionary) -> bool:
@@ -66,7 +63,7 @@ static func multiplier(effect_key: String, unlocked_nodes: Dictionary) -> float:
 	return result
 
 
-## 汇总加法效果，例如极品概率加成。
+## 汇总一类加值（概率类效果，如暴击率）。节点相加，未购买时返回 0。
 static func bonus(effect_key: String, unlocked_nodes: Dictionary) -> float:
 	var result := 0.0
 	for node_id in BalanceConfig.TALENT_NODE_ORDER:

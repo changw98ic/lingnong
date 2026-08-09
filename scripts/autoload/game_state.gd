@@ -27,7 +27,7 @@ signal realm_changed
 var spirit_stones := 0.0
 var qi := 0.0
 var cultivation := 0.0
-var crop_inventory := {}
+var breakthrough_materials := {}
 var realm_index := BalanceConfig.INITIAL_REALM_INDEX
 var unlocked_fields := BalanceConfig.INITIAL_UNLOCKED_FIELDS
 # 灵田结构（契约[C]）：每项 {crop_id, planted_at, ready_at, tier}。tier 0..3。
@@ -39,9 +39,27 @@ var lifespan_max_years: float = BalanceConfig.LIFESPAN_YEARS_BY_REALM[BalanceCon
 var lifespan_years: float = BalanceConfig.LIFESPAN_YEARS_BY_REALM[BalanceConfig.INITIAL_REALM_INDEX]
 var lifespan_depleted := false
 
+# 天劫是突破后的独立阶段。当前境界只有在全部劫数结算成功后才会递增。
+var healing_pills := 0
+var resistance_pills := 0
+var enhancement_pills := 0
+var tribulation_active := false
+var tribulation_target_realm := -1
+var tribulation_total_strikes := 0
+var tribulation_strikes_survived := 0
+var tribulation_health_max := 0.0
+var tribulation_health := 0.0
+var tribulation_next_strike_at := 0.0
+var tribulation_resistance_charges := 0
+var tribulation_enhancement_active := false
+var tribulation_last_damage := 0.0
+var tribulation_last_result := ""
+
 # ───────────────────────── 天赋 / 长期进度 ─────────────────────────
 
 var talent_points := 0
+# 已经获得过的天赋点总量。天劫档位按累计获得量判断，避免天赋点被立即消费后天劫又退回九九。
+var talent_points_earned := 0
 var talent_nodes: Dictionary = {"root": true}
 var total_cultivation_earned := 0.0
 var talent_milestone_index := 0
@@ -56,6 +74,10 @@ var promotion_count := 0
 var reincarnation_count := 0
 var offline_claimed_talent_points := 0
 var offline_claimed_spirit_stone_units := 0.0
+# 幸运系统计：暴击 / 稀有暴击 / 天降横财触发次数，供成就进度使用。
+var crit_count := 0
+var rare_crit_count := 0
+var windfall_count := 0
 
 # ───────────────────────── 倍率分量（事件 / buff） ─────────────────────────
 
@@ -72,9 +94,6 @@ var active_buff_mult := BalanceConfig.DEFAULT_MULTIPLIER
 var spirit_rain_unlocked := false
 # 名称与 RealmConfig.breakthrough_rewards 的键严格对齐（便于通用应用）。
 var unlock_auto_cultivation := false
-var unlock_mind_flower := false
-var unlock_sun_fruit := false
-var unlock_heaven_lotus := false
 
 # ───────────────────────── 子系统实例 ─────────────────────────
 
@@ -110,6 +129,7 @@ func _ready() -> void:
 # 新游戏：彻底重置当前进度与天赋树。
 func initialize_new_game() -> void:
 	talent_points = 0
+	talent_points_earned = 0
 	talent_nodes = {"root": true}
 	total_cultivation_earned = 0.0
 	talent_milestone_index = 0
@@ -121,6 +141,9 @@ func initialize_new_game() -> void:
 	reincarnation_count = 0
 	offline_claimed_talent_points = 0
 	offline_claimed_spirit_stone_units = 0.0
+	crit_count = 0
+	rare_crit_count = 0
+	windfall_count = 0
 	shop_purchase_counts = {}
 	last_offline_report = {}
 	_reset_run_state()
@@ -133,10 +156,10 @@ func _reset_run_state() -> void:
 	spirit_stones = 0.0
 	qi = 0.0
 	cultivation = 0.0
-	crop_inventory = {}
+	breakthrough_materials = {}
 	realm_index = BalanceConfig.INITIAL_REALM_INDEX
 	unlocked_fields = BalanceConfig.INITIAL_UNLOCKED_FIELDS
-	# 灵雨、炼丹、配方、作物和自动化的初始解锁统一由 BalanceConfig 推导。
+	# 灵雨、作物和自动化的初始解锁统一由 BalanceConfig 推导。
 	var default_unlock_flags := BalanceConfig.default_unlock_flags(BalanceConfig.INITIAL_REALM_INDEX)
 	for flag in default_unlock_flags:
 		set(flag, bool(default_unlock_flags[flag]))
@@ -156,6 +179,20 @@ func _reset_run_state() -> void:
 	lifespan_max_years = BalanceConfig.LIFESPAN_YEARS_BY_REALM[BalanceConfig.INITIAL_REALM_INDEX]
 	lifespan_years = lifespan_max_years
 	lifespan_depleted = false
+	healing_pills = 0
+	resistance_pills = 0
+	enhancement_pills = 0
+	tribulation_active = false
+	tribulation_target_realm = -1
+	tribulation_total_strikes = 0
+	tribulation_strikes_survived = 0
+	tribulation_health_max = 0.0
+	tribulation_health = 0.0
+	tribulation_next_strike_at = 0.0
+	tribulation_resistance_charges = 0
+	tribulation_enhancement_active = false
+	tribulation_last_damage = 0.0
+	tribulation_last_result = ""
 	# 灵田全 tier=0、作物空；保留 BalanceConfig.FIELD_COUNT 个槽位。
 	fields.clear()
 	spirit_rain_until.clear()
@@ -175,13 +212,15 @@ func _reset_run_state() -> void:
 		})
 
 
-# 确保库存字典覆盖全部作物 id（缺则补 0），保持结构稳定。
+# 确保长期熟练度和突破材料字典覆盖当前配置的 id，保持结构稳定。
 func _ensure_inventory_keys() -> void:
 	for crop_id in CropConfig.get_all():
-		if not crop_inventory.has(crop_id):
-			crop_inventory[crop_id] = 0
 		if not crop_proficiency.has(crop_id):
 			crop_proficiency[crop_id] = 0
+	for material_id_variant in BalanceConfig.BREAKTHROUGH_MATERIALS:
+		var material_id := String(material_id_variant)
+		if not breakthrough_materials.has(material_id):
+			breakthrough_materials[material_id] = 0
 
 
 func emit_state_changed() -> void:
@@ -204,33 +243,247 @@ func get_next_realm_requirement() -> float:
 
 
 func can_breakthrough() -> bool:
-	return not lifespan_depleted and realm_index + 1 < RealmConfig.realm_count() and cultivation >= get_next_realm_requirement()
+	if lifespan_depleted or tribulation_active or realm_index + 1 >= RealmConfig.realm_count() or cultivation < get_next_realm_requirement():
+		return false
+	return has_breakthrough_materials(realm_index + 1)
 
 
-# 突破：按 RealmConfig.breakthrough_rewards(new_realm_index) 应用奖励。
-# production / cultivation 乘数不在这里设置——按当前境界实时查表。
+func get_breakthrough_requirements(target_realm: int = -1) -> Array[Dictionary]:
+	var target := realm_index + 1 if target_realm < 0 else target_realm
+	var configured: Variant = BalanceConfig.BREAKTHROUGH_REQUIREMENTS.get(target, [])
+	var requirements: Array[Dictionary] = []
+	if configured is Array:
+		for item in configured:
+			if item is Dictionary:
+				requirements.append(item.duplicate(true))
+	return requirements
+
+
+func get_breakthrough_material_count(material_id: String) -> int:
+	return maxi(0, int(breakthrough_materials.get(material_id, 0)))
+
+
+func has_breakthrough_materials(target_realm: int = -1) -> bool:
+	for requirement in get_breakthrough_requirements(target_realm):
+		var material_id := String(requirement.get("material_id", ""))
+		var amount := maxi(0, int(requirement.get("amount", 0)))
+		if material_id == "" or get_breakthrough_material_count(material_id) < amount:
+			return false
+	return true
+
+
+func get_breakthrough_block_reason() -> String:
+	if lifespan_depleted:
+		return "大限已至"
+	if tribulation_active:
+		return "正在渡劫：%s %d/%d" % [get_tribulation_name(), tribulation_strikes_survived, tribulation_total_strikes]
+	if realm_index + 1 >= RealmConfig.realm_count():
+		return "已达当前最高境界"
+	if cultivation < get_next_realm_requirement():
+		return "修为未达门槛"
+	for requirement in get_breakthrough_requirements():
+		var material_id := String(requirement.get("material_id", ""))
+		var required_amount := maxi(0, int(requirement.get("amount", 0)))
+		var owned_amount := get_breakthrough_material_count(material_id)
+		if owned_amount < required_amount:
+			return "缺少%s %d/%d" % [_breakthrough_material_name(material_id), owned_amount, required_amount]
+	return "可突破"
+
+
+func _breakthrough_material_name(material_id: String) -> String:
+	var material: Variant = BalanceConfig.BREAKTHROUGH_MATERIALS.get(material_id, {})
+	return String(material.get("name", material_id)) if material is Dictionary else material_id
+
+
+# 突破：消耗材料并开始天劫；按 RealmConfig.breakthrough_rewards(new_realm_index) 的奖励
+# 要等天劫成功后才应用。production / cultivation 乘数按当前境界实时查表。
 func breakthrough() -> bool:
 	if lifespan_depleted or not can_breakthrough():
 		return false
-	realm_index += 1
-	# 突破延寿：提高寿元上限并补满当前寿元。
+	return begin_tribulation(realm_index + 1)
+
+
+func get_tribulation_strikes_for_target(_target_realm: int = -1) -> int:
+	return BalanceConfig.tribulation_strikes_for_talent(talent_points_earned)
+
+
+func get_tribulation_name(strikes: int = -1) -> String:
+	var total := tribulation_total_strikes if strikes < 0 else strikes
+	match total:
+		BalanceConfig.TRIBULATION_THREE_NINE_STRIKES:
+			return "三九天劫"
+		BalanceConfig.TRIBULATION_SIX_NINE_STRIKES:
+			return "六九天劫"
+		BalanceConfig.TRIBULATION_BASE_STRIKES:
+			return "九九天劫"
+	return "%d道天劫" % total
+
+
+func begin_tribulation(target_realm: int = -1) -> bool:
+	var target := realm_index + 1 if target_realm < 0 else target_realm
+	if lifespan_depleted or tribulation_active or target != realm_index + 1 or not can_breakthrough():
+		return false
+	if target < 0 or target >= RealmConfig.realm_count():
+		return false
+	_consume_breakthrough_materials(target)
+	tribulation_active = true
+	tribulation_target_realm = target
+	tribulation_total_strikes = get_tribulation_strikes_for_target(target)
+	tribulation_strikes_survived = 0
+	tribulation_health_max = BalanceConfig.TRIBULATION_BASE_HEALTH
+	tribulation_health = tribulation_health_max
+	tribulation_next_strike_at = Time.get_unix_time_from_system() + BalanceConfig.TRIBULATION_INTERVAL_SECONDS
+	tribulation_resistance_charges = 0
+	tribulation_enhancement_active = false
+	tribulation_last_damage = 0.0
+	tribulation_last_result = ""
+	emit_state_changed()
+	return true
+
+
+func get_tribulation_status() -> Dictionary:
+	var seconds_to_next := 0.0
+	if tribulation_active:
+		seconds_to_next = maxf(0.0, tribulation_next_strike_at - Time.get_unix_time_from_system())
+	return {
+		"active": tribulation_active,
+		"target_realm": tribulation_target_realm,
+		"target_realm_name": String(BalanceConfig.REALMS[tribulation_target_realm].get("name", "")) if tribulation_target_realm >= 0 and tribulation_target_realm < RealmConfig.realm_count() else "",
+		"name": get_tribulation_name(),
+		"total_strikes": tribulation_total_strikes,
+		"strikes_survived": tribulation_strikes_survived,
+		"health_max": tribulation_health_max,
+		"health": tribulation_health,
+		"seconds_to_next": seconds_to_next,
+		"resistance_charges": tribulation_resistance_charges,
+		"enhancement_active": tribulation_enhancement_active,
+		"last_damage": tribulation_last_damage,
+		"last_result": tribulation_last_result,
+		"healing_pills": healing_pills,
+		"resistance_pills": resistance_pills,
+		"enhancement_pills": enhancement_pills,
+	}
+
+
+func advance_tribulation() -> bool:
+	if not tribulation_active:
+		return false
+	_resolve_tribulation_strike(Time.get_unix_time_from_system())
+	return true
+
+
+func use_healing_pill() -> bool:
+	if not tribulation_active or healing_pills <= 0 or tribulation_health >= tribulation_health_max:
+		return false
+	healing_pills -= 1
+	tribulation_health = minf(tribulation_health_max, tribulation_health + BalanceConfig.TRIBULATION_HEAL_AMOUNT)
+	emit_state_changed()
+	return true
+
+
+func use_resistance_pill() -> bool:
+	if not tribulation_active or resistance_pills <= 0:
+		return false
+	resistance_pills -= 1
+	tribulation_resistance_charges += BalanceConfig.TRIBULATION_RESISTANCE_CHARGES
+	emit_state_changed()
+	return true
+
+
+func use_enhancement_pill() -> bool:
+	if not tribulation_active or enhancement_pills <= 0 or tribulation_enhancement_active:
+		return false
+	enhancement_pills -= 1
+	tribulation_enhancement_active = true
+	tribulation_health_max += BalanceConfig.TRIBULATION_ENHANCEMENT_HEALTH_BONUS
+	tribulation_health += BalanceConfig.TRIBULATION_ENHANCEMENT_HEALTH_BONUS
+	emit_state_changed()
+	return true
+
+
+func _update_tribulation(now: float) -> void:
+	if not tribulation_active or now < tribulation_next_strike_at:
+		return
+	# 一帧只结算一道，避免从后台回来时瞬间跳过整段天劫。
+	_resolve_tribulation_strike(now)
+
+
+func _resolve_tribulation_strike(now: float) -> void:
+	if not tribulation_active:
+		return
+	var damage := BalanceConfig.TRIBULATION_STRIKE_DAMAGE
+	if tribulation_resistance_charges > 0:
+		damage *= BalanceConfig.TRIBULATION_RESISTANCE_DAMAGE_MULT
+		tribulation_resistance_charges -= 1
+	if tribulation_enhancement_active:
+		damage *= BalanceConfig.TRIBULATION_ENHANCEMENT_DAMAGE_MULT
+	tribulation_last_damage = damage
+	tribulation_health = maxf(0.0, tribulation_health - damage)
+	tribulation_strikes_survived += 1
+	if tribulation_health <= 0.0:
+		_fail_tribulation("劫体耗尽")
+		return
+	if tribulation_strikes_survived >= tribulation_total_strikes:
+		_complete_tribulation()
+		return
+	tribulation_next_strike_at = now + BalanceConfig.TRIBULATION_INTERVAL_SECONDS
+	emit_state_changed()
+
+
+func _complete_tribulation() -> void:
+	var completed_realm := tribulation_target_realm
+	tribulation_active = false
+	tribulation_last_result = "渡劫成功"
+	tribulation_target_realm = -1
+	tribulation_next_strike_at = 0.0
+	tribulation_resistance_charges = 0
+	tribulation_enhancement_active = false
+	if completed_realm < 0 or completed_realm >= RealmConfig.realm_count():
+		_fail_tribulation("目标境界无效")
+		return
+	realm_index = completed_realm
+	# 突破成功：提高寿元上限并补满当前寿元。
 	lifespan_max_years = BalanceConfig.LIFESPAN_YEARS_BY_REALM[mini(realm_index, BalanceConfig.LIFESPAN_YEARS_BY_REALM.size() - 1)]
 	lifespan_years = lifespan_max_years
 	lifespan_depleted = false
 	# 突破本身给点，修为里程碑另行给点。
 	promotion_count += 1
 	var reward_index := mini(realm_index, BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM.size() - 1)
-	talent_points += int(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM[reward_index])
+	_award_talent_points(int(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM[reward_index]))
 	var rewards: Dictionary = RealmConfig.breakthrough_rewards(realm_index)
 	_apply_breakthrough_rewards(rewards)
+	tribulation_total_strikes = 0
+	tribulation_strikes_survived = 0
+	tribulation_health_max = 0.0
+	tribulation_health = 0.0
 	realm_changed.emit()
 	emit_state_changed()
-	return true
+
+
+func _fail_tribulation(reason: String) -> void:
+	tribulation_active = false
+	tribulation_last_result = "渡劫失败：%s" % reason
+	tribulation_target_realm = -1
+	tribulation_next_strike_at = 0.0
+	tribulation_total_strikes = 0
+	tribulation_strikes_survived = 0
+	tribulation_health_max = 0.0
+	tribulation_health = 0.0
+	tribulation_resistance_charges = 0
+	tribulation_enhancement_active = false
+	emit_state_changed()
+
+
+func _consume_breakthrough_materials(target_realm: int) -> void:
+	for requirement in get_breakthrough_requirements(target_realm):
+		var material_id := String(requirement.get("material_id", ""))
+		var amount := maxi(0, int(requirement.get("amount", 0)))
+		breakthrough_materials[material_id] = maxi(0, get_breakthrough_material_count(material_id) - amount)
 
 
 # 把突破奖励字典应用到自身。奖励键名与 unlock_* 变量名严格对齐。
 # 突破奖励只“解锁”、不“回收”：rewards 全默认 false，只有 true 项才生效，
-# 不能把早前境界已解锁的能力（灵雨诀 / 各配方）覆盖回 false。
+# 不能把早前境界已解锁的能力（灵雨诀 / 自动修炼）覆盖回 false。
 func _apply_breakthrough_rewards(rewards: Dictionary) -> void:
 	for key in rewards:
 		var value: Variant = rewards[key]
@@ -241,16 +494,13 @@ func _apply_breakthrough_rewards(rewards: Dictionary) -> void:
 			set(key, bool(get(key)) or bool(value))
 
 
-func get_breakthrough_rewards_for_current() -> Dictionary:
-	return RealmConfig.breakthrough_rewards(realm_index)
-
-
 # ───────────────────────── 倍率统一入口（契约[A]） ─────────────────────────
 
 func talent_multiplier(effect_key: String) -> float:
 	return TalentTree.multiplier(effect_key, talent_nodes)
 
 
+# 概率类天赋效果（暴击率等）：相加语义，未购买时返回 0。
 func talent_bonus(effect_key: String) -> float:
 	return TalentTree.bonus(effect_key, talent_nodes)
 
@@ -281,10 +531,6 @@ func get_achievement_rows() -> Array[Dictionary]:
 	return AchievementSystem.progress_rows(self)
 
 
-func get_completed_achievement_count() -> int:
-	return AchievementSystem.completed_count(self)
-
-
 # 修炼类综合倍率（灵田直接修为 / 自动修炼修为）。buff 不直接作用于 cultivation，
 # 但会通过 production 影响收获数量；这里仍只汇总境界、天赋和事件修炼倍率。
 func get_cultivation_mult() -> float:
@@ -310,10 +556,6 @@ func get_season_name() -> String:
 	return String(BalanceConfig.SEASONS[season_index]["name"])
 
 
-func get_season_multiplier(kind: String) -> float:
-	return float(BalanceConfig.SEASONS[season_index].get(kind, BalanceConfig.DEFAULT_MULTIPLIER))
-
-
 # ───────────────────────── 灵田 / 种植 / 收获 / 升档 ─────────────────────────
 
 # 灵田 tier 乘数：凡1 / 灵10 / 宝100 / 仙1000。
@@ -328,9 +570,9 @@ func get_crop_options() -> Array:
 	return CropConfig.get_unlocked(realm_index)
 
 
-# 种植：校验空田、作物已解锁，写入 crop_id 与按倍率缩短后的成熟时间，重置该田虫害。
+# 种植：校验空田、作物已解锁，写入 crop_id 与按倍率缩短后的成熟时间；不改变该田固定虫害计时。
 func plant_crop(field_index: int, crop_id: String) -> bool:
-	if lifespan_depleted:
+	if lifespan_depleted or tribulation_active:
 		return false
 	if field_index < 0 or field_index >= fields.size() or field_index >= unlocked_fields:
 		return false
@@ -349,8 +591,30 @@ func plant_crop(field_index: int, crop_id: String) -> bool:
 	data["planted_at"] = now
 	data["ready_at"] = now + growth_time
 	fields[field_index] = data
-	if field_index < insect_events.size():
-		insect_events[field_index] = {"active": false, "attacks": 0, "pest_level": 0, "next_attack_at": now + BalanceConfig.INSECT_INITIAL_DELAY_SECONDS}
+	emit_state_changed()
+	return true
+
+
+# 切换已在生长的灵植：放弃当前生长进度，立即按新作物重新计时；不改变固定虫害计时。
+func switch_crop(field_index: int, crop_id: String) -> bool:
+	if lifespan_depleted or tribulation_active:
+		return false
+	if field_index < 0 or field_index >= fields.size() or field_index >= unlocked_fields:
+		return false
+	if not get_crop_options().has(crop_id):
+		return false
+	var data: Dictionary = fields[field_index]
+	var previous_crop_id := String(data.get("crop_id", ""))
+	if previous_crop_id == "" or previous_crop_id == crop_id:
+		return false
+	var crop: Variant = CropConfig.get_crop(crop_id)
+	if crop == null:
+		return false
+	var now := Time.get_unix_time_from_system()
+	data["crop_id"] = crop_id
+	data["planted_at"] = now
+	data["ready_at"] = now + SimulationSystem.live_crop_growth_seconds(self, field_index, crop_id)
+	fields[field_index] = data
 	emit_state_changed()
 	return true
 
@@ -358,7 +622,7 @@ func plant_crop(field_index: int, crop_id: String) -> bool:
 # 点击加速：缩短当前作物的成熟倒计时，成熟后仍由自动收获统一结算。
 func speed_up_crop(field_index: int) -> Dictionary:
 	var empty := {"ok": false, "seconds": 0.0, "remaining": 0.0}
-	if lifespan_depleted or field_index < 0 or field_index >= fields.size():
+	if lifespan_depleted or tribulation_active or field_index < 0 or field_index >= fields.size():
 		return empty
 	var data: Dictionary = fields[field_index]
 	if String(data.get("crop_id", "")) == "":
@@ -378,7 +642,7 @@ func speed_up_crop(field_index: int) -> Dictionary:
 # 结算在模型内同时完成补种，保证一次收获就是一个可保存的完整状态变更。
 func harvest_crop(field_index: int) -> Dictionary:
 	var empty := {"ok": false, "crop_id": "", "amount": 0, "cultivation": 0.0, "spirit_stones": 0.0}
-	if lifespan_depleted:
+	if lifespan_depleted or tribulation_active:
 		return empty
 	if field_index < 0 or field_index >= fields.size():
 		return empty
@@ -396,6 +660,27 @@ func harvest_crop(field_index: int) -> Dictionary:
 	var amount := int(simulated.get("amount", 0))
 	var cultivation_gain := float(simulated.get("cultivation_gain", 0.0))
 	var spirit_stones_gain := float(simulated.get("spirit_stones_per_cycle", 0.0))
+	# 幸运系：收获时 roll 暴击 / 稀有暴击 / 天降横财。概率由天赋提供（相加语义）。
+	var luck_mult := 1.0
+	var is_crit := false
+	var is_rare := false
+	var is_windfall := false
+	if talent_bonus("crit_chance") > 0.0 and randf() < talent_bonus("crit_chance"):
+		is_crit = true
+		crit_count += 1
+		if talent_bonus("rare_crit_chance") > 0.0 and randf() < talent_bonus("rare_crit_chance"):
+			is_rare = true
+			luck_mult = BalanceConfig.LUCK_RARE_CRIT_MULT
+			rare_crit_count += 1
+		else:
+			luck_mult = BalanceConfig.LUCK_CRIT_MULT
+	cultivation_gain *= luck_mult
+	spirit_stones_gain *= luck_mult
+	if talent_bonus("windfall_chance") > 0.0 and randf() < talent_bonus("windfall_chance"):
+		is_windfall = true
+		windfall_count += 1
+		# 横财按暴击后的本次灵石额外追加。
+		spirit_stones_gain += spirit_stones_gain * BalanceConfig.LUCK_WINDFALL_RATIO
 	# 灵田是当前循环的直接产出端：收获同时结算修为与灵石，不结算灵气。
 	_add_cultivation(cultivation_gain)
 	spirit_stones += spirit_stones_gain
@@ -410,6 +695,10 @@ func harvest_crop(field_index: int) -> Dictionary:
 		"spirit_stones": spirit_stones_gain,
 		"qi_mult": float(simulated.get("qi_harvest_mult", 1.0)),
 		"proficiency": get_crop_proficiency(crop_id),
+		"crit": is_crit,
+		"rare_crit": is_rare,
+		"windfall": is_windfall,
+		"luck_mult": luck_mult,
 	}
 
 
@@ -428,12 +717,19 @@ func _replant_after_harvest(field_index: int, crop_id: String, planted_at: float
 	data["ready_at"] = planted_at + SimulationSystem.live_crop_growth_seconds(self, field_index, crop_id)
 	fields[field_index] = data
 	if field_index < insect_events.size():
-		insect_events[field_index] = {
-			"active": false,
-			"attacks": 0,
-			"pest_level": 0,
-			"next_attack_at": planted_at + BalanceConfig.INSECT_INITIAL_DELAY_SECONDS,
-		}
+		# 自动补种仍是同一条生产线：保留虫灾状态和计时，避免聚灵草每 5 秒
+		# 重置一次预警，导致虫灾永远进不来。手动种植/切换作物也不改变固定袭击。
+		var event: Dictionary = insect_events[field_index]
+		if event.is_empty():
+			event = {
+				"active": false,
+				"attacks": 0,
+				"pest_level": 0,
+				"next_attack_at": planted_at + BalanceConfig.INSECT_INITIAL_DELAY_SECONDS,
+			}
+		elif not event.has("next_attack_at"):
+			event["next_attack_at"] = planted_at + BalanceConfig.INSECT_INITIAL_DELAY_SECONDS
+		insect_events[field_index] = event
 
 ## 返回指定灵田槽位的购买费用与修行等级要求。
 func get_field_slot_cost(field_index: int) -> Dictionary:
@@ -443,7 +739,7 @@ func get_field_slot_cost(field_index: int) -> Dictionary:
 
 
 func can_buy_field_slot(field_index: int) -> bool:
-	if lifespan_depleted or field_index != unlocked_fields or field_index <= 0 or field_index >= fields.size():
+	if lifespan_depleted or tribulation_active or field_index != unlocked_fields or field_index <= 0 or field_index >= fields.size():
 		return false
 	var cost := get_field_slot_cost(field_index)
 	return spirit_stones >= float(cost.get("spirit_stones", 0.0))
@@ -473,7 +769,7 @@ func get_field_upgrade_cost(field_index: int) -> Dictionary:
 
 
 func can_purchase_field_tier(field_index: int) -> bool:
-	if lifespan_depleted or field_index < 0 or field_index >= fields.size() or field_index >= unlocked_fields:
+	if lifespan_depleted or tribulation_active or field_index < 0 or field_index >= fields.size() or field_index >= unlocked_fields:
 		return false
 	var tier := int(fields[field_index].get("tier", 0))
 	if tier < 0 or tier >= BalanceConfig.FIELD_TIER_UPGRADE_COSTS.size() or tier >= get_max_field_tier():
@@ -492,19 +788,6 @@ func upgrade_field_tier(field_index: int) -> bool:
 	spirit_stones -= float(cost.get("spirit_stones", 0.0))
 	data["tier"] = tier + 1
 	fields[field_index] = data
-	emit_state_changed()
-	return true
-
-
-# 旧存档灵材迁移接口：当前主循环在收获时直接结算灵石，新收获不再写入灵材库存。
-func sell_crop(crop_id: String, amount: int) -> bool:
-	var crop: Variant = CropConfig.get_crop(crop_id)
-	if crop == null or amount <= 0:
-		return false
-	if int(crop_inventory.get(crop_id, 0)) < amount:
-		return false
-	crop_inventory[crop_id] = int(crop_inventory.get(crop_id, 0)) - amount
-	spirit_stones += float(crop["sell_price"]) * float(amount)
 	emit_state_changed()
 	return true
 
@@ -529,11 +812,11 @@ func unlock_talent(node_id: String) -> bool:
 	return true
 
 
-func add_talent_points(amount: int) -> void:
+func _award_talent_points(amount: int) -> void:
 	if amount <= 0:
 		return
 	talent_points += amount
-	emit_state_changed()
+	talent_points_earned += amount
 
 
 func get_crop_proficiency(crop_id: String) -> Dictionary:
@@ -546,8 +829,7 @@ func _record_crop_harvest(crop_id: String) -> void:
 	crop_proficiency[crop_id] = current_count
 	total_harvest_count += 1
 	var new_talent_points := BalanceConfig.crop_proficiency_talent_points(crop_id, previous_count, current_count)
-	if new_talent_points > 0:
-		talent_points += new_talent_points
+	_award_talent_points(new_talent_points)
 
 
 func _add_cultivation(amount: float) -> void:
@@ -556,7 +838,7 @@ func _add_cultivation(amount: float) -> void:
 	cultivation += amount
 	total_cultivation_earned += amount
 	while talent_milestone_index < BalanceConfig.TALENT_MILESTONES.size() and total_cultivation_earned >= BalanceConfig.TALENT_MILESTONES[talent_milestone_index]:
-		talent_points += BalanceConfig.TALENT_MILESTONE_POINTS
+		_award_talent_points(BalanceConfig.TALENT_MILESTONE_POINTS)
 		talent_milestone_index += 1
 
 
@@ -571,7 +853,7 @@ func cast_spirit_rain(
 	duration := BalanceConfig.SPIRIT_RAIN_DURATION_SECONDS,
 	cost := BalanceConfig.SPIRIT_RAIN_COST
 	) -> bool:
-	if lifespan_depleted or not spirit_rain_unlocked:
+	if lifespan_depleted or tribulation_active or not spirit_rain_unlocked:
 		return false
 	if field_index < 0 or field_index >= fields.size() or qi < cost:
 		return false
@@ -587,7 +869,7 @@ func cast_gengjin_sword(
 	cooldown := BalanceConfig.GENGJIN_SWORD_COOLDOWN_SECONDS
 	) -> bool:
 	var now := Time.get_unix_time_from_system()
-	if lifespan_depleted or realm_index < BalanceConfig.ADVANCED_COMBAT_REALM_INDEX:
+	if lifespan_depleted or tribulation_active or realm_index < BalanceConfig.ADVANCED_COMBAT_REALM_INDEX:
 		return false
 	if field_index < 0 or field_index >= insect_events.size() or qi < cost or now < sword_art_cooldown_until:
 		return false
@@ -607,7 +889,7 @@ func cast_gengjin_sword(
 
 
 func upgrade_guardian_array(field_index: int, cost := BalanceConfig.GUARDIAN_UPGRADE_COST) -> bool:
-	if lifespan_depleted or realm_index < BalanceConfig.ADVANCED_COMBAT_REALM_INDEX:
+	if lifespan_depleted or tribulation_active or realm_index < BalanceConfig.ADVANCED_COMBAT_REALM_INDEX:
 		return false
 	if field_index < 0 or field_index >= guardian_array_level.size() or spirit_stones < cost:
 		return false
@@ -636,8 +918,14 @@ func update_world(delta: float) -> void:
 		lifespan_years = maxf(0.0, lifespan_years - get_lifespan_decay_per_second() * delta)
 		if before_lifespan > 0.0 and lifespan_years <= 0.0:
 			lifespan_depleted = true
+			if tribulation_active:
+				_fail_tribulation("寿元耗尽")
 			emit_state_changed()
 			return
+	# 渡劫是暂停生产的独立阶段，只处理自动天劫；玩家可用按钮手动迎接下一道。
+	if tribulation_active:
+		_update_tribulation(now)
+		return
 	# 四季轮换（180 秒/季）。
 	if now - season_started_at >= BalanceConfig.SEASON_DURATION_SECONDS:
 		season_started_at = now
@@ -755,6 +1043,8 @@ func buy_shop_item(item_id: String) -> bool:
 	var item := shop.get_item(item_id)
 	if item.is_empty():
 		return false
+	if realm_index < int(item.get("required_realm", 0)):
+		return false
 	var purchases := int(shop_purchase_counts.get(item_id, 0))
 	var cost := shop.get_cost(item_id, purchases)
 	if cost <= 0.0 or spirit_stones < cost:
@@ -764,7 +1054,7 @@ func buy_shop_item(item_id: String) -> bool:
 	if effect == "lifespan" and lifespan_years >= lifespan_max_years:
 		return false
 	# 大限期间生产暂停，生产 buff 购买无意义。
-	if effect == "buff" and lifespan_depleted:
+	if effect == "buff" and (lifespan_depleted or tribulation_active):
 		return false
 	spirit_stones -= cost
 	match effect:
@@ -773,13 +1063,25 @@ func buy_shop_item(item_id: String) -> bool:
 			lifespan_depleted = lifespan_years <= 0.0
 		"qi":
 			qi += amount
+		"tribulation_healing":
+			healing_pills += 1
+		"tribulation_resistance":
+			resistance_pills += 1
+		"tribulation_enhancement":
+			enhancement_pills += 1
 		"talent_points":
-			talent_points += int(amount)
+			_award_talent_points(int(amount))
 		"buff":
 			var now := Time.get_unix_time_from_system()
 			# 连买刷新为较远结束时间，倍率取本次。
 			active_buff_until = maxf(active_buff_until, now + float(item.get("duration", 0.0)))
 			active_buff_mult = float(item.get("mult", 1.0))
+		"breakthrough_material":
+			var material_id := String(item.get("material_id", ""))
+			if material_id == "" or not BalanceConfig.BREAKTHROUGH_MATERIALS.has(material_id):
+				spirit_stones += cost
+				return false
+			breakthrough_materials[material_id] = get_breakthrough_material_count(material_id) + maxi(1, int(amount))
 		_:
 			spirit_stones += cost
 			return false
@@ -790,25 +1092,14 @@ func buy_shop_item(item_id: String) -> bool:
 
 # ───────────────────────── 寿元 ─────────────────────────
 
-func restore_lifespan(amount: float) -> bool:
-	if amount <= 0.0:
-		return false
-	var before := lifespan_years
-	lifespan_years = minf(lifespan_max_years, lifespan_years + amount)
-	lifespan_depleted = lifespan_years <= 0.0
-	if lifespan_years <= before:
-		return false
-	emit_state_changed()
-	return true
-
-
-## 大限结算后的手动开局：清空本轮经营状态，但保留天赋树、未用天赋点和修为里程碑。
+## 大限结算后的手动开局：清空本轮经营状态，但保留天赋树、天赋点账本和修为里程碑。
 ## 不自动触发，也不称为转世；玩家可以先去商店续命，确认结束后再开启新局。
 func start_new_run() -> bool:
 	if not lifespan_depleted:
 		return false
 	var saved_nodes := talent_nodes.duplicate(true)
 	var saved_points := talent_points
+	var saved_earned_points := talent_points_earned
 	var saved_total_cultivation := total_cultivation_earned
 	var saved_milestone_index := talent_milestone_index
 	var saved_crop_proficiency := crop_proficiency.duplicate(true)
@@ -819,9 +1110,13 @@ func start_new_run() -> bool:
 	var saved_achievement_points := achievement_points
 	var saved_offline_claimed_talent_points := offline_claimed_talent_points
 	var saved_offline_claimed_spirit_stone_units := offline_claimed_spirit_stone_units
+	var saved_crit_count := crit_count
+	var saved_rare_crit_count := rare_crit_count
+	var saved_windfall_count := windfall_count
 	_reset_run_state()
 	talent_nodes = saved_nodes
 	talent_points = saved_points
+	talent_points_earned = saved_earned_points
 	total_cultivation_earned = saved_total_cultivation
 	talent_milestone_index = saved_milestone_index
 	crop_proficiency = saved_crop_proficiency
@@ -832,18 +1127,11 @@ func start_new_run() -> bool:
 	achievement_points = saved_achievement_points
 	offline_claimed_talent_points = saved_offline_claimed_talent_points
 	offline_claimed_spirit_stone_units = saved_offline_claimed_spirit_stone_units
+	crit_count = saved_crit_count
+	rare_crit_count = saved_rare_crit_count
+	windfall_count = saved_windfall_count
 	last_offline_report = {}
 	_ensure_inventory_keys()
-	emit_state_changed()
-	return true
-
-
-func increase_lifespan_max(amount: float) -> bool:
-	if amount <= 0.0:
-		return false
-	lifespan_max_years += amount
-	lifespan_years += amount
-	lifespan_depleted = false
 	emit_state_changed()
 	return true
 
@@ -886,7 +1174,7 @@ func get_qi_density() -> float:
 # 自动修炼每秒产出（供 UI 展示）。未解锁返回 0，但仍返回当前浓度。
 func get_auto_cultivation_per_sec() -> Dictionary:
 	var density := get_qi_density()
-	if lifespan_depleted or not unlock_auto_cultivation:
+	if lifespan_depleted or tribulation_active or not unlock_auto_cultivation:
 		return {"cultivation": 0.0, "qi": 0.0, "density": density}
 	var rates := automation.auto_rates(
 		density,
@@ -945,7 +1233,7 @@ func apply_offline_report() -> void:
 	var talent_reward := int(preview.get("talent_points", 0))
 	var spirit_stones_reward := float(preview.get("spirit_stones", 0.0))
 	if not lifespan_depleted:
-		talent_points += talent_reward
+		_award_talent_points(talent_reward)
 		spirit_stones += spirit_stones_reward
 		offline_claimed_talent_points = maxi(
 			offline_claimed_talent_points,

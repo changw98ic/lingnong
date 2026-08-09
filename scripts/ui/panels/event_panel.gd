@@ -155,7 +155,7 @@ func _refresh() -> void:
 				burst_label.text = "★ 爆发：生产 ×10 进行中（生长/产量/灵气/自动灵气）★"
 				burst_label.add_theme_color_override("font_color", Color(1.0, 0.55, 0.3))
 			"dao_insight":
-				burst_label.text = "★ 爆发：修炼 ×20 进行中（丹药/自动修炼）★"
+				burst_label.text = "★ 爆发：修炼 ×20 进行中（灵田收获/自动修炼）★"
 				burst_label.add_theme_color_override("font_color", Color(0.55, 0.85, 1.0))
 			"warlord_birthday":
 				burst_label.text = "⚠ 噬金虫活跃：攻击 ×2、间隔减半 ⚠"
@@ -191,8 +191,17 @@ func _refresh_field_buttons() -> void:
 		var tag := ""
 		if GameState.is_spirit_rain_active(i):
 			tag += "·雨"
-		if i < GameState.insect_events.size() and bool(GameState.insect_events[i].get("active", false)):
-			tag += "·虫"
+		var has_crop := i < GameState.fields.size() and String(GameState.fields[i].get("crop_id", "")) != ""
+		if has_crop and i < GameState.insect_events.size():
+			var insect_event: Dictionary = GameState.insect_events[i]
+			if bool(insect_event.get("active", false)):
+				tag += "·虫"
+			else:
+				var insect_remaining := int(ceil(float(insect_event.get("next_attack_at", 0.0)) - Time.get_unix_time_from_system()))
+				if insect_remaining > 0:
+					tag += "·虫%d秒" % insect_remaining
+				else:
+					tag += "·虫即将"
 		b.text = "灵田%d%s" % [i + 1, tag]
 		b.button_pressed = (i == selected_field)
 
@@ -205,7 +214,7 @@ func _refresh_action_buttons() -> void:
 	if rain_unlocked:
 		var rain_active := GameState.is_spirit_rain_active(selected_field)
 		btn_spirit_rain.text = "灵雨诀生效中" if rain_active else "灵雨诀（%.0f 灵气）" % BalanceConfig.SPIRIT_RAIN_COST
-		btn_spirit_rain.disabled = rain_active or GameState.qi < BalanceConfig.SPIRIT_RAIN_COST
+		btn_spirit_rain.disabled = GameState.tribulation_active or rain_active or GameState.qi < BalanceConfig.SPIRIT_RAIN_COST
 
 	# 庚金剑诀：筑基（realm_index >= 2）起。
 	var sword_unlocked := GameState.realm_index >= BalanceConfig.ADVANCED_COMBAT_REALM_INDEX
@@ -213,20 +222,20 @@ func _refresh_action_buttons() -> void:
 	if sword_unlocked:
 		var has_insect := selected_field < GameState.insect_events.size() and bool(GameState.insect_events[selected_field].get("active", false))
 		btn_gengjin_sword.text = "庚金剑诀（%.0f 灵气）" % BalanceConfig.GENGJIN_SWORD_COST
-		btn_gengjin_sword.disabled = (not has_insect) or GameState.qi < BalanceConfig.GENGJIN_SWORD_COST
+		btn_gengjin_sword.disabled = GameState.tribulation_active or (not has_insect) or GameState.qi < BalanceConfig.GENGJIN_SWORD_COST
 
 	# 升级守护灵阵：筑基起。
 	var guard_unlocked := GameState.realm_index >= BalanceConfig.ADVANCED_COMBAT_REALM_INDEX
 	btn_guardian.visible = guard_unlocked
 	if guard_unlocked:
 		btn_guardian.text = "升级守护灵阵（%.0f 灵石）" % BalanceConfig.GUARDIAN_UPGRADE_COST
-		btn_guardian.disabled = GameState.spirit_stones < BalanceConfig.GUARDIAN_UPGRADE_COST
+		btn_guardian.disabled = GameState.tribulation_active or GameState.spirit_stones < BalanceConfig.GUARDIAN_UPGRADE_COST
 
 	# 出售虫尸：始终显示（8 灵石/个）。
 	btn_sell_corpses.visible = true
 	btn_sell_corpses.text = "出售虫尸（%d 个 · %.0f 灵石/个）" % [GameState.insect_corpses, BalanceConfig.INSECT_CORPSE_SELL_PRICE]
 	btn_sell_corpses.disabled = GameState.insect_corpses <= 0
-	if GameState.lifespan_depleted:
+	if GameState.lifespan_depleted or GameState.tribulation_active:
 		btn_spirit_rain.disabled = true
 		btn_gengjin_sword.disabled = true
 		btn_guardian.disabled = true
@@ -272,24 +281,23 @@ func _set_feedback(message: String) -> void:
 	feedback_time = FEEDBACK_DURATION
 
 
-# 加载后若有离线自动修炼收益，写入常驻摘要（筑基起生效）。
+# 加载后显示按长期计数结算的离线差额。
 func _show_offline_report_if_any() -> void:
 	var report: Dictionary = GameState.last_offline_report
-	if not bool(report.get("active", false)):
+	var gained_talent := int(report.get("talent_points", 0))
+	var gained_stones := float(report.get("spirit_stones", 0.0))
+	var pending_talent := int(report.get("pending_talent_points", 0))
+	var pending_stones := float(report.get("pending_spirit_stones", 0.0))
+	if gained_talent <= 0 and gained_stones <= 0.0 and pending_talent <= 0 and pending_stones <= 0.0:
 		offline_label.text = ""
 		return
-	var gained_c := float(report.get("cultivation", 0.0))
-	var gained_q := float(report.get("qi", 0.0))
-	if gained_c <= 0.0 and gained_q <= 0.0:
-		offline_label.text = ""
-		return
-	var hours := float(report.get("credited_seconds", 0.0)) / 3600.0
-	var capped := bool(report.get("capped", false))
-	var cap_note := "，已达 8 小时上限" if capped else ""
-	offline_label.text = "离线结算（%.1f 小时%s）：浓度 %.0f，修为 +%s，灵气 +%s。" % [
-		hours,
-		cap_note,
-		float(report.get("qi_density", 0.0)),
-		NumberFormat.format(gained_c),
-		NumberFormat.format(gained_q),
-	]
+	if bool(report.get("active", false)):
+		offline_label.text = "离线结算（与离线时长无关）：天赋点 +%d，灵石 +%s。" % [
+			gained_talent,
+			NumberFormat.format(gained_stones),
+		]
+	else:
+		offline_label.text = "大限未续命：离线奖励待结算——天赋点 %d，灵石 %s。" % [
+			pending_talent,
+			NumberFormat.format(pending_stones),
+		]

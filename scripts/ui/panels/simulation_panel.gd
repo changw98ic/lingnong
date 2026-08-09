@@ -37,6 +37,9 @@ var _qi: SpinBox
 var _pest_level: SpinBox
 var _rain_check: CheckBox
 var _auto_check: CheckBox
+var _material_gate_check: CheckBox
+var _tribulation_gate_check: CheckBox
+var _maximize_check: CheckBox
 var _auto_refresh_check: CheckBox
 var _result_view: RichTextLabel
 var _feedback: Label
@@ -180,7 +183,25 @@ func _build_controls() -> void:
 	_auto_check.toggled.connect(_on_toggle_changed)
 	controls.add_child(_control_cell("自动化", _auto_check))
 
-	var hint := _make_label("实时状态会使用当前每块田的作物、档位、虫害和灵雨；其它视图使用上方参数重算。突破流程按点击频率推进种植、收获直接修为和突破；默认把点击频率视为玩家总点击，也可切换为每块灵田独立点击。", 12, Color(0.62, 0.72, 0.68))
+	_material_gate_check = CheckBox.new()
+	_material_gate_check.text = "按当前库存校验"
+	_material_gate_check.button_pressed = true
+	_material_gate_check.toggled.connect(_on_toggle_changed)
+	controls.add_child(_control_cell("突破材料", _material_gate_check))
+
+	_tribulation_gate_check = CheckBox.new()
+	_tribulation_gate_check.text = "按渡劫丹库存校验"
+	_tribulation_gate_check.button_pressed = true
+	_tribulation_gate_check.toggled.connect(_on_toggle_changed)
+	controls.add_child(_control_cell("天劫丹药", _tribulation_gate_check))
+
+	_maximize_check = CheckBox.new()
+	_maximize_check.text = "自动加点并最大化购买"
+	_maximize_check.button_pressed = true
+	_maximize_check.toggled.connect(_on_toggle_changed)
+	controls.add_child(_control_cell("突破流程策略", _maximize_check))
+
+	var hint := _make_label("实时状态会使用当前每块田的作物、档位、虫害和灵雨；其它视图使用上方参数重算。突破流程按点击频率推进种植、收获直接修为、突破和天劫；默认把点击频率视为玩家总点击，也可切换为每块灵田独立点击。开启最大化后，获得天赋点会立即按修为收益解锁节点，灵石会自动保证寿元、突破材料和渡劫丹药，再购买有实际收益的聚气玉。", 12, Color(0.62, 0.72, 0.68))
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_root_vbox.add_child(hint)
 
@@ -353,6 +374,10 @@ func _options() -> Dictionary:
 		"pest_level": int(_pest_level.value) if event_id == "normal" else int(event.get("pest_level", _pest_level.value)),
 		"spirit_rain_active": _rain_check.button_pressed,
 		"auto_cultivation_enabled": _auto_check.button_pressed,
+		"enforce_breakthrough_materials": _material_gate_check.button_pressed,
+		"enforce_tribulation_supplies": _tribulation_gate_check.button_pressed,
+		"maximize_progression": _maximize_check.button_pressed,
+		"auto_buy_shop_resources": _maximize_check.button_pressed,
 	}
 	return options
 
@@ -364,6 +389,7 @@ func _format_report(report: Dictionary) -> String:
 	var auto: Dictionary = report.get("auto_rates", {})
 	var click: Dictionary = report.get("click", {})
 	var offline: Dictionary = report.get("offline_settlement", {})
+	var tribulation: Dictionary = report.get("tribulation", {})
 	var lines := PackedStringArray()
 	lines.append("=== 实时场景报告 ===")
 	lines.append("境界：%s    时节：%s    作物基准：%s    天赋：%s" % [
@@ -447,6 +473,15 @@ func _format_report(report: Dictionary) -> String:
 		_fmt(float(auto.get("cultivation_per_sec", 0.0))),
 		_fmt(float(auto.get("qi_per_sec", 0.0))),
 	])
+	if bool(tribulation.get("active", false)):
+		lines.append("天劫：%s，进度 %d/%d，劫体 %s/%s，抗性剩余 %d 道；生产已暂停。" % [
+			String(tribulation.get("name", "天劫")),
+			int(tribulation.get("strikes_survived", 0)),
+			int(tribulation.get("total_strikes", 0)),
+			_fmt(float(tribulation.get("health", 0.0))),
+			_fmt(float(tribulation.get("health_max", 0.0))),
+			int(tribulation.get("resistance_charges", 0)),
+		])
 	var offline_status := "生效" if bool(offline.get("active", false)) else "大限中，暂不结算"
 	lines.append("离线折算（与离线时长无关）：天赋点 +%d，灵石 +%s；%s。离线不增加修为和灵气。" % [
 		int(offline.get("talent_points", 0)),
@@ -497,10 +532,15 @@ func _format_matrix(kind: String, rows: Array) -> String:
 func _format_breakthrough_matrix(rows: Array) -> String:
 	var lines := PackedStringArray()
 	lines.append("=== 突破流程：%d 条 ===" % rows.size())
-	lines.append("灵田收获直接结算修为与灵石，不产生灵气；点击频率按上方的点击分配计算；自动修炼按境界解锁后计入。")
+	lines.append("灵田收获直接结算修为与灵石，不产生灵气；点击频率按上方的点击分配计算；自动修炼按境界解锁后计入；阶段耗时包含天劫。")
 	for row in rows:
 		var flow: Dictionary = row.get("flow", {})
-		var status := "已完成" if bool(flow.get("completed", false)) else "未完成：%s" % String(flow.get("blocked_reason", "未知原因"))
+		var status := "已完成"
+		if not bool(flow.get("completed", false)):
+			if bool(flow.get("estimated_completed", false)):
+				status = "时间估算可达（未按全部真实门槛确认）"
+			else:
+				status = "未完成：%s" % String(flow.get("blocked_reason", "未知原因"))
 		lines.append("配置：%s / %d块 / %s / %s；总耗时 %s；总点击 %s；%s" % [
 			String(row.get("profile_name", "当前天赋")),
 			int(row.get("field_count", flow.get("field_count", 0))),
@@ -510,16 +550,44 @@ func _format_breakthrough_matrix(rows: Array) -> String:
 			_fmt(float(flow.get("total_clicks", 0.0))),
 			status,
 		])
+		var material_status := "已备齐"
+		if not bool(flow.get("breakthrough_materials_ready", true)):
+			material_status = "缺材料，预计商店兑换 %s 灵石" % _fmt(float(flow.get("breakthrough_material_shop_cost", 0.0)))
+		lines.append("突破材料：%s；本次模拟%s" % [material_status, "按库存校验" if bool(flow.get("enforce_breakthrough_materials", false)) else "时间估算，未校验材料"])
+		lines.append("渡劫丹药：%s；本次模拟%s" % [
+			"已备齐" if bool(flow.get("tribulation_supplies_ready", true)) else "当前库存不足",
+			"按库存校验" if bool(flow.get("enforce_tribulation_supplies", false)) else "时间估算，未校验丹药",
+		])
+		if bool(flow.get("maximize_progression", false)):
+			lines.append("最大化策略：天赋点实时解锁；灵石自动购买寿元、材料和渡劫丹；只有超过资源预留的灵石才购买能产生实际收益的聚气玉。")
 		lines.append("点击模型：%s；季节：%s；%s" % [
 			String(flow.get("click_mode", "每块灵田独立点击")),
 			String(flow.get("season_name", "")),
 			String(flow.get("cultivation_mode", "灵田收获直接结算修为")),
 		])
 		for stage in flow.get("stages", []):
-			lines.append("  %s→%s：耗时 %s；种植 %s（单轮修为 %s、灵石 %s）；收获 %d 轮；点击 %d；自动修为 %s；阶段后修为 %s" % [
+			var stage_materials := "已备齐" if bool(stage.get("materials_ready", true)) else "缺材料，需 %s 灵石" % _fmt(float(stage.get("material_shop_cost", 0.0)))
+			var stage_tribulation := "不计天劫"
+			if bool(flow.get("include_tribulation", true)):
+				if not stage.has("tribulation_total_strikes"):
+					stage_tribulation = "未开始"
+				elif bool(stage.get("tribulation_success", false)):
+					stage_tribulation = "%s %d道，%s" % [
+						String(stage.get("tribulation_name", "天劫")),
+						int(stage.get("tribulation_total_strikes", stage.get("tribulation_strikes", 0))),
+						"丹药足够" if bool(flow.get("enforce_tribulation_supplies", false)) else "时间估算，未校验丹药",
+					]
+				else:
+					stage_tribulation = "%s，%s" % [
+						String(stage.get("tribulation_name", "天劫")),
+						"丹药不足，建议至少治疗丹 %d 枚" % int(stage.get("tribulation_recommended_healing_pills", 0)) if bool(flow.get("enforce_tribulation_supplies", false)) else "时间估算，当前库存不足",
+					]
+			lines.append("  %s→%s：耗时 %s（修炼 %s + %s）；种植 %s（单轮修为 %s、灵石 %s）；收获 %d 轮；点击 %d；自动修为 %s；阶段后修为 %s；材料 %s" % [
 				String(stage.get("from_realm_name", "")),
 				String(stage.get("to_realm_name", "")),
 				_fmt_seconds(float(stage.get("duration_seconds", stage.get("seconds", 0.0)))),
+				_fmt_seconds(float(stage.get("seconds", 0.0)) - float(stage.get("tribulation_seconds", 0.0))),
+				stage_tribulation,
 				String(stage.get("crop_name", "")),
 				_fmt(float(stage.get("cultivation_per_cycle", 0.0))),
 				_fmt(float(stage.get("spirit_stones_per_cycle", 0.0))),
@@ -527,7 +595,19 @@ func _format_breakthrough_matrix(rows: Array) -> String:
 				int(stage.get("clicks", 0)),
 				_fmt(float(stage.get("auto_cultivation", 0.0))),
 				_fmt(float(stage.get("cultivation_after", 0.0))),
+				stage_materials,
 			])
+			if bool(flow.get("maximize_progression", false)):
+				lines.append("    自动加点 %d 个；购买：聚气玉 %d、突破材料 %d、长生丹 %d；阶段寿元 %s→%s 年；可用天赋点 %d（累计获得 %d）。" % [
+					(stage.get("talent_unlocks", []) as Array).size(),
+					int(stage.get("qi_purchases", 0)),
+					int(stage.get("material_purchases", 0)),
+					int(stage.get("lifespan_purchases", 0)),
+					_fmt(float(stage.get("lifespan_before_years", 0.0))),
+					_fmt(float(stage.get("lifespan_after_years", 0.0))),
+					int(stage.get("talent_points_after_tribulation", 0)),
+					int(stage.get("talent_points_earned_after_tribulation", 0)),
+				])
 		lines.append("最终状态：%s 修为；%s 灵石；%s 灵气；累计收获 %s；自动修为 %s。" % [
 			_fmt(float(flow.get("final_cultivation", 0.0))),
 			_fmt(float(flow.get("final_spirit_stones", 0.0))),
@@ -535,6 +615,13 @@ func _format_breakthrough_matrix(rows: Array) -> String:
 			_fmt(float(flow.get("harvest_cycles", 0.0))),
 			_fmt(float(flow.get("auto_cultivation", 0.0))),
 		])
+		if bool(flow.get("maximize_progression", false)):
+			lines.append("最终天赋：可用 %d 点 / 累计获得 %d 点 / 已花费 %d 点；自动购买总支出 %s 灵石。" % [
+				int(flow.get("talent_points", 0)),
+				int(flow.get("talent_points_earned", 0)),
+				int(flow.get("talent_points_spent", 0)),
+				_fmt(float(flow.get("spirit_stones_spent", 0.0))),
+			])
 	return "\n".join(lines)
 
 

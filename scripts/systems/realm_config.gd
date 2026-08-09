@@ -13,10 +13,6 @@ extends RefCounted
 static func realm_count() -> int:
 	return BalanceConfig.REALMS.size()
 
-## 返回境界表。配置统一来自 BalanceConfig。
-static func get_realms() -> Array[Dictionary]:
-	return BalanceConfig.REALMS
-
 ## 返回指定境界的生产乘数（生长 / 产量 / 灵石 / 自动修炼灵气）。
 ## 索引越界（任意方向）时返回最高境界的生产乘数。
 static func production_mult(realm_index: int) -> float:
@@ -37,9 +33,6 @@ static func cultivation_mult(realm_index: int) -> float:
 ## 字段含义：
 ##   unlock_spirit_rain      是否解锁灵雨诀
 ##   unlock_auto_cultivation 是否解锁自动修炼（灵气浓度驱动，筑基起生效）
-##   unlock_mind_flower      是否解锁凝神花种植
-##   unlock_sun_fruit        是否解锁赤阳果种植
-##   unlock_heaven_lotus     是否解锁天道莲种植
 ## 注意：production / cultivation 乘数不在此处发放，它们按当前境界实时查表获得。
 ## 庚金剑诀 / 守护灵阵 沿用现有解锁路径，此处不重复声明。
 ## 未知索引返回全默认值的空奖励。
@@ -47,9 +40,6 @@ static func breakthrough_rewards(new_realm_index: int) -> Dictionary:
 	var rewards := {
 		"unlock_spirit_rain": false,
 		"unlock_auto_cultivation": false,
-		"unlock_mind_flower": false,
-		"unlock_sun_fruit": false,
-		"unlock_heaven_lotus": false,
 	}
 	var configured: Variant = BalanceConfig.BREAKTHROUGH_REWARDS.get(new_realm_index, {})
 	if configured is Dictionary:

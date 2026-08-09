@@ -14,6 +14,7 @@ var _grid: GridContainer
 var _feedback: Label
 var _cards: Array[Dictionary] = []
 var _unlocked_crop_set: Dictionary = {}
+var _switching_fields: Dictionary = {}
 var _tick_accumulator := 0.0
 var _feedback_time := 0.0
 
@@ -66,7 +67,7 @@ func _build_root_vbox() -> VBoxContainer:
 
 func _build_header(parent: Node) -> void:
 	parent.add_child(_make_label("【灵田】", 20, Color(1.0, 0.9, 0.5)))
-	parent.add_child(_make_label("空闲田点击种植；生长中点击田块加速；成熟后自动收获并补种。灵石购买灵田和灵田等级。", 13, Color(0.7, 0.8, 0.7)))
+	parent.add_child(_make_label("空闲田点击种植；生长中点击田块加速；需要换作物时点击【切换作物】。切换会重置当前生长进度，成熟后按新作物自动补种。", 13, Color(0.7, 0.8, 0.7)))
 
 
 func _build_field_cards() -> void:
@@ -99,6 +100,14 @@ func _make_card(field_index: int) -> Dictionary:
 	actions.add_theme_constant_override("separation", 4)
 	vbox.add_child(actions)
 
+	var switch_crop := Button.new()
+	switch_crop.custom_minimum_size = Vector2(0, 28)
+	switch_crop.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	switch_crop.add_theme_font_size_override("font_size", 12)
+	switch_crop.visible = false
+	switch_crop.pressed.connect(_on_switch_pressed.bind(field_index))
+	actions.add_child(switch_crop)
+
 	var crops: Dictionary = {}
 	for crop_id in CropConfig.get_all():
 		var crop: Variant = CropConfig.get_crop(String(crop_id))
@@ -109,7 +118,7 @@ func _make_card(field_index: int) -> Dictionary:
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.add_theme_font_size_override("font_size", 12)
 		btn.visible = false
-		btn.pressed.connect(_on_plant.bind(field_index, String(crop_id)))
+		btn.pressed.connect(_on_crop_button.bind(field_index, String(crop_id)))
 		actions.add_child(btn)
 		crops[String(crop_id)] = btn
 
@@ -129,7 +138,7 @@ func _make_card(field_index: int) -> Dictionary:
 	upgrade.pressed.connect(_on_upgrade.bind(field_index))
 	actions.add_child(upgrade)
 
-	return {"panel": panel, "body": body, "crops": crops, "buy_slot": buy_slot, "upgrade": upgrade}
+	return {"panel": panel, "body": body, "switch_crop": switch_crop, "crops": crops, "buy_slot": buy_slot, "upgrade": upgrade}
 
 
 func _make_label(text: String, font_size: int, color: Color) -> Label:
@@ -145,6 +154,8 @@ func _make_label(text: String, font_size: int, color: Color) -> Label:
 func _refresh_full() -> void:
 	if GameState.lifespan_depleted:
 		_speed_label.text = "大限已至：生产暂停，去商店续命或在修炼·突破面板开始新局。"
+	elif GameState.tribulation_active:
+		_speed_label.text = "渡劫中：生产暂停，完成天劫后恢复灵田操作。"
 	else:
 		_speed_label.text = "点击加速：每次减少成熟倒计时 %s 秒；农道天赋可以提高点击效果。" % NumberFormat.format(GameState.get_click_accel_seconds())
 	if _cards.size() != GameState.fields.size():
@@ -161,15 +172,25 @@ func _refresh_card(field_index: int) -> void:
 	var body: Button = card["body"]
 	var locked := field_index >= GameState.unlocked_fields
 	body.text = _body_text(field_index)
-	body.disabled = locked or GameState.lifespan_depleted
+	body.disabled = locked or GameState.lifespan_depleted or GameState.tribulation_active
 	card["panel"].modulate = Color(0.55, 0.55, 0.55, 1.0) if locked else Color.WHITE
 
 	var data: Dictionary = GameState.fields[field_index]
-	var idle := not locked and not GameState.lifespan_depleted and String(data.get("crop_id", "")) == ""
+	var crop_id := String(data.get("crop_id", ""))
+	var idle := not locked and not GameState.lifespan_depleted and not GameState.tribulation_active and crop_id == ""
+	var active := not locked and not GameState.lifespan_depleted and not GameState.tribulation_active and crop_id != ""
+	var switching := bool(_switching_fields.get(field_index, false))
+	if not active:
+		_switching_fields.erase(field_index)
+		switching = false
+	var switch_crop: Button = card["switch_crop"]
+	switch_crop.visible = active
+	switch_crop.text = "取消切换" if switching else "切换作物"
+	switch_crop.disabled = not active
 	var crops: Dictionary = card["crops"]
-	for crop_id in crops:
-		var btn: Button = crops[crop_id]
-		btn.visible = idle and _unlocked_crop_set.has(crop_id)
+	for available_crop_id in crops:
+		var btn: Button = crops[available_crop_id]
+		btn.visible = (idle or switching) and _unlocked_crop_set.has(available_crop_id) and (idle or available_crop_id != crop_id)
 
 	_refresh_slot_button(field_index, card["buy_slot"])
 	_refresh_upgrade_button(field_index, card["upgrade"])
@@ -186,6 +207,9 @@ func _refresh_slot_button(field_index: int, buy_slot: Button) -> void:
 	var cost_text := NumberFormat.format(float(cost.get("spirit_stones", 0.0))) + " 灵石"
 	if GameState.lifespan_depleted:
 		buy_slot.text = "大限后可购买灵田"
+		buy_slot.disabled = true
+	elif GameState.tribulation_active:
+		buy_slot.text = "渡劫中暂不可购买"
 		buy_slot.disabled = true
 	else:
 		buy_slot.text = "购买灵田%d（%s）" % [field_index + 1, cost_text]
@@ -208,6 +232,9 @@ func _refresh_upgrade_button(field_index: int, upgrade: Button) -> void:
 	if GameState.lifespan_depleted:
 		upgrade.text = "大限后可升至%s" % BalanceConfig.FIELD_TIER_NAMES[next_tier]
 		upgrade.disabled = true
+	elif GameState.tribulation_active:
+		upgrade.text = "渡劫中暂不可升档"
+		upgrade.disabled = true
 	elif GameState.get_max_field_tier() <= tier:
 		upgrade.text = "升至%s（%s后开放）" % [BalanceConfig.FIELD_TIER_NAMES[next_tier], _realm_name(required_realm)]
 		upgrade.disabled = true
@@ -229,6 +256,8 @@ func _body_text(field_index: int) -> String:
 		return header + "\n未购买\n等待购买"
 	if GameState.lifespan_depleted:
 		return header + "\n大限已至\n去商店续命或开始新局"
+	if GameState.tribulation_active:
+		return header + "\n渡劫中\n生产暂停"
 	return header + "\n" + _status_text(field_index)
 
 
@@ -255,12 +284,21 @@ func _status_text(field_index: int) -> String:
 			if field_index < GameState.guardian_array_charges.size():
 				charges = int(GameState.guardian_array_charges[field_index])
 			lines.append("噬金虫：阵法 %d / 虫害 %d" % [charges, int(event.get("pest_level", 0))])
+		else:
+			var insect_remaining := int(ceil(float(event.get("next_attack_at", 0.0)) - now))
+			if insect_remaining > 0:
+				lines.append("噬金虫侦测：%d 秒后出现" % insect_remaining)
+			else:
+				lines.append("噬金虫侦测：即将出现")
 	if GameState.is_spirit_rain_active(field_index):
 		lines.append("灵雨诀生效中")
 	return "\n".join(lines)
 
 
 func _on_body_pressed(field_index: int) -> void:
+	if GameState.tribulation_active:
+		_set_feedback("渡劫中：灵田操作暂停，完成天劫后恢复。")
+		return
 	if GameState.lifespan_depleted:
 		_set_feedback("大限已至：请去商店续命，或在修炼·突破面板开始新局。")
 		return
@@ -288,11 +326,48 @@ func _on_body_pressed(field_index: int) -> void:
 
 func _on_plant(field_index: int, crop_id: String) -> void:
 	if GameState.plant_crop(field_index, crop_id):
+		_switching_fields.erase(field_index)
 		var crop: Variant = CropConfig.get_crop(crop_id)
 		var disp_name := crop_id if crop == null else String(crop.get("name", crop_id))
 		_set_feedback("种下 %s。" % disp_name)
 	else:
 		_set_feedback("种植失败：灵田尚未购买或当前已到大限。")
+	_refresh_full()
+
+
+func _on_crop_button(field_index: int, crop_id: String) -> void:
+	if field_index < 0 or field_index >= GameState.fields.size():
+		return
+	var current_crop_id := String(GameState.fields[field_index].get("crop_id", ""))
+	if current_crop_id == "":
+		_on_plant(field_index, crop_id)
+	else:
+		_on_switch_crop(field_index, crop_id)
+
+
+func _on_switch_pressed(field_index: int) -> void:
+	if field_index < 0 or field_index >= GameState.fields.size():
+		return
+	var current_crop_id := String(GameState.fields[field_index].get("crop_id", ""))
+	if current_crop_id == "":
+		_set_feedback("当前灵田为空，请直接选择作物种植。")
+		return
+	_switching_fields[field_index] = not bool(_switching_fields.get(field_index, false))
+	if bool(_switching_fields.get(field_index, false)):
+		_set_feedback("请选择新作物；切换会放弃当前生长进度并立即重新计时。")
+	else:
+		_set_feedback("已取消切换。")
+	_refresh_full()
+
+
+func _on_switch_crop(field_index: int, crop_id: String) -> void:
+	if GameState.switch_crop(field_index, crop_id):
+		_switching_fields.erase(field_index)
+		var crop: Variant = CropConfig.get_crop(crop_id)
+		var disp_name := crop_id if crop == null else String(crop.get("name", crop_id))
+		_set_feedback("已切换为 %s，当前生长进度已重置。" % disp_name)
+	else:
+		_set_feedback("切换失败：作物未解锁或当前灵田状态不允许切换。")
 	_refresh_full()
 
 

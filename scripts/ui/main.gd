@@ -148,16 +148,6 @@ func _add_tab(tabs: TabContainer, panel: Control, title: String) -> void:
 
 ## 把面板包进 PanelContainer 做视觉边框。expand_h=true 时横向扩张占位。
 ## add=true 时把边框挂到 parent；否则返回边框由调用方自行挂载。
-func _wrap_in_frame(panel: Control, expand_h: bool, parent: Control, add: bool = true) -> PanelContainer:
-	var frame := PanelContainer.new()
-	frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	frame.size_flags_horizontal = Control.SIZE_EXPAND_FILL if expand_h else Control.SIZE_SHRINK_CENTER
-	frame.add_child(panel)
-	if add:
-		parent.add_child(frame)
-	return frame
-
-
 # ─────────────────────────── 爽感：突破动画 ───────────────────────────
 
 ## 境界突破：弹一个居中"突破成功！{境界} 生产×N 修炼×N"提示，上浮淡出 2 秒。

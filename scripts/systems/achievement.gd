@@ -28,6 +28,19 @@ static func current_value(source: Node, definition: Dictionary) -> float:
 			return float(source.reincarnation_count)
 		"talent_nodes":
 			return float(source.talent_nodes.size())
+		"crit_count":
+			return float(source.crit_count)
+		"rare_crit_count":
+			return float(source.rare_crit_count)
+		"windfall_count":
+			return float(source.windfall_count)
+		"all_fields_max_tier":
+			for field in source.fields:
+				if int(field.get("tier", 0)) < BalanceConfig.FIELD_TIER_MULTS.size() - 1:
+					return 0.0
+			return 1.0
+		"shop_purchase_count":
+			return float(source.shop_purchase_counts.get(String(definition.get("item_id", "")), 0))
 	return 0.0
 
 

@@ -1,15 +1,18 @@
 extends Node
 
 const SAVE_PATH := "user://lingnong_save.json"
-const SAVE_VERSION := 13
+const SAVE_VERSION := 17
 
-## v13 只保存当前游戏规则：
-## - 无转世、无仙缘、无炼丹（配方/丹药/旧解锁标志已删除）；天赋树使用 talent_nodes + talent_points。
+## v16 只保存当前游戏规则：
+## - 无转世、无仙缘、无炼丹；天赋树使用 talent_nodes + talent_points。
+## - talent_points_earned 保存累计获得的天赋点；天劫档位不受立即消费天赋点影响。
 ## - 作物成熟后自动收获并补种；点击加速直接修改成熟时间。
 ## - lifespan_max_years / lifespan_years 按时间流逝，寿元归零不重置进度。
 ## - 熟练度、晋级/轮回/收获计数和离线结算领取账本跨大限保留。
 ## - 成就和成就点跨大限、跨新局保留，并在加载时按当前定义校正。
 ## - 商店购买次数（狂暴丹等越买越贵商品的价格依据）跨大限保留。
+## - 突破材料由商店兑换，材料库存按当前局保存。
+## - 突破会先进入天劫；天劫进度和治疗/抗性/强化丹库存按当前局保存。
 
 func save_game() -> bool:
 	var data := {
@@ -19,6 +22,7 @@ func save_game() -> bool:
 		"cultivation": GameState.cultivation,
 		"total_cultivation_earned": GameState.total_cultivation_earned,
 		"talent_points": GameState.talent_points,
+		"talent_points_earned": GameState.talent_points_earned,
 		"talent_nodes": GameState.talent_nodes,
 		"talent_milestone_index": GameState.talent_milestone_index,
 		"achievements": GameState.achievements,
@@ -29,8 +33,11 @@ func save_game() -> bool:
 		"reincarnation_count": GameState.reincarnation_count,
 		"offline_claimed_talent_points": GameState.offline_claimed_talent_points,
 		"offline_claimed_spirit_stone_units": GameState.offline_claimed_spirit_stone_units,
+		"crit_count": GameState.crit_count,
+		"rare_crit_count": GameState.rare_crit_count,
+		"windfall_count": GameState.windfall_count,
 		"shop_purchase_counts": GameState.shop_purchase_counts,
-		"crop_inventory": GameState.crop_inventory,
+		"breakthrough_materials": GameState.breakthrough_materials,
 		"realm_index": GameState.realm_index,
 		"unlocked_fields": GameState.unlocked_fields,
 		"fields": GameState.fields,
@@ -47,17 +54,27 @@ func save_game() -> bool:
 		"event_prod_mult": GameState.event_prod_mult,
 		"event_cult_mult": GameState.event_cult_mult,
 		"sword_art_cooldown_until": GameState.sword_art_cooldown_until,
-		"next_auto_brew_at": GameState.next_auto_brew_at,
 		"active_buff_until": GameState.active_buff_until,
 		"active_buff_mult": GameState.active_buff_mult,
 		"lifespan_max_years": GameState.lifespan_max_years,
 		"lifespan_years": GameState.lifespan_years,
 		"lifespan_depleted": GameState.lifespan_depleted,
+		"healing_pills": GameState.healing_pills,
+		"resistance_pills": GameState.resistance_pills,
+		"enhancement_pills": GameState.enhancement_pills,
+		"tribulation_active": GameState.tribulation_active,
+		"tribulation_target_realm": GameState.tribulation_target_realm,
+		"tribulation_total_strikes": GameState.tribulation_total_strikes,
+		"tribulation_strikes_survived": GameState.tribulation_strikes_survived,
+		"tribulation_health_max": GameState.tribulation_health_max,
+		"tribulation_health": GameState.tribulation_health,
+		"tribulation_next_strike_at": GameState.tribulation_next_strike_at,
+		"tribulation_resistance_charges": GameState.tribulation_resistance_charges,
+		"tribulation_enhancement_active": GameState.tribulation_enhancement_active,
+		"tribulation_last_damage": GameState.tribulation_last_damage,
+		"tribulation_last_result": GameState.tribulation_last_result,
 		"spirit_rain_unlocked": GameState.spirit_rain_unlocked,
 		"unlock_auto_cultivation": GameState.unlock_auto_cultivation,
-		"unlock_mind_flower": GameState.unlock_mind_flower,
-		"unlock_sun_fruit": GameState.unlock_sun_fruit,
-		"unlock_heaven_lotus": GameState.unlock_heaven_lotus,
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
@@ -87,9 +104,13 @@ func load_game() -> bool:
 		BalanceConfig.FIELD_COUNT
 	)
 
-	GameState.crop_inventory = data.get("crop_inventory", {}) if data.get("crop_inventory", {}) is Dictionary else {}
-	for crop_id in CropConfig.get_all():
-		GameState.crop_inventory[crop_id] = maxi(0, int(GameState.crop_inventory.get(crop_id, 0)))
+	var saved_breakthrough_materials = data.get("breakthrough_materials", {})
+	GameState.breakthrough_materials = {}
+	if saved_breakthrough_materials is Dictionary:
+		for material_id_variant in saved_breakthrough_materials:
+			var material_id := String(material_id_variant)
+			if BalanceConfig.BREAKTHROUGH_MATERIALS.has(material_id):
+				GameState.breakthrough_materials[material_id] = maxi(0, int(saved_breakthrough_materials[material_id_variant]))
 	var saved_purchase_counts = data.get("shop_purchase_counts", {})
 	GameState.shop_purchase_counts = {}
 	if saved_purchase_counts is Dictionary:
@@ -108,6 +129,9 @@ func load_game() -> bool:
 	GameState.reincarnation_count = maxi(0, int(data.get("reincarnation_count", 0)))
 	GameState.offline_claimed_talent_points = maxi(0, int(data.get("offline_claimed_talent_points", 0)))
 	GameState.offline_claimed_spirit_stone_units = maxf(0.0, float(data.get("offline_claimed_spirit_stone_units", 0.0)))
+	GameState.crit_count = maxi(0, int(data.get("crit_count", 0)))
+	GameState.rare_crit_count = maxi(0, int(data.get("rare_crit_count", 0)))
+	GameState.windfall_count = maxi(0, int(data.get("windfall_count", 0)))
 	GameState._ensure_inventory_keys()
 
 	GameState.fields.clear()
@@ -134,6 +158,12 @@ func load_game() -> bool:
 		for node_id in TalentTree.node_ids():
 			if bool(saved_nodes.get(node_id, false)):
 				GameState.talent_nodes[node_id] = true
+	# v15 及更早存档没有累计字段，用“未消费点 + 已点亮节点成本”恢复最低可知总量。
+	var legacy_earned_points := GameState.talent_points + TalentTree.unlocked_cost(GameState.talent_nodes)
+	GameState.talent_points_earned = maxi(
+		legacy_earned_points,
+		int(data.get("talent_points_earned", legacy_earned_points))
+	)
 	GameState.total_cultivation_earned = maxf(
 		GameState.cultivation,
 		float(data.get("total_cultivation_earned", GameState.cultivation))
@@ -144,7 +174,7 @@ func load_game() -> bool:
 		BalanceConfig.TALENT_MILESTONES.size()
 	)
 	while GameState.talent_milestone_index < BalanceConfig.TALENT_MILESTONES.size() and GameState.total_cultivation_earned >= BalanceConfig.TALENT_MILESTONES[GameState.talent_milestone_index]:
-		GameState.talent_points += 1
+		GameState._award_talent_points(1)
 		GameState.talent_milestone_index += 1
 
 	# 成就只接受当前定义中的 id；点数由已解锁定义重算，避免存档字段和定义不一致。
@@ -175,7 +205,6 @@ func load_game() -> bool:
 	GameState.event_prod_mult = float(data.get("event_prod_mult", BalanceConfig.DEFAULT_MULTIPLIER))
 	GameState.event_cult_mult = float(data.get("event_cult_mult", BalanceConfig.DEFAULT_MULTIPLIER))
 	GameState.sword_art_cooldown_until = float(data.get("sword_art_cooldown_until", 0.0))
-	GameState.next_auto_brew_at = float(data.get("next_auto_brew_at", 0.0))
 	GameState.active_buff_until = float(data.get("active_buff_until", 0.0))
 	GameState.active_buff_mult = float(data.get("active_buff_mult", BalanceConfig.DEFAULT_MULTIPLIER))
 
@@ -183,6 +212,45 @@ func load_game() -> bool:
 	GameState.lifespan_max_years = maxf(BalanceConfig.MIN_LIFESPAN_YEARS, float(data.get("lifespan_max_years", default_max)))
 	GameState.lifespan_years = clampf(float(data.get("lifespan_years", GameState.lifespan_max_years)), 0.0, GameState.lifespan_max_years)
 	GameState.lifespan_depleted = bool(data.get("lifespan_depleted", GameState.lifespan_years <= 0.0))
+	GameState.healing_pills = maxi(0, int(data.get("healing_pills", 0)))
+	GameState.resistance_pills = maxi(0, int(data.get("resistance_pills", 0)))
+	GameState.enhancement_pills = maxi(0, int(data.get("enhancement_pills", 0)))
+	GameState.tribulation_active = bool(data.get("tribulation_active", false))
+	GameState.tribulation_target_realm = int(data.get("tribulation_target_realm", -1))
+	GameState.tribulation_total_strikes = maxi(0, int(data.get("tribulation_total_strikes", 0)))
+	GameState.tribulation_strikes_survived = clampi(
+		int(data.get("tribulation_strikes_survived", 0)),
+		0,
+		GameState.tribulation_total_strikes
+	)
+	GameState.tribulation_health_max = maxf(0.0, float(data.get("tribulation_health_max", 0.0)))
+	GameState.tribulation_health = clampf(
+		float(data.get("tribulation_health", 0.0)),
+		0.0,
+		GameState.tribulation_health_max
+	)
+	GameState.tribulation_next_strike_at = maxf(0.0, float(data.get("tribulation_next_strike_at", 0.0)))
+	GameState.tribulation_resistance_charges = maxi(0, int(data.get("tribulation_resistance_charges", 0)))
+	GameState.tribulation_enhancement_active = bool(data.get("tribulation_enhancement_active", false))
+	GameState.tribulation_last_damage = maxf(0.0, float(data.get("tribulation_last_damage", 0.0)))
+	GameState.tribulation_last_result = String(data.get("tribulation_last_result", ""))
+	if GameState.tribulation_active and (
+		GameState.lifespan_depleted
+		or
+		GameState.tribulation_target_realm <= GameState.realm_index
+		or GameState.tribulation_target_realm >= RealmConfig.realm_count()
+		or GameState.tribulation_total_strikes <= 0
+		or GameState.tribulation_health_max <= 0.0
+	):
+		GameState.tribulation_active = false
+		GameState.tribulation_target_realm = -1
+		GameState.tribulation_total_strikes = 0
+		GameState.tribulation_strikes_survived = 0
+		GameState.tribulation_health_max = 0.0
+		GameState.tribulation_health = 0.0
+		GameState.tribulation_next_strike_at = 0.0
+		GameState.tribulation_resistance_charges = 0
+		GameState.tribulation_enhancement_active = false
 	var default_unlock_flags := BalanceConfig.default_unlock_flags(GameState.realm_index)
 	for flag in default_unlock_flags:
 		if data.has(flag):
