@@ -227,8 +227,8 @@ const MAX_PEST_LEVEL := 3
 
 # ───────────────────────── 寿元 / 灵气 / 天赋里程碑 ─────────────────────────
 
-const LIFESPAN_YEARS_BY_REALM: Array[float] = [60.0, 120.0, 200.0, 500.0, 2000.0]
-const LIFESPAN_DECAY_PER_SECOND := 0.5
+const LIFESPAN_YEARS_BY_REALM: Array[float] = [80.0, 120.0, 300.0, 1000.0, 3000.0]
+const LIFESPAN_DECAY_PER_SECOND := 0.2
 const QI_HARVEST_STEP := 100.0
 const QI_HARVEST_BONUS_PER_STEP := 0.10
 const QI_HARVEST_BASE_CAP := 3.0
@@ -246,32 +246,103 @@ const TALENT_MILESTONES: Array[float] = [
 const TALENT_BREAKTHROUGH_POINTS_BY_REALM: Array[int] = [0, 3, 7, 15, 31]
 
 
-# ───────────────────────── 天劫 ─────────────────────────
+# ───────────────────────── 天劫（生产体系检测） ─────────────────────────
 
-# 突破按钮只会开启天劫；完成全部劫数后才真正进入下一境界。
+# 突破不再是挨雷劈，而是检测 3 道“生产体系”检查；全部通过才进入下一境界。
 # 天劫期间暂停灵田、事件和自动修炼，避免玩家一边渡劫一边继续生产。
-const TRIBULATION_BASE_STRIKES := 99
-const TRIBULATION_SIX_NINE_STRIKES := 69
-const TRIBULATION_THREE_NINE_STRIKES := 39
-const TRIBULATION_SIX_NINE_TALENT_THRESHOLD := 10
-const TRIBULATION_THREE_NINE_TALENT_THRESHOLD := 25
-const TRIBULATION_INTERVAL_SECONDS := 1.0
-const TRIBULATION_BASE_HEALTH := 100.0
-const TRIBULATION_ENHANCEMENT_HEALTH_BONUS := 50.0
-const TRIBULATION_STRIKE_DAMAGE := 2.0
-const TRIBULATION_RESISTANCE_CHARGES := 10
-const TRIBULATION_RESISTANCE_DAMAGE_MULT := 0.5
-const TRIBULATION_ENHANCEMENT_DAMAGE_MULT := 0.8
-const TRIBULATION_HEAL_AMOUNT := 30.0
+# 检查失败不损失修为，获得永久雷劫淬体（生产/修为 +5%，跨局保留）。
+const TRIBULATION_TOTAL_CHECKS := 3
+const TRIBULATION_CHECK_INTERVAL_SECONDS := 5.0
+# 第一劫·灵气：当前灵气 ≥ 需求（治疗丹使需求减半）。
+# 灵气需求按目标境界缩放：固定 10,000 在初局无灵气产出、只能靠聚气玉的时代无法达成，
+# 所以炼气只需 500（治疗丹后 250 ≈ 2 颗聚气玉），元婴回到文档标定的 10,000。
+const TRIBULATION_CHECK_QI_REQUIREMENT := 10000.0
+# 按“目标境界”索引：index 0 为占位，炼气（目标 1）500 → 元婴（目标 4）10,000。
+const TRIBULATION_QI_REQUIREMENT_BY_REALM: Array[float] = [0.0, 500.0, 1500.0, 4000.0, 10000.0]
+# 第二劫·底蕴：本世累计收获 ≥ 1,000（抗性丹使需求减半）。
+const TRIBULATION_CHECK_HARVEST_REQUIREMENT := 1000
+# 第三劫·气运：本世触发过随机事件 ≥1 或拥有幸运系天赋（强化丹直接通过）。
+const TRIBULATION_REFINE_BONUS := 0.05
+const TRIBULATION_HEAL_REQUIREMENT_MULT := 0.5
+const TRIBULATION_RESISTANCE_REQUIREMENT_MULT := 0.5
 
 
-static func tribulation_strikes_for_talent(talent_point_count: int) -> int:
-	var points := maxi(0, talent_point_count)
-	if points >= TRIBULATION_THREE_NINE_TALENT_THRESHOLD:
-		return TRIBULATION_THREE_NINE_STRIKES
-	if points >= TRIBULATION_SIX_NINE_TALENT_THRESHOLD:
-		return TRIBULATION_SIX_NINE_STRIKES
-	return TRIBULATION_BASE_STRIKES
+static func tribulation_qi_requirement(target_realm: int) -> float:
+	return TRIBULATION_QI_REQUIREMENT_BY_REALM[clampi(target_realm, 1, TRIBULATION_QI_REQUIREMENT_BY_REALM.size() - 1)]
+
+
+## 三道检查的定义（顺序固定）：name 用于 UI，requirement 描述用于失败提示。
+static func tribulation_checks() -> Array[Dictionary]:
+	return [
+		{"index": 0, "name": "第一劫·灵气", "desc": "灵气储备", "requirement": "当前灵气达标（治疗丹需求减半）"},
+		{"index": 1, "name": "第二劫·底蕴", "desc": "生产底蕴", "requirement": "本世累计收获 ≥ %d 次" % TRIBULATION_CHECK_HARVEST_REQUIREMENT},
+		{"index": 2, "name": "第三劫·气运", "desc": "气运", "requirement": "本世触发过随机事件，或拥有幸运系天赋"},
+	]
+
+
+# ───────────────────────── 轮回 / 天人五衰 ─────────────────────────
+
+# 转世奖励：保留未用天赋点 + 本世新跨修为里程碑 ×2 + 本世突破境界 ×1。
+# 提前轮回（寿元 > 20%）奖励 ×80%；天人五衰立即轮回 ×100%。
+const REINCARNATION_MILESTONE_POINTS := 2
+const REINCARNATION_BREAKTHROUGH_POINTS := 1
+const REINCARNATION_EARLY_PENALTY := 0.8
+const DECAY_THRESHOLD_RATIO := 0.20
+# 天人五衰·继续修炼：生产 -50% 至寿元耗尽，每 60 秒 roll 一次天命奇遇。
+const DECAY_PRODUCTION_PENALTY := 0.50
+const FATE_OPPORTUNITY_INTERVAL_SECONDS := 60.0
+# 天人五衰·渡劫续命：消耗 3 种渡劫丹各 1 + 当前境界寿元上限 20% 的灵石。
+# 成功寿元 +50 年并解除衰败；失败寿元归零、强制轮回且奖励 ×80%。
+const LIFESPAN_TRIBULATION_SUCCESS_YEARS := 50.0
+const LIFESPAN_TRIBULATION_STONE_RATIO := 0.20
+const LIFESPAN_TRIBULATION_SUCCESS_RATE := 0.70
+# 天命奇遇池（继续修炼期间 roll）：gift_id → 效果说明。
+const FATE_OPPORTUNITIES: Array[Dictionary] = [
+	{"id": "insight_scroll", "name": "悟道残卷", "desc": "立即获得 1 天赋点。", "weight": 40, "amount": 1},
+	{"id": "qi_jade", "name": "聚气玉", "desc": "立即获得 500 灵气。", "weight": 40, "amount": 500.0},
+	{"id": "permanent_production", "name": "灵光乍现", "desc": "永久生产倍率 +2%。", "weight": 15, "amount": 0.02},
+	{"id": "lifespan_max", "name": "延寿机缘", "desc": "寿元上限 +20 年。", "weight": 5, "amount": 20.0},
+]
+const FATE_PERMANENT_PRODUCTION_BONUS := 0.02
+
+# 转世天赋三选一：轮回后本世生效、跨世不保留。
+const REINCARNATION_BOONS: Array[Dictionary] = [
+	{"id": "wood_spirit", "name": "青木神通", "desc": "本世灵田产量 +50%。", "production_mult": 1.50, "cultivation_mult": 1.0, "fate_mult": 1.0},
+	{"id": "dan_heart", "name": "丹心", "desc": "本世收获修为 +20%。", "production_mult": 1.0, "cultivation_mult": 1.20, "fate_mult": 1.0},
+	{"id": "heaven_fate", "name": "天命", "desc": "本世宝箱/奇遇概率 ×5。", "production_mult": 1.0, "cultivation_mult": 1.0, "fate_mult": 5.0},
+]
+
+
+## 按 id 查转世天赋；未找到返回空字典。
+static func reincarnation_boon(boon_id: String) -> Dictionary:
+	for boon in REINCARNATION_BOONS:
+		if String(boon.get("id", "")) == boon_id:
+			return boon
+	return {}
+
+
+# ───────────────────────── 突破成功率 / 碎丹经验 ─────────────────────────
+
+const BREAKTHROUGH_STABLE_MATERIAL_MULT := 1.5
+const BREAKTHROUGH_STABLE_SUCCESS_RATE := 0.95
+const BREAKTHROUGH_FORCED_SUCCESS_RATE := 0.50
+const BROKEN_DAN_SUCCESS_BONUS := 0.15
+const BROKEN_DAN_SUCCESS_CAP := 0.45
+
+
+# ───────────────────────── 宝箱 / 奇遇 ─────────────────────────
+
+# 每次收获时 roll：木箱 5% / 玉箱 1% / 仙箱 0.1% / 古修遗物 1%（玉/仙池随机）。
+# 仙箱与遗物的永久强化跨局保留、累计无上限。
+const TREASURE_WOOD_CHANCE := 0.05
+const TREASURE_JADE_CHANCE := 0.01
+const TREASURE_IMMORTAL_CHANCE := 0.001
+const TREASURE_RELIC_CHANCE := 0.01
+const TREASURE_WOOD_STONES_RATIO := 10.0
+const TREASURE_WOOD_QI := 200.0
+const TREASURE_IMMORTAL_PRODUCTION_BONUS := 0.02
+const TREASURE_IMMORTAL_LIFESPAN_BONUS := 20.0
+const TREASURE_IMMORTAL_CRIT_BONUS := 0.01
 
 
 # ───────────────────────── 成就 ─────────────────────────
@@ -329,13 +400,24 @@ const EVENT_DURATIONS: Dictionary = {
 	"auspicious": 60.0,
 	"dao_insight": 30.0,
 	"warlord_birthday": 60.0,
+	"ancient_cave": 60.0,
+	"heavenly_seed": 30.0,
+	"demon_qi": 90.0,
+	"insect_king": 60.0,
 }
 const EVENT_PROD_BONUS := 10.0
 const EVENT_CULT_BONUS := 20.0
-const EVENT_EVENTS: Array[String] = ["auspicious", "dao_insight", "warlord_birthday"]
+const EVENT_EVENTS: Array[String] = ["auspicious", "dao_insight", "warlord_birthday", "ancient_cave", "heavenly_seed", "demon_qi", "insect_king"]
 const DEFAULT_EVENT_DURATION_SECONDS := 60.0
 const EVENT_WARLORD_PEST_LEVEL := 1
 const WORLD_STATE_EMIT_INTERVAL_SECONDS := 0.25
+# 新交互事件参数。
+const ANCIENT_CAVE_STONES := 5000.0
+const ANCIENT_CAVE_TALENT_POINTS := 1
+const HEAVENLY_SEED_CROP := "zi_zhi"
+const DEMON_QI_PRODUCTION_PENALTY := 0.50
+const DEMON_QI_PURIFY_COST_RATIO := 0.10
+const INSECT_KING_CORPSE_REWARD := 10
 
 
 # ───────────────────────── 自动化 ─────────────────────────
@@ -416,25 +498,25 @@ const SHOP_ITEMS: Array[Dictionary] = [
 		"name": "治疗丹",
 		"cost": 1500.0,
 		"icon": "疗",
-		"desc": "渡劫中恢复 30 点劫体，不能超过劫体上限。",
+		"desc": "渡劫准备：第一劫·灵气需求减半。",
 		"effect": "tribulation_healing",
-		"amount": TRIBULATION_HEAL_AMOUNT,
+		"amount": 1.0,
 	},
 	{
 		"id": "resistance_pill",
 		"name": "抗性丹",
 		"cost": 2000.0,
 		"icon": "抗",
-		"desc": "渡劫中获得 10 道抗性，接下来所受雷劫伤害减半。",
+		"desc": "渡劫准备：第二劫·底蕴需求减半。",
 		"effect": "tribulation_resistance",
-		"amount": TRIBULATION_RESISTANCE_CHARGES,
+		"amount": 1.0,
 	},
 	{
 		"id": "enhancement_pill",
 		"name": "强化丹",
 		"cost": 2500.0,
 		"icon": "强",
-		"desc": "本次渡劫劫体上限 +50，雷劫伤害 ×0.8，每次渡劫限用 1 枚。",
+		"desc": "渡劫准备：第三劫·气运直接通过。",
 		"effect": "tribulation_enhancement",
 		"amount": 1.0,
 	},

@@ -65,24 +65,38 @@ static func production_multiplier(source: Node, scenario: Dictionary, tier: int)
 	var safe_realm := clampi(int(scenario.get("realm_index", 0)), 0, RealmConfig.realm_count() - 1)
 	var safe_tier := clampi(tier, 0, BalanceConfig.FIELD_TIER_MULTS.size() - 1)
 	var talent_nodes: Dictionary = scenario.get("talent_nodes", {"root": true})
-	return MultiplierStack.production(
+	var mult := MultiplierStack.production(
 		safe_realm,
 		TalentTree.multiplier("production_mult", talent_nodes),
 		float(BalanceConfig.FIELD_TIER_MULTS[safe_tier]),
 		maxf(0.0, float(scenario.get("event_prod_mult", BalanceConfig.DEFAULT_MULTIPLIER))),
 		maxf(0.0, float(scenario.get("buff_mult", BalanceConfig.DEFAULT_MULTIPLIER)))
 	)
+	# 本世修正：天人五衰衰减 / 转世天赋 / 宝箱、天命与淬体永久加成。
+	if bool(scenario.get("decay_active", false)):
+		mult *= (1.0 - BalanceConfig.DECAY_PRODUCTION_PENALTY)
+	var boon_id := String(scenario.get("reincarnation_boon", ""))
+	if boon_id != "":
+		mult *= float(BalanceConfig.reincarnation_boon(boon_id).get("production_mult", 1.0))
+	mult *= 1.0 + float(scenario.get("treasure_production_bonus", 0.0)) + float(scenario.get("fate_permanent_production", 0.0)) + float(scenario.get("tribulation_refine_bonus", 0.0))
+	return mult
 
 
 static func cultivation_multiplier(scenario: Dictionary) -> float:
 	var realm := clampi(int(scenario.get("realm_index", 0)), 0, RealmConfig.realm_count() - 1)
 	var talent_nodes: Dictionary = scenario.get("talent_nodes", {"root": true})
-	return MultiplierStack.cultivation(
+	var mult := MultiplierStack.cultivation(
 		realm,
 		TalentTree.multiplier("cultivation_mult", talent_nodes),
 		maxf(0.0, float(scenario.get("event_cult_mult", BalanceConfig.DEFAULT_MULTIPLIER))),
 		BalanceConfig.DEFAULT_MULTIPLIER
 	)
+	# 转世天赋·丹心与雷劫淬体作用于修为。
+	var boon_id := String(scenario.get("reincarnation_boon", ""))
+	if boon_id != "":
+		mult *= float(BalanceConfig.reincarnation_boon(boon_id).get("cultivation_mult", 1.0))
+	mult *= 1.0 + float(scenario.get("tribulation_refine_bonus", 0.0))
+	return mult
 
 
 static func growth_multiplier(source: Node, scenario: Dictionary, spirit_rain_active: bool) -> float:
@@ -301,7 +315,7 @@ static func simulate_breakthrough_flow(source: Node, options: Dictionary = {}) -
 		),
 		"spirit_stones": maxf(0.0, float(options.get("start_spirit_stones", source.spirit_stones))),
 		"qi": maxf(0.0, float(options.get("start_qi", source.qi))),
-		"harvest_cycles": 0,
+		"harvest_cycles": maxi(0, int(options.get("start_harvest_cycles", 0))),
 		"clicks": 0,
 		"auto_cultivation": 0.0,
 		"auto_qi": 0.0,
@@ -377,29 +391,39 @@ static func simulate_breakthrough_flow(source: Node, options: Dictionary = {}) -
 			stage["talent_points_before_tribulation"] = int(state.get("talent_points", 0))
 			stage["talent_points_earned_before_tribulation"] = int(state.get("talent_points_earned", 0))
 			if include_tribulation:
-				var tribulation_strikes := BalanceConfig.tribulation_strikes_for_talent(int(state.get("talent_points_earned", 0)))
-				var tribulation_report := _simulate_tribulation(state, tribulation_strikes, auto_use_tribulation_pills)
+				# 三道检查是确定性的生产体系检测：灵气 / 底蕴 / 气运，渡劫丹减半需求或直接通过。
+				var tribulation_report: Dictionary
+				if enforce_tribulation_supplies:
+					tribulation_report = _simulate_tribulation_checks(state, auto_use_tribulation_pills, talent_nodes, realm + 1)
+				else:
+					tribulation_report = {
+						"success": true,
+						"passed_checks": BalanceConfig.TRIBULATION_TOTAL_CHECKS,
+						"failed_check": 0,
+						"used_healing_pills": 0,
+						"used_resistance_pills": 0,
+						"used_enhancement_pills": 0,
+					}
 				var tribulation_success := bool(tribulation_report.get("success", false))
-				var elapsed_strikes := tribulation_strikes if tribulation_success or not enforce_tribulation_supplies else int(tribulation_report.get("resolved_strikes", 0))
-				var tribulation_seconds := float(elapsed_strikes) * BalanceConfig.TRIBULATION_INTERVAL_SECONDS
+				var passed_checks := int(tribulation_report.get("passed_checks", 0))
+				var tribulation_seconds := float(passed_checks) * BalanceConfig.TRIBULATION_CHECK_INTERVAL_SECONDS
 				state["seconds"] = float(state.get("seconds", 0.0)) + tribulation_seconds
 				state["tribulation_seconds"] = float(state.get("tribulation_seconds", 0.0)) + tribulation_seconds
-				state["tribulation_strikes"] = int(state.get("tribulation_strikes", 0)) + elapsed_strikes
-				stage["tribulation_name"] = _tribulation_name(tribulation_strikes)
-				stage["tribulation_strikes"] = elapsed_strikes
+				state["tribulation_strikes"] = int(state.get("tribulation_strikes", 0)) + passed_checks
+				stage["tribulation_name"] = "三劫雷劫"
+				stage["tribulation_strikes"] = passed_checks
 				stage["tribulation_seconds"] = tribulation_seconds
-				stage["tribulation_total_strikes"] = tribulation_strikes
+				stage["tribulation_total_strikes"] = BalanceConfig.TRIBULATION_TOTAL_CHECKS
 				stage["tribulation_success"] = tribulation_success
 				stage["tribulation_supplies_ready"] = tribulation_success
 				stage["tribulation_assumed_success"] = not enforce_tribulation_supplies
 				stage["tribulation_estimate_only"] = not enforce_tribulation_supplies
-				stage["tribulation_failed_strike"] = int(tribulation_report.get("failed_strike", 0))
+				stage["tribulation_failed_strike"] = int(tribulation_report.get("failed_check", 0))
 				stage["tribulation_used_healing_pills"] = int(tribulation_report.get("used_healing_pills", 0))
 				stage["tribulation_used_resistance_pills"] = int(tribulation_report.get("used_resistance_pills", 0))
 				stage["tribulation_used_enhancement_pills"] = int(tribulation_report.get("used_enhancement_pills", 0))
-				stage["tribulation_recommended_healing_pills"] = int(tribulation_report.get("recommended_healing_pills", 0))
 				if enforce_tribulation_supplies and not tribulation_success:
-					blocked_reason = "渡劫丹药不足"
+					blocked_reason = "渡劫检查未过"
 			var reward_index := mini(realm + 1, BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM.size() - 1)
 			if blocked_reason == "" or not enforce_tribulation_supplies:
 				_add_simulated_talent_points(state, int(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM[reward_index]))
@@ -480,7 +504,7 @@ static func simulate_breakthrough_flow(source: Node, options: Dictionary = {}) -
 		"breakthrough_materials": state.get("breakthrough_materials", {}),
 		"stages": stages,
 		"cultivation_mode": "灵田收获直接结算修为",
-		"tribulation_mode": "材料齐备后开始天劫；完成全部劫数才进入下一境界",
+		"tribulation_mode": "三道生产体系检查全部通过才进入下一境界；失败获得永久雷劫淬体",
 		"include_tribulation": include_tribulation,
 		"auto_use_tribulation_pills": auto_use_tribulation_pills,
 	}
@@ -549,7 +573,7 @@ static func _simulate_maximized_breakthrough_flow(source: Node, options: Diction
 		"talent_nodes": talent_nodes.duplicate(true),
 		"spirit_stones": maxf(0.0, float(options.get("start_spirit_stones", source.spirit_stones))),
 		"qi": maxf(0.0, float(options.get("start_qi", source.qi))),
-		"harvest_cycles": 0,
+		"harvest_cycles": maxi(0, int(options.get("start_harvest_cycles", 0))),
 		"total_harvest_count": 0,
 		"clicks": 0,
 		"auto_cultivation": 0.0,
@@ -667,10 +691,9 @@ static func _simulate_maximized_breakthrough_flow(source: Node, options: Diction
 				elif not enforce_tribulation_supplies:
 					stage_ready = bool(stage.get("materials_ready", true))
 				else:
-					var strikes_for_plan := BalanceConfig.tribulation_strikes_for_talent(int(state.get("talent_points_earned", 0)))
 					if auto_buy_resources:
-						_maximized_prepare_tribulation_supplies(state, strikes_for_plan)
-					var trib_plan := _maximized_find_tribulation_plan(state, strikes_for_plan)
+						_maximized_prepare_tribulation_supplies(state, realm + 1)
+					var trib_plan := _maximized_find_tribulation_plan(state, realm + 1)
 					stage["tribulation_supplies_ready"] = bool(trib_plan.get("success", false))
 					stage_ready = bool(stage.get("materials_ready", true)) and bool(trib_plan.get("success", false))
 			if stage_ready:
@@ -691,32 +714,43 @@ static func _simulate_maximized_breakthrough_flow(source: Node, options: Diction
 			stage["talent_points_before_tribulation"] = int(state.get("talent_points", 0))
 			stage["talent_points_earned_before_tribulation"] = int(state.get("talent_points_earned", 0))
 			if include_tribulation:
-				var tribulation_strikes := BalanceConfig.tribulation_strikes_for_talent(int(state.get("talent_points_earned", 0)))
-				if enforce_tribulation_supplies and auto_buy_resources:
-					_maximized_prepare_tribulation_supplies(state, tribulation_strikes)
-				var tribulation_report := _simulate_tribulation(state, tribulation_strikes, auto_use_tribulation_pills)
-				var tribulation_success := bool(tribulation_report.get("success", false))
-				if enforce_tribulation_supplies and not tribulation_success:
-					blocked_reason = "渡劫丹药不足"
+				var tribulation_report: Dictionary
+				if enforce_tribulation_supplies:
+					if auto_buy_resources:
+						_maximized_prepare_tribulation_supplies(state, realm + 1)
+					# 最大化流程的天赋树随进度动态加点，气运劫按当前节点判断。
+					tribulation_report = _simulate_tribulation_checks(state, auto_use_tribulation_pills, state.get("talent_nodes", {"root": true}) as Dictionary, realm + 1)
 				else:
-					var tribulation_seconds := float(tribulation_strikes) * BalanceConfig.TRIBULATION_INTERVAL_SECONDS
+					tribulation_report = {
+						"success": true,
+						"passed_checks": BalanceConfig.TRIBULATION_TOTAL_CHECKS,
+						"failed_check": 0,
+						"used_healing_pills": 0,
+						"used_resistance_pills": 0,
+						"used_enhancement_pills": 0,
+					}
+				var tribulation_success := bool(tribulation_report.get("success", false))
+				var passed_checks := int(tribulation_report.get("passed_checks", 0))
+				if enforce_tribulation_supplies and not tribulation_success:
+					blocked_reason = "渡劫检查未过"
+				else:
+					var tribulation_seconds := float(passed_checks) * BalanceConfig.TRIBULATION_CHECK_INTERVAL_SECONDS
 					if not _maximized_ensure_lifespan(source, state, model, tribulation_seconds):
 						blocked_reason = "寿元和灵石不足"
 					else:
 						_maximized_advance_time(source, state, model, tribulation_seconds, false)
 						state["tribulation_seconds"] = float(state.get("tribulation_seconds", 0.0)) + tribulation_seconds
-						state["tribulation_strikes"] = int(state.get("tribulation_strikes", 0)) + tribulation_strikes
-						stage["tribulation_name"] = _tribulation_name(tribulation_strikes)
-						stage["tribulation_strikes"] = tribulation_strikes
+						state["tribulation_strikes"] = int(state.get("tribulation_strikes", 0)) + passed_checks
+						stage["tribulation_name"] = "三劫雷劫"
+						stage["tribulation_strikes"] = passed_checks
 						stage["tribulation_seconds"] = tribulation_seconds
-						stage["tribulation_total_strikes"] = tribulation_strikes
+						stage["tribulation_total_strikes"] = BalanceConfig.TRIBULATION_TOTAL_CHECKS
 						stage["tribulation_success"] = tribulation_success or not enforce_tribulation_supplies
 						stage["tribulation_supplies_ready"] = tribulation_success
 						stage["tribulation_assumed_success"] = not enforce_tribulation_supplies
 						stage["tribulation_used_healing_pills"] = int(tribulation_report.get("used_healing_pills", 0))
 						stage["tribulation_used_resistance_pills"] = int(tribulation_report.get("used_resistance_pills", 0))
 						stage["tribulation_used_enhancement_pills"] = int(tribulation_report.get("used_enhancement_pills", 0))
-						stage["tribulation_recommended_healing_pills"] = int(tribulation_report.get("recommended_healing_pills", 0))
 			else:
 				stage["tribulation_success"] = true
 				stage["tribulation_supplies_ready"] = true
@@ -824,7 +858,7 @@ static func _simulate_maximized_breakthrough_flow(source: Node, options: Diction
 		"spirit_stones_spent": float(state.get("spirit_stones_spent", 0.0)),
 		"stages": stages,
 		"cultivation_mode": "灵田收获直接结算修为；天赋点实时解锁",
-		"tribulation_mode": "材料和渡劫物资由灵石自动兑换；天劫时间计入寿元",
+		"tribulation_mode": "材料和渡劫丹药由灵石自动兑换；三道检查通过才晋级，失败获得雷劫淬体",
 		"include_tribulation": include_tribulation,
 		"auto_use_tribulation_pills": auto_use_tribulation_pills,
 	}
@@ -1096,10 +1130,13 @@ static func _maximized_buy_breakthrough_materials(state: Dictionary, target_real
 	return ready
 
 
-static func _maximized_prepare_tribulation_supplies(state: Dictionary, strikes: int) -> bool:
-	var plan := _maximized_find_tribulation_plan(state, strikes)
+static func _maximized_prepare_tribulation_supplies(state: Dictionary, target_realm: int) -> bool:
+	var plan := _maximized_find_tribulation_plan(state, target_realm)
 	if not bool(plan.get("success", false)):
 		return false
+	for _i in range(int(plan.get("extra_qi_jades", 0))):
+		if not _maximized_buy_item(state, "qi_jade"):
+			return false
 	for _i in range(int(plan.get("extra_enhancement_pills", 0))):
 		if not _maximized_buy_item(state, "enhancement_pill"):
 			return false
@@ -1112,28 +1149,33 @@ static func _maximized_prepare_tribulation_supplies(state: Dictionary, strikes: 
 	return true
 
 
-static func _maximized_find_tribulation_plan(state: Dictionary, strikes: int) -> Dictionary:
-	if strikes <= 0:
-		return {"success": true, "cost": 0.0, "extra_enhancement_pills": 0, "extra_resistance_pills": 0, "extra_healing_pills": 0}
+# 三道检查的最小准备方案：灵气缺口用聚气玉补足（治疗丹减半需求），底蕴只能靠本世收获
+# （抗性丹减半需求），气运劫用强化丹直接通过。返回灵石成本最小的组合。
+static func _maximized_find_tribulation_plan(state: Dictionary, target_realm: int) -> Dictionary:
+	var base_qi := float(state.get("qi", 0.0))
+	var base_harvest := int(state.get("harvest_cycles", 0))
+	var has_luck := _has_simulated_luck_talent(state.get("talent_nodes", {"root": true}) as Dictionary)
+	var jade_amount := _maximized_shop_item_amount("qi_jade")
 	var best: Dictionary = {}
-	var max_healing := maxi(8, ceili(float(strikes * BalanceConfig.TRIBULATION_STRIKE_DAMAGE) / BalanceConfig.TRIBULATION_HEAL_AMOUNT) + 4)
-	for enhancement in range(2):
-		for resistance in range(3):
-			for healing in range(max_healing + 1):
-				var trial: Dictionary = state.duplicate(true)
-				trial["enhancement_pills"] = int(trial.get("enhancement_pills", 0)) + enhancement
-				trial["resistance_pills"] = int(trial.get("resistance_pills", 0)) + resistance
-				trial["healing_pills"] = int(trial.get("healing_pills", 0)) + healing
-				var result := _simulate_tribulation(trial, strikes, true)
-				if not bool(result.get("success", false)):
+	for healing in range(2):
+		for resistance in range(2):
+			for enhancement in range(2):
+				var harvest_ok := base_harvest >= ceili(float(BalanceConfig.TRIBULATION_CHECK_HARVEST_REQUIREMENT) * (BalanceConfig.TRIBULATION_RESISTANCE_REQUIREMENT_MULT if resistance > 0 else 1.0))
+				var fate_ok := has_luck or enhancement > 0
+				if not harvest_ok or not fate_ok:
 					continue
-				var cost := float(enhancement) * _maximized_shop_item_cost(state, "enhancement_pill")
-				cost += float(resistance) * _maximized_shop_item_cost(state, "resistance_pill")
+				var qi_requirement := BalanceConfig.tribulation_qi_requirement(target_realm) * (BalanceConfig.TRIBULATION_HEAL_REQUIREMENT_MULT if healing > 0 else 1.0)
+				var missing_qi := maxf(0.0, qi_requirement - base_qi)
+				var jades := ceili(missing_qi / maxf(0.001, jade_amount)) if jade_amount > 0.0 else 0
+				var cost := float(jades) * _maximized_shop_item_cost(state, "qi_jade")
 				cost += float(healing) * _maximized_shop_item_cost(state, "healing_pill")
+				cost += float(resistance) * _maximized_shop_item_cost(state, "resistance_pill")
+				cost += float(enhancement) * _maximized_shop_item_cost(state, "enhancement_pill")
 				if best.is_empty() or cost < float(best.get("cost", INF)) - 0.000001:
 					best = {
 						"success": true,
 						"cost": cost,
+						"extra_qi_jades": jades,
 						"extra_enhancement_pills": enhancement,
 						"extra_resistance_pills": resistance,
 						"extra_healing_pills": healing,
@@ -1176,8 +1218,7 @@ static func _maximized_lifespan_reserve(source: Node, state: Dictionary, model: 
 	var remaining := maxf(0.0, required_cultivation - float(state.get("cultivation", 0.0)))
 	var expected_seconds := remaining / rate
 	if include_tribulation:
-		var strikes := BalanceConfig.tribulation_strikes_for_talent(int(state.get("talent_points_earned", 0)))
-		expected_seconds += float(strikes) * BalanceConfig.TRIBULATION_INTERVAL_SECONDS
+		expected_seconds += float(BalanceConfig.TRIBULATION_TOTAL_CHECKS) * BalanceConfig.TRIBULATION_CHECK_INTERVAL_SECONDS
 	var decay := lifespan_decay_per_second(source, state.get("talent_nodes", {}) as Dictionary)
 	var available_seconds := float(state.get("lifespan_years", 0.0)) / maxf(0.001, decay)
 	var pill_seconds := float(_maximized_shop_item_amount("longevity_pill")) / maxf(0.001, decay)
@@ -1193,8 +1234,7 @@ static func _maximized_shop_item_amount(item_id: String) -> float:
 static func _maximized_resource_reserve(source: Node, state: Dictionary, model: Dictionary, target_realm: int, required_cultivation: float, include_tribulation: bool) -> float:
 	var reserve := _maximized_missing_material_cost(state, target_realm)
 	if include_tribulation and bool(model.get("enforce_tribulation_supplies", true)):
-		var strikes := BalanceConfig.tribulation_strikes_for_talent(int(state.get("talent_points_earned", 0)))
-		reserve += float(_maximized_find_tribulation_plan(state, strikes).get("cost", 0.0))
+		reserve += float(_maximized_find_tribulation_plan(state, target_realm).get("cost", 0.0))
 	reserve += _maximized_lifespan_reserve(source, state, model, required_cultivation, target_realm, include_tribulation)
 	return reserve
 
@@ -1261,69 +1301,53 @@ static func _maximized_sum_purchase_prefix(state: Dictionary, start_index: int, 
 	return total
 
 
-static func _tribulation_name(strikes: int) -> String:
-	match strikes:
-		BalanceConfig.TRIBULATION_THREE_NINE_STRIKES:
-			return "三九天劫"
-		BalanceConfig.TRIBULATION_SIX_NINE_STRIKES:
-			return "六九天劫"
-		BalanceConfig.TRIBULATION_BASE_STRIKES:
-			return "九九天劫"
-	return "%d道天劫" % strikes
-
-
-static func _simulate_tribulation(state: Dictionary, strikes: int, auto_use_pills: bool) -> Dictionary:
-	var health_max := BalanceConfig.TRIBULATION_BASE_HEALTH
-	var health := health_max
-	var resistance_charges := 0
+static func _simulate_tribulation_checks(state: Dictionary, auto_use_pills: bool, talent_nodes: Dictionary, target_realm: int) -> Dictionary:
+	var prepared := [false, false, false]
 	var used_healing := 0
 	var used_resistance := 0
 	var used_enhancement := 0
-	if auto_use_pills and int(state.get("enhancement_pills", 0)) > 0:
-		state["enhancement_pills"] = int(state.get("enhancement_pills", 0)) - 1
-		used_enhancement = 1
-		health_max += BalanceConfig.TRIBULATION_ENHANCEMENT_HEALTH_BONUS
-		health += BalanceConfig.TRIBULATION_ENHANCEMENT_HEALTH_BONUS
-	if auto_use_pills and int(state.get("resistance_pills", 0)) > 0:
-		state["resistance_pills"] = int(state.get("resistance_pills", 0)) - 1
-		used_resistance = 1
-		resistance_charges = BalanceConfig.TRIBULATION_RESISTANCE_CHARGES
-	var damage_per_strike := BalanceConfig.TRIBULATION_STRIKE_DAMAGE
-	if used_enhancement > 0:
-		damage_per_strike *= BalanceConfig.TRIBULATION_ENHANCEMENT_DAMAGE_MULT
-	var recommended_damage := float(strikes) * damage_per_strike
-	if used_resistance > 0:
-		recommended_damage -= float(BalanceConfig.TRIBULATION_RESISTANCE_CHARGES) * damage_per_strike * (1.0 - BalanceConfig.TRIBULATION_RESISTANCE_DAMAGE_MULT)
-	var recommended_healing := maxi(0, ceili(maxf(0.0, recommended_damage - health_max) / BalanceConfig.TRIBULATION_HEAL_AMOUNT))
-	for strike in range(strikes):
-		var damage := damage_per_strike
-		if resistance_charges > 0:
-			damage *= BalanceConfig.TRIBULATION_RESISTANCE_DAMAGE_MULT
-			resistance_charges -= 1
-		health = maxf(0.0, health - damage)
-		if health <= 0.0:
+	if auto_use_pills:
+		if int(state.get("enhancement_pills", 0)) > 0:
+			state["enhancement_pills"] = int(state.get("enhancement_pills", 0)) - 1
+			used_enhancement = 1
+			prepared[2] = true
+		if int(state.get("resistance_pills", 0)) > 0:
+			state["resistance_pills"] = int(state.get("resistance_pills", 0)) - 1
+			used_resistance = 1
+			prepared[1] = true
+		if int(state.get("healing_pills", 0)) > 0:
+			state["healing_pills"] = int(state.get("healing_pills", 0)) - 1
+			used_healing = 1
+			prepared[0] = true
+	var checks := [
+		float(state.get("qi", 0.0)) >= BalanceConfig.tribulation_qi_requirement(target_realm) * (BalanceConfig.TRIBULATION_HEAL_REQUIREMENT_MULT if prepared[0] else 1.0),
+		int(state.get("harvest_cycles", 0)) >= ceili(float(BalanceConfig.TRIBULATION_CHECK_HARVEST_REQUIREMENT) * (BalanceConfig.TRIBULATION_RESISTANCE_REQUIREMENT_MULT if prepared[1] else 1.0)),
+		prepared[2] or _has_simulated_luck_talent(talent_nodes),
+	]
+	for check_index in range(checks.size()):
+		if not checks[check_index]:
 			return {
 				"success": false,
-				"resolved_strikes": strike + 1,
-				"failed_strike": strike + 1,
+				"passed_checks": check_index,
+				"failed_check": check_index + 1,
 				"used_healing_pills": used_healing,
 				"used_resistance_pills": used_resistance,
 				"used_enhancement_pills": used_enhancement,
-				"recommended_healing_pills": recommended_healing,
 			}
-		if auto_use_pills and health <= BalanceConfig.TRIBULATION_HEAL_AMOUNT and int(state.get("healing_pills", 0)) > 0:
-			state["healing_pills"] = int(state.get("healing_pills", 0)) - 1
-			used_healing += 1
-			health = minf(health_max, health + BalanceConfig.TRIBULATION_HEAL_AMOUNT)
 	return {
 		"success": true,
-		"resolved_strikes": strikes,
-		"failed_strike": 0,
+		"passed_checks": BalanceConfig.TRIBULATION_TOTAL_CHECKS,
+		"failed_check": 0,
 		"used_healing_pills": used_healing,
 		"used_resistance_pills": used_resistance,
 		"used_enhancement_pills": used_enhancement,
-		"recommended_healing_pills": recommended_healing,
 	}
+
+
+static func _has_simulated_luck_talent(talent_nodes: Dictionary) -> bool:
+	return TalentTree.bonus("crit_chance", talent_nodes) > 0.0 \
+		or TalentTree.bonus("rare_crit_chance", talent_nodes) > 0.0 \
+		or TalentTree.bonus("windfall_chance", talent_nodes) > 0.0
 
 
 static func _consume_simulated_breakthrough_materials(state: Dictionary, target_realm: int) -> void:
@@ -1546,8 +1570,8 @@ static func field_result(
 	var click_accel := click_accel_seconds(source, talent_nodes)
 	var clicks_to_finish := int(ceil(growth_seconds / maxf(0.001, click_accel)))
 	# 幸运系期望倍率：真实收获在 GameState.harvest_crop 里 roll，模拟器只展示期望。
-	# 暴击：概率 crit_chance，普通 ×2 / 稀有 ×5；横财：概率 windfall_chance，额外灵石 ×50%。
-	var crit_chance := TalentTree.bonus("crit_chance", talent_nodes)
+	# 暴击：概率 crit_chance（天赋 + 仙箱永久暴击），普通 ×2 / 稀有 ×5；横财：概率 windfall_chance，额外灵石 ×50%。
+	var crit_chance := TalentTree.bonus("crit_chance", talent_nodes) + float(scenario.get("treasure_crit_bonus", 0.0))
 	var rare_chance := TalentTree.bonus("rare_crit_chance", talent_nodes)
 	var windfall_chance := TalentTree.bonus("windfall_chance", talent_nodes)
 	var expected_crit_mult := 1.0 + crit_chance * (
@@ -1926,6 +1950,12 @@ static func _scenario(source: Node, options: Dictionary) -> Dictionary:
 		"event_prod_mult": maxf(0.0, float(options.get("event_prod_mult", source.event_prod_mult))),
 		"event_cult_mult": maxf(0.0, float(options.get("event_cult_mult", source.event_cult_mult))),
 		"buff_mult": maxf(0.0, float(options.get("buff_mult", source.active_buff_mult if source.is_active_buff() else BalanceConfig.DEFAULT_MULTIPLIER))),
+		"decay_active": bool(options.get("decay_active", source.decay_active)),
+		"reincarnation_boon": String(options.get("reincarnation_boon", source.reincarnation_boon)),
+		"treasure_production_bonus": maxf(0.0, float(options.get("treasure_production_bonus", source.treasure_production_bonus))),
+		"fate_permanent_production": maxf(0.0, float(options.get("fate_permanent_production", source.fate_permanent_production))),
+		"tribulation_refine_bonus": maxf(0.0, float(options.get("tribulation_refine_bonus", source.tribulation_refine_bonus))),
+		"treasure_crit_bonus": maxf(0.0, float(options.get("treasure_crit_bonus", source.treasure_crit_bonus))),
 		"spirit_rain_active": bool(options.get("spirit_rain_active", false)),
 		"pest_level": maxi(0, int(options.get("pest_level", 0))),
 		"auto_cultivation_enabled": bool(options.get("auto_cultivation_enabled", source.unlock_auto_cultivation)),

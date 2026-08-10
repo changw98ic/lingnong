@@ -474,13 +474,15 @@ func _format_report(report: Dictionary) -> String:
 		_fmt(float(auto.get("qi_per_sec", 0.0))),
 	])
 	if bool(tribulation.get("active", false)):
-		lines.append("天劫：%s，进度 %d/%d，劫体 %s/%s，抗性剩余 %d 道；生产已暂停。" % [
+		var check_text := PackedStringArray()
+		for check in tribulation.get("checks", []):
+			var mark := "已过" if bool(check.get("passed", false)) else ("已准备" if bool(check.get("prepared", false)) else "待结算")
+			check_text.append("%s：%s" % [String(check.get("name", "")), mark])
+		lines.append("天劫：%s，进度 %d/%d，%s；生产已暂停。" % [
 			String(tribulation.get("name", "天劫")),
 			int(tribulation.get("strikes_survived", 0)),
 			int(tribulation.get("total_strikes", 0)),
-			_fmt(float(tribulation.get("health", 0.0))),
-			_fmt(float(tribulation.get("health_max", 0.0))),
-			int(tribulation.get("resistance_charges", 0)),
+			"，".join(check_text),
 		])
 	var offline_status := "生效" if bool(offline.get("active", false)) else "大限中，暂不结算"
 	lines.append("离线折算（与离线时长无关）：天赋点 +%d，灵石 +%s；%s。离线不增加修为和灵气。" % [

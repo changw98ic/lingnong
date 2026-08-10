@@ -28,6 +28,12 @@ var btn_spirit_rain: Button
 var btn_gengjin_sword: Button
 var btn_guardian: Button
 var btn_sell_corpses: Button
+# 交互事件：古修洞府三选一 + 魔气净化。
+var cave_controls: GridContainer
+var btn_cave_stones: Button
+var btn_cave_talent: Button
+var btn_cave_treasure: Button
+var btn_purify_demon_qi: Button
 var offline_label: Label
 var feedback_label: Label
 
@@ -93,6 +99,22 @@ func _build_layout() -> void:
 	actions.add_child(btn_guardian)
 	actions.add_child(btn_sell_corpses)
 	box.add_child(actions)
+
+	# 古修洞府三选一（事件进行中显示）。
+	cave_controls = GridContainer.new()
+	cave_controls.columns = 3
+	cave_controls.add_theme_constant_override("h_separation", 6)
+	cave_controls.visible = false
+	btn_cave_stones = _make_action_button("灵石 +%s" % NumberFormat.format(BalanceConfig.ANCIENT_CAVE_STONES), _on_cave_stones)
+	btn_cave_talent = _make_action_button("天赋点 +%d" % int(BalanceConfig.ANCIENT_CAVE_TALENT_POINTS), _on_cave_talent)
+	btn_cave_treasure = _make_action_button("随机宝箱", _on_cave_treasure)
+	cave_controls.add_child(btn_cave_stones)
+	cave_controls.add_child(btn_cave_talent)
+	cave_controls.add_child(btn_cave_treasure)
+	box.add_child(cave_controls)
+	btn_purify_demon_qi = _make_action_button("净化魔气", _on_purify_demon_qi)
+	btn_purify_demon_qi.visible = false
+	box.add_child(btn_purify_demon_qi)
 
 	# 反馈区：离线摘要（常驻）+ 操作反馈（瞬时）。
 	var feedback_area := VBoxContainer.new()
@@ -160,10 +182,32 @@ func _refresh() -> void:
 			"warlord_birthday":
 				burst_label.text = "⚠ 噬金虫活跃：攻击 ×2、间隔减半 ⚠"
 				burst_label.add_theme_color_override("font_color", Color(0.95, 0.5, 0.5))
+			"ancient_cave":
+				burst_label.text = "🏛 古修洞府：选择一份机缘（灵石 / 天赋点 / 随机宝箱）"
+				burst_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.5))
+			"heavenly_seed":
+				burst_label.text = "🌱 天降灵种：本世已解锁紫芝（高级灵植，元婴级）"
+				burst_label.add_theme_color_override("font_color", Color(0.6, 1.0, 0.6))
+			"demon_qi":
+				burst_label.text = "☠ 魔气侵染：生产 -50%，可用灵石净化"
+				burst_label.add_theme_color_override("font_color", Color(0.7, 0.4, 0.9))
+			"insect_king":
+				burst_label.text = "🐛 噬金虫王出现：用庚金剑诀击杀，额外获得虫尸 ×%d" % int(BalanceConfig.INSECT_KING_CORPSE_REWARD)
+				burst_label.add_theme_color_override("font_color", Color(0.95, 0.4, 0.4))
 			_:
 				burst_label.text = ""
+		# 交互事件按钮显隐。
+		cave_controls.visible = GameState.random_event == "ancient_cave"
+		var demon_qi := GameState.random_event == "demon_qi"
+		btn_purify_demon_qi.visible = demon_qi
+		if demon_qi:
+			var purify_cost := GameState.spirit_stones * BalanceConfig.DEMON_QI_PURIFY_COST_RATIO
+			btn_purify_demon_qi.text = "净化魔气（花费当前灵石 %d%%，约 %s）" % [int(BalanceConfig.DEMON_QI_PURIFY_COST_RATIO * 100.0), NumberFormat.format(purify_cost)]
+			btn_purify_demon_qi.disabled = GameState.spirit_stones <= 0.0
 	else:
 		burst_label.visible = false
+		cave_controls.visible = false
+		btn_purify_demon_qi.visible = false
 
 	# 狂暴丹 buff 提示。
 	if GameState.is_active_buff():
@@ -273,6 +317,35 @@ func _on_sell_corpses() -> void:
 		_set_feedback("虫尸出售成功，灵石已到账。")
 	else:
 		_set_feedback("当前没有虫尸可出售。")
+
+
+# ─────────────── 交互事件按钮处理 ───────────────
+func _on_cave_stones() -> void:
+	if GameState.resolve_ancient_cave("stones"):
+		_set_feedback("古修洞府：获得 %s 灵石。" % NumberFormat.format(BalanceConfig.ANCIENT_CAVE_STONES))
+	else:
+		_set_feedback("古修洞府已关闭。")
+
+
+func _on_cave_talent() -> void:
+	if GameState.resolve_ancient_cave("talent"):
+		_set_feedback("古修洞府：获得 %d 天赋点。" % int(BalanceConfig.ANCIENT_CAVE_TALENT_POINTS))
+	else:
+		_set_feedback("古修洞府已关闭。")
+
+
+func _on_cave_treasure() -> void:
+	if GameState.resolve_ancient_cave("treasure"):
+		_set_feedback("古修洞府：开启随机宝箱。")
+	else:
+		_set_feedback("古修洞府已关闭。")
+
+
+func _on_purify_demon_qi() -> void:
+	if GameState.purify_demon_qi():
+		_set_feedback("净化成功：魔气退散，生产恢复。")
+	else:
+		_set_feedback("净化失败：需要至少 1 灵石（花费当前灵石的 %d%%）。" % int(BalanceConfig.DEMON_QI_PURIFY_COST_RATIO * 100.0))
 
 
 # ─────────────── 反馈 / 离线摘要 ───────────────

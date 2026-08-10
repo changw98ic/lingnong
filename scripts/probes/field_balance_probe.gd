@@ -15,6 +15,9 @@ var failures := 0
 
 func _ready() -> void:
 	var gs = GameState
+	# 探针环境：关闭随机宝箱（避免污染精确资源断言）、隔离存档路径（不覆盖真实存档）。
+	TreasureSystem.enabled = false
+	SaveManager.save_path = "user://lingnong_probe_save.json"
 	gs.initialize_new_game()
 	var default_unlock_flags := BalanceConfig.default_unlock_flags(BalanceConfig.INITIAL_REALM_INDEX)
 	_check(not default_unlock_flags.has("unlock_alchemy"), "炼丹解锁标志已删除")
@@ -281,6 +284,7 @@ func _ready() -> void:
 	_check_breakthrough_pacing(gs)
 	_check_crop_switch_and_breakthrough_materials(gs)
 	_check_tribulation_and_pills(gs)
+	_check_reincarnation_loop(gs)
 	_check_insect_disaster(gs)
 	_check_achievements(gs)
 	_check_frenzy_pill(gs)
@@ -469,13 +473,13 @@ func _check_section_one(gs: Node) -> void:
 	_check(gs.get_crop_options().has("mind_flower"), "筑基解锁凝神花")
 	gs.realm_index = 3
 	_check(gs.get_crop_options().has("sun_fruit") and gs.get_crop_options().has("heaven_lotus"), "金丹解锁赤阳果和天道莲")
-	_check(is_equal_approx(float(BalanceConfig.LIFESPAN_DECAY_PER_SECOND), 0.5), "寿元衰减为 0.5 年/秒")
+	_check(is_equal_approx(float(BalanceConfig.LIFESPAN_DECAY_PER_SECOND), 0.2), "寿元衰减为 0.2 年/秒（5 秒 = 1 年）")
 	_check(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM == [0, 3, 7, 15, 31], "突破天赋点表为 [0,3,7,15,31]")
 	_check(is_equal_approx(float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0)), 1000.0) and is_equal_approx(float(BalanceConfig.REALMS[2].get("required_cultivation", 0.0)), 80000.0) and is_equal_approx(float(BalanceConfig.REALMS[3].get("required_cultivation", 0.0)), 2000000.0), "境界修为门槛提高为 1000/80000/2000000")
-	_check(is_equal_approx(60.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 120.0), "凡人一轮寿元为 2 分钟")
-	_check(is_equal_approx(120.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 240.0), "炼气一轮寿元为 4 分钟")
-	_check(is_equal_approx(200.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 400.0), "筑基一轮寿元约 6.7 分钟")
-	_check(is_equal_approx(500.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 1000.0), "金丹一轮寿元约 16.7 分钟")
+	_check(is_equal_approx(80.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 400.0), "凡人一轮寿元约 6.7 分钟")
+	_check(is_equal_approx(120.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 600.0), "炼气一轮寿元约 10 分钟")
+	_check(is_equal_approx(300.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 1500.0), "筑基一轮寿元约 25 分钟")
+	_check(is_equal_approx(1000.0 / BalanceConfig.LIFESPAN_DECAY_PER_SECOND, 5000.0), "金丹一轮寿元约 83 分钟")
 
 	for crop_id_variant in CropConfig.get_all():
 		var crop_id := String(crop_id_variant)
@@ -515,7 +519,8 @@ func _check_section_one(gs: Node) -> void:
 		gs.cultivation = float(BalanceConfig.REALMS[realm].get("required_cultivation", 0.0))
 		_grant_breakthrough_materials(gs, realm)
 		var before: int = gs.talent_points
-		_check(gs.breakthrough(), "开始%s天劫" % String(BalanceConfig.REALMS[realm].get("name", "")))
+		var break_result: Dictionary = gs.breakthrough()
+		_check(bool(break_result.get("ok", false)), "开始%s三劫雷劫" % String(BalanceConfig.REALMS[realm].get("name", "")))
 		_check(gs.realm_index == realm - 1 and gs.tribulation_active, "天劫完成前境界不提前增加")
 		_finish_tribulation_for_probe(gs)
 		_check(gs.realm_index == realm, "天劫成功后进入%s" % String(BalanceConfig.REALMS[realm].get("name", "")))
@@ -523,15 +528,21 @@ func _check_section_one(gs: Node) -> void:
 	_check(breakthrough_points == [3, 7, 15, 31], "实际突破发放 3/7/15/31 点")
 	_check(gs.promotion_count == 4, "实际突破累计晋级次数")
 
+	# 轮回：随时轮回保留长期成长，选择转世天赋。
 	gs.initialize_new_game()
 	gs.crop_proficiency["gathering_grass"] = 400
 	gs.total_harvest_count = 400
 	gs.promotion_count = 2
 	gs.lifespan_depleted = true
-	_check(gs.start_new_run(), "大限后可以开始新局")
-	_check(gs.reincarnation_count == 1, "开始新局增加轮回次数")
-	_check(int(gs.crop_proficiency.get("gathering_grass", 0)) == 400, "开始新局保留作物熟练度")
-	_check(gs.total_harvest_count == 400 and gs.promotion_count == 2, "开始新局保留长期计数")
+	_check(gs.reincarnate_now(), "大限后可以立即轮回")
+	_check(gs.reincarnation_count == 1, "轮回增加轮回次数")
+	_check(int(gs.crop_proficiency.get("gathering_grass", 0)) == 400, "轮回保留作物熟练度")
+	_check(gs.total_harvest_count == 400 and gs.promotion_count == 2, "轮回保留长期计数")
+	_check(gs.pending_reincarnation_boon, "轮回后等待选择转世天赋")
+	_check(not gs.reincarnate_now(), "选择转世天赋前不可再次轮回")
+	_check(gs.choose_reincarnation_boon("wood_spirit"), "选择转世天赋·青木神通")
+	_check(gs.reincarnation_boon == "wood_spirit" and not gs.pending_reincarnation_boon, "转世天赋本世生效")
+	_check(not gs.choose_reincarnation_boon("not_real"), "非法转世天赋被拒绝")
 
 	# 离线结算只按长期计数发放一次差额，不随离线时长变化，也不增加修为/灵气。
 	gs.initialize_new_game()
@@ -588,27 +599,35 @@ func _check_crop_switch_and_breakthrough_materials(gs: Node) -> void:
 		"start_realm": 0,
 		"target_realm": 1,
 		"start_cultivation": gs.cultivation,
+		"start_qi": 250.0,
+		"start_harvest_cycles": 500,
 		"clicks_per_second": 4.0,
 		"include_auto_cultivation": false,
 		"enforce_breakthrough_materials": true,
 		"start_breakthrough_materials": {"fu_qi_dan": 10},
 		"enforce_tribulation_supplies": true,
 		"start_healing_pills": 4,
+		"start_resistance_pills": 1,
+		"start_enhancement_pills": 1,
 	})
-	_check(bool(prepared_flow.get("completed", false)), "模拟器使用已备齐材料和渡劫丹完成突破")
+	_check(bool(prepared_flow.get("completed", false)), "模拟器使用已备齐材料和渡劫丹通过三道检查完成突破")
 	_check(not gs.can_breakthrough(), "缺少突破材料不能突破")
 	_check(gs.get_breakthrough_block_reason().begins_with("缺少服气丹"), "突破界面显示缺少的材料")
 	var bought_fu_qi := true
-	for _i in range(10):
+	for _i in range(15):
 		bought_fu_qi = gs.buy_shop_item("breakthrough_fu_qi_dan") and bought_fu_qi
 	_check(bought_fu_qi, "服气丹只能通过商店兑换")
-	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 10, "服气丹库存达到炼气突破需求")
+	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 15, "服气丹库存达到稳定突破需求（10×1.5）")
 	_check(gs.can_breakthrough(), "修为和服气丹齐备后可以突破")
-	_check(gs.breakthrough(), "消耗材料后开始炼气天劫")
+	_check(gs.has_breakthrough_materials_for_mode(1, "stable"), "稳定突破 1.5 倍材料可满足")
+	# 商店路径没有碎丹经验，探针直接堆满保证稳定突破必成。
+	gs.broken_dan_experience = BalanceConfig.BROKEN_DAN_SUCCESS_CAP
+	var stable_result: Dictionary = gs.breakthrough("stable")
+	_check(bool(stable_result.get("success", false)), "稳定突破消耗 1.5 倍材料开始炼气天劫")
 	_check(gs.tribulation_active and gs.realm_index == 0, "炼气天劫期间仍保持凡人境界")
 	_finish_tribulation_for_probe(gs)
 	_check(gs.realm_index == 1, "完成炼气天劫后进入炼气")
-	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 0, "炼气突破消耗 10 颗服气丹")
+	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 0, "炼气突破消耗 15 颗服气丹")
 
 	gs.initialize_new_game()
 	gs.spirit_stones = 100000.0
@@ -628,46 +647,307 @@ func _check_crop_switch_and_breakthrough_materials(gs: Node) -> void:
 
 
 func _check_tribulation_and_pills(gs: Node) -> void:
-	print("=== 天劫与渡劫丹 ===")
+	print("=== 天劫检查与渡劫丹 ===")
+	# 稳定突破需要 1.5 倍材料；1 倍材料只够强行突破。
 	gs.initialize_new_game()
 	gs.cultivation = float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0))
 	_grant_breakthrough_materials(gs, 1)
 	gs.talent_points = 0
 	gs.talent_points_earned = 0
-	_check(gs.get_tribulation_strikes_for_target(1) == BalanceConfig.TRIBULATION_BASE_STRIKES, "0天赋点触发九九天劫")
-	_check(gs.breakthrough(), "材料齐备后开始九九天劫")
+	_check(gs.has_breakthrough_materials_for_mode(1, "forced"), "强行突破只需 1 倍材料")
+	gs.breakthrough_materials["fu_qi_dan"] = 10
+	_check(not gs.has_breakthrough_materials_for_mode(1, "stable"), "1 倍材料不满足稳定突破的 1.5 倍需求")
+	gs.breakthrough_materials["fu_qi_dan"] = 15
+	_check(bool(gs.breakthrough().get("success", false)), "稳定突破成功率 100%（碎丹经验堆满）")
 	_check(gs.realm_index == 0 and gs.tribulation_active, "天劫完成前不递增境界")
-	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 0, "天劫开始时消耗突破材料")
+	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 0, "稳定突破消耗 15 颗服气丹（×1.5）")
 
+	# 灵气不足：第一劫失败，获得永久雷劫淬体。
+	_check(gs.advance_tribulation(), "灵气不足时结算第一劫")
+	_check(not gs.tribulation_active and gs.realm_index == 0, "第一劫失败、境界不变")
+	_check(is_equal_approx(gs.tribulation_refine_bonus, BalanceConfig.TRIBULATION_REFINE_BONUS), "检查失败获得永久雷劫淬体 +5%")
+
+	# 三项达标：三道检查依次通过后进入炼气。
+	gs.initialize_new_game()
+	gs.cultivation = float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0))
+	_grant_breakthrough_materials(gs, 1)
+	gs.qi = BalanceConfig.tribulation_qi_requirement(1)
+	gs.run_harvest_count = BalanceConfig.TRIBULATION_CHECK_HARVEST_REQUIREMENT
+	gs.run_random_event_count = 1
+	_check(bool(gs.breakthrough().get("success", false)), "材料齐备后开始三劫雷劫")
+	_check(gs.realm_index == 0 and gs.tribulation_active, "天劫完成前不递增境界")
+	_check(gs.advance_tribulation() and gs.tribulation_strikes_survived == 1, "手动结算第一劫·灵气")
+	_check(gs.advance_tribulation() and gs.tribulation_strikes_survived == 2, "手动结算第二劫·底蕴")
+	_check(gs.advance_tribulation(), "手动结算第三劫·气运")
+	_check(gs.realm_index == 1 and not gs.tribulation_active, "完成三劫雷劫后进入炼气")
+	_check(gs.tribulation_last_result.begins_with("渡劫成功"), "渡劫成功结果文本")
+
+	# 渡劫丹是渡劫准备：治疗丹减半灵气需求、抗性丹减半底蕴需求、强化丹直通气运。
+	gs.initialize_new_game()
+	gs.cultivation = float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0))
+	_grant_breakthrough_materials(gs, 1)
 	gs.spirit_stones = 100000.0
 	_check(gs.buy_shop_item("healing_pill"), "商店购买治疗丹")
 	_check(gs.buy_shop_item("resistance_pill"), "商店购买抗性丹")
 	_check(gs.buy_shop_item("enhancement_pill"), "商店购买强化丹")
-	_check(gs.enhancement_pills == 1 and gs.resistance_pills == 1 and gs.healing_pills == 1, "三类渡劫丹进入库存")
-	_check(gs.use_enhancement_pill(), "渡劫中使用强化丹")
-	_check(is_equal_approx(gs.tribulation_health_max, BalanceConfig.TRIBULATION_BASE_HEALTH + BalanceConfig.TRIBULATION_ENHANCEMENT_HEALTH_BONUS), "强化丹提高劫体上限")
-	_check(gs.use_resistance_pill() and gs.tribulation_resistance_charges == BalanceConfig.TRIBULATION_RESISTANCE_CHARGES, "抗性丹增加抗性次数")
-	_check(gs.advance_tribulation(), "手动迎接一道天劫")
-	_check(gs.use_healing_pill() and gs.tribulation_health > gs.tribulation_health_max - BalanceConfig.TRIBULATION_HEAL_AMOUNT, "治疗丹恢复劫体")
-	_finish_tribulation_for_probe(gs)
-	_check(gs.realm_index == 1 and not gs.tribulation_active, "完成九九天劫后进入炼气")
+	_check(gs.healing_pills == 1 and gs.resistance_pills == 1 and gs.enhancement_pills == 1, "三类渡劫丹进入库存")
+	# 灵气只有需求一半（治疗丹后达标）；底蕴只有 500 次（抗性丹后达标）。
+	gs.qi = BalanceConfig.tribulation_qi_requirement(1) * BalanceConfig.TRIBULATION_HEAL_REQUIREMENT_MULT
+	gs.run_harvest_count = ceili(float(BalanceConfig.TRIBULATION_CHECK_HARVEST_REQUIREMENT) * BalanceConfig.TRIBULATION_RESISTANCE_REQUIREMENT_MULT)
+	_check(bool(gs.breakthrough().get("success", false)), "丹药准备后开始渡劫")
+	_check(gs.use_healing_pill(), "使用治疗丹准备第一劫")
+	_check(not gs.use_healing_pill(), "治疗丹每次渡劫限用 1 枚")
+	_check(gs.advance_tribulation() and gs.tribulation_strikes_survived == 1, "治疗丹让灵气劫需求减半后通过")
+	_check(gs.use_resistance_pill(), "使用抗性丹准备第二劫")
+	_check(gs.advance_tribulation() and gs.tribulation_strikes_survived == 2, "抗性丹让底蕴劫需求减半后通过")
+	_check(gs.use_enhancement_pill(), "使用强化丹准备第三劫")
+	_check(gs.advance_tribulation(), "强化丹直接通过气运劫")
+	_check(gs.realm_index == 1 and not gs.tribulation_active, "丹药备齐完成渡劫进入炼气")
 
-	gs.talent_points = BalanceConfig.TRIBULATION_SIX_NINE_TALENT_THRESHOLD
-	gs.talent_points_earned = BalanceConfig.TRIBULATION_SIX_NINE_TALENT_THRESHOLD
-	_check(gs.get_tribulation_strikes_for_target(2) == BalanceConfig.TRIBULATION_SIX_NINE_STRIKES, "10天赋点降低为六九天劫")
-	gs.talent_nodes = {"root": true}
-	_check(gs.unlock_talent("farming_start"), "天赋点可以立即点亮节点")
-	_check(gs.talent_points < BalanceConfig.TRIBULATION_SIX_NINE_TALENT_THRESHOLD and gs.get_tribulation_strikes_for_target(2) == BalanceConfig.TRIBULATION_SIX_NINE_STRIKES, "消费天赋点后天劫仍按累计获得点数计算")
-	gs.talent_points = BalanceConfig.TRIBULATION_THREE_NINE_TALENT_THRESHOLD
-	gs.talent_points_earned = BalanceConfig.TRIBULATION_THREE_NINE_TALENT_THRESHOLD
-	_check(gs.get_tribulation_strikes_for_target(2) == BalanceConfig.TRIBULATION_THREE_NINE_STRIKES, "25天赋点降低为三九天劫")
+	# 碎丹：强行突破 50% 成功率，固定种子强制失败验证经验累计。
+	gs.initialize_new_game()
+	gs.cultivation = float(BalanceConfig.REALMS[1].get("required_cultivation", 0.0))
+	_grant_breakthrough_materials(gs, 1)
+	gs.broken_dan_experience = 0.0
+	var dan_failed := false
+	randomize()
+	for seed_index in range(200):
+		seed(7000 + seed_index)
+		gs.breakthrough_materials["fu_qi_dan"] = 10
+		gs.broken_dan_experience = 0.0
+		# 上一次尝试若成功会开启天劫，先复位渡劫状态再试下一次。
+		gs.tribulation_active = false
+		gs.tribulation_target_realm = -1
+		gs.tribulation_strikes_survived = 0
+		gs.tribulation_prepared = [false, false, false]
+		var dan_result: Dictionary = gs.breakthrough("forced")
+		if not bool(dan_result.get("success", false)) and bool(dan_result.get("ok", false)):
+			dan_failed = true
+			break
+	randomize()
+	_check(dan_failed, "强行突破可以碎丹失败")
+	_check(is_equal_approx(gs.broken_dan_experience, BalanceConfig.BROKEN_DAN_SUCCESS_BONUS), "碎丹经验 +15%")
+	_check(gs.get_breakthrough_material_count("fu_qi_dan") == 0, "碎丹消耗 10 颗服气丹")
+	_check(not gs.tribulation_active and gs.realm_index == 0, "碎丹后不进入天劫、境界不变")
+	_check(is_equal_approx(gs.get_breakthrough_success_rate("forced"), BalanceConfig.BREAKTHROUGH_FORCED_SUCCESS_RATE + BalanceConfig.BROKEN_DAN_SUCCESS_BONUS), "碎丹经验进入下次成功率")
+	_check(gs.get_breakthrough_success_rate("forced") <= BalanceConfig.BREAKTHROUGH_FORCED_SUCCESS_RATE + BalanceConfig.BROKEN_DAN_SUCCESS_CAP, "碎丹经验封顶 45%")
+
+
+func _check_reincarnation_loop(gs: Node) -> void:
+	print("=== 轮回 / 天人五衰 / 宝箱 / 新事件 ===")
+	# 轮回奖励预览：本世里程碑 ×2 + 本世突破 ×1；提前轮回 ×80%，天人五衰 ×100%。
+	gs.initialize_new_game()
+	gs.talent_milestone_index = 3
+	gs.run_start_milestone_index = 1
+	gs.promotion_count = 5
+	gs.run_start_promotion_count = 3
+	gs.lifespan_max_years = 80.0
+	gs.lifespan_years = 30.0
+	var early_preview: Dictionary = gs.get_reincarnation_reward_preview()
+	_check(bool(early_preview.get("early", false)), "寿元 >20% 判定为提前轮回")
+	_check(int(early_preview.get("points", 0)) == int(floor((2 * 2 + 2 * 1) * BalanceConfig.REINCARNATION_EARLY_PENALTY)), "提前轮回：里程碑×2+突破×1 再 ×80%")
+	gs.lifespan_years = 10.0
+	var decay_preview: Dictionary = gs.get_reincarnation_reward_preview()
+	_check(not bool(decay_preview.get("early", false)), "寿元 ≤20% 进入天人五衰不扣奖励")
+	_check(int(decay_preview.get("points", 0)) == 2 * 2 + 2 * 1, "天人五衰立即轮回 ×100%")
+
+	# 天人五衰三选择·继续修炼：生产减半 + 天命奇遇。
+	gs.initialize_new_game()
+	gs.lifespan_max_years = 80.0
+	gs.lifespan_years = 10.0
+	_check(gs.is_decay_stage(), "寿元不足 20% 进入天人五衰阶段")
+	var prod_normal := float(gs.get_production_mult(0))
+	_check(gs.begin_decay_continuation(), "选择继续修炼")
+	_check(gs.decay_active, "衰败状态激活")
+	var prod_decay := float(gs.get_production_mult(0))
+	_check(is_equal_approx(prod_decay, prod_normal * (1.0 - BalanceConfig.DECAY_PRODUCTION_PENALTY)), "继续修炼生产 -50%")
+	var p_t := int(gs.talent_points)
+	var p_qi := float(gs.qi)
+	var p_fate := float(gs.fate_permanent_production)
+	var p_life := float(gs.lifespan_max_years)
+	gs.fate_opportunity_at = Time.get_unix_time_from_system() - 1.0
+	gs.update_world(0.1)
+	var any_gift := int(gs.talent_points) != p_t or not is_equal_approx(float(gs.qi), p_qi) \
+		or not is_equal_approx(float(gs.fate_permanent_production), p_fate) \
+		or not is_equal_approx(float(gs.lifespan_max_years), p_life)
+	_check(any_gift, "天命奇遇发放了奖励")
+	_check(gs.fate_opportunity_at > Time.get_unix_time_from_system(), "奇遇计时重置")
+
+	# 渡劫续命：三丹 + 灵石；成败两种结果都要可复现。
+	var tribulation_succeeded := false
+	var tribulation_failed := false
+	randomize()
+	for seed_index in range(60):
+		seed(9000 + seed_index)
+		gs.initialize_new_game()
+		gs.lifespan_max_years = 80.0
+		gs.lifespan_years = 10.0
+		gs.spirit_stones = 100000.0
+		gs.healing_pills = 1
+		gs.resistance_pills = 1
+		gs.enhancement_pills = 1
+		var stones_before_attempt := float(gs.spirit_stones)
+		var result: Dictionary = gs.attempt_lifespan_tribulation()
+		if not bool(result.get("ok", false)):
+			continue
+		if bool(result.get("success", false)):
+			tribulation_succeeded = true
+			_check(is_equal_approx(float(gs.spirit_stones), stones_before_attempt - 80.0 * BalanceConfig.LIFESPAN_TRIBULATION_STONE_RATIO), "渡劫续命消耗当前境界寿元上限 20% 的灵石")
+			_check(gs.healing_pills == 0 and gs.resistance_pills == 0 and gs.enhancement_pills == 0, "渡劫续命消耗三丹")
+			_check(gs.lifespan_years >= 10.0 + BalanceConfig.LIFESPAN_TRIBULATION_SUCCESS_YEARS and not gs.is_decay_stage(), "续命成功寿元增加并解除衰败")
+		else:
+			tribulation_failed = true
+			_check(gs.reincarnation_count == 1 and gs.pending_reincarnation_boon, "续命失败强制轮回并等待转世天赋")
+		if tribulation_succeeded and tribulation_failed:
+			break
+	randomize()
+	_check(tribulation_succeeded, "渡劫续命成功路径可复现")
+	_check(tribulation_failed, "渡劫续命失败路径可复现")
+
+	# 转世天赋倍率：青木神通（产量）、丹心（修为）。
+	gs.initialize_new_game()
+	gs.pending_reincarnation_boon = true
+	var prod_no_boon := float(gs.get_production_mult(0))
+	_check(gs.choose_reincarnation_boon("wood_spirit"), "选择青木神通")
+	_check(is_equal_approx(float(gs.get_production_mult(0)), prod_no_boon * BalanceConfig.reincarnation_boon("wood_spirit").get("production_mult", 1.0)), "青木神通产量 +50%")
+	gs.initialize_new_game()
+	gs.pending_reincarnation_boon = true
+	var cult_no_boon := float(gs.get_cultivation_mult())
+	_check(gs.choose_reincarnation_boon("dan_heart"), "选择丹心")
+	_check(is_equal_approx(float(gs.get_cultivation_mult()), cult_no_boon * BalanceConfig.reincarnation_boon("dan_heart").get("cultivation_mult", 1.0)), "丹心修为 +20%")
+
+	# 宝箱奖励入账（直接注入奖励描述，验证 GameState 是唯一入账方）。
+	gs.initialize_new_game()
+	gs._apply_treasure_reward({"reward": {"kind": "stones", "amount": 100.0}})
+	_check(is_equal_approx(float(gs.spirit_stones), 100.0), "木箱灵石入账")
+	gs._apply_treasure_reward({"reward": {"kind": "qi", "amount": 200.0}})
+	_check(is_equal_approx(float(gs.qi), 200.0), "宝箱灵气入账")
+	gs._apply_treasure_reward({"reward": {"kind": "talent_points", "amount": 1}})
+	_check(int(gs.talent_points) == 1, "玉箱天赋点入账")
+	gs._apply_treasure_reward({"reward": {"kind": "permanent_production", "amount": BalanceConfig.TREASURE_IMMORTAL_PRODUCTION_BONUS}})
+	_check(is_equal_approx(float(gs.treasure_production_bonus), BalanceConfig.TREASURE_IMMORTAL_PRODUCTION_BONUS), "仙箱永久生产加成入账")
+	gs._apply_treasure_reward({"reward": {"kind": "lifespan_max", "amount": BalanceConfig.TREASURE_IMMORTAL_LIFESPAN_BONUS}})
+	_check(is_equal_approx(float(gs.lifespan_max_years), 80.0 + BalanceConfig.TREASURE_IMMORTAL_LIFESPAN_BONUS), "仙箱寿元上限加成入账")
+	gs._apply_treasure_reward({"reward": {"kind": "permanent_crit", "amount": BalanceConfig.TREASURE_IMMORTAL_CRIT_BONUS}})
+	_check(is_equal_approx(float(gs.treasure_crit_bonus), BalanceConfig.TREASURE_IMMORTAL_CRIT_BONUS), "仙箱永久暴击加成入账")
+	_check(is_equal_approx(float(gs.get_production_mult(0)), 1.0 + BalanceConfig.TREASURE_IMMORTAL_PRODUCTION_BONUS), "永久生产加成进入生产倍率")
+
+	# 天命：宝箱概率 ×5，收获时能开出宝箱。
+	gs.initialize_new_game()
+	gs.pending_reincarnation_boon = true
+	gs.choose_reincarnation_boon("heaven_fate")
+	gs.realm_index = 0
+	gs.season_index = 0
+	gs.unlocked_fields = 1
+	gs.fields[0]["crop_id"] = CROP_ID
+	gs.fields[0]["tier"] = 0
+	gs.insect_events[0] = {"active": false, "attacks": 0, "pest_level": 0, "next_attack_at": 9999999999.0}
+	TreasureSystem.enabled = true
+	var chest_found := false
+	randomize()
+	for seed_index in range(100):
+		seed(9800 + seed_index)
+		gs.fields[0]["ready_at"] = 0.0
+		var harvest: Dictionary = gs.harvest_crop(0)
+		if bool(harvest.get("treasure_found", false)):
+			chest_found = true
+			break
+	randomize()
+	TreasureSystem.enabled = false
+	_check(chest_found, "天命转世天赋下收获可开出宝箱")
+
+	# 古修洞府三选一。
+	gs.initialize_new_game()
+	gs.random_event = "ancient_cave"
+	gs.random_event_until = Time.get_unix_time_from_system() + 60.0
+	var cave_stones_before := float(gs.spirit_stones)
+	_check(gs.resolve_ancient_cave("stones"), "古修洞府选择灵石")
+	_check(is_equal_approx(float(gs.spirit_stones), cave_stones_before + BalanceConfig.ANCIENT_CAVE_STONES), "洞府灵石入账")
+	_check(gs.random_event == "", "洞府选择后事件结束")
+	_check(not gs.resolve_ancient_cave("stones"), "事件结束后不能再次选择")
+	gs.random_event = "ancient_cave"
+	gs.random_event_until = Time.get_unix_time_from_system() + 60.0
+	var cave_talent_before := int(gs.talent_points)
+	_check(gs.resolve_ancient_cave("talent"), "古修洞府选择天赋点")
+	_check(int(gs.talent_points) == cave_talent_before + BalanceConfig.ANCIENT_CAVE_TALENT_POINTS, "洞府天赋点入账")
+	gs.random_event = "ancient_cave"
+	gs.random_event_until = Time.get_unix_time_from_system() + 60.0
+	var cave_stones_before_2 := float(gs.spirit_stones)
+	_check(gs.resolve_ancient_cave("treasure"), "古修洞府选择宝箱")
+	_check(float(gs.spirit_stones) >= cave_stones_before_2, "宝箱选择至少给灵石保底")
+
+	# 魔气侵染：生产减半 + 灵石净化。
+	gs.initialize_new_game()
+	gs.spirit_stones = 10000.0
+	gs.random_event = "demon_qi"
+	gs.random_event_until = Time.get_unix_time_from_system() + 60.0
+	var normal_prod_2 := float(gs.get_production_mult(0))
+	gs.update_world(0.05)
+	var demon_prod := float(gs.get_production_mult(0))
+	_check(is_equal_approx(demon_prod, normal_prod_2 * (1.0 - BalanceConfig.DEMON_QI_PRODUCTION_PENALTY)), "魔气侵染生产 -50%")
+	_check(gs.purify_demon_qi(), "净化魔气")
+	_check(is_equal_approx(float(gs.spirit_stones), 9000.0), "净化消耗当前灵石 10%")
+	_check(gs.random_event == "", "净化后事件结束")
+	gs.update_world(0.05)
+	_check(is_equal_approx(float(gs.get_production_mult(0)), normal_prod_2), "净化后生产恢复")
+
+	# 天降灵种：本世解锁紫芝。
+	gs.initialize_new_game()
+	gs.random_event = "heavenly_seed"
+	gs.random_event_until = Time.get_unix_time_from_system() + 30.0
+	gs.update_world(0.05)
+	_check(gs.heavenly_seed_unlocked, "天降灵种解锁紫芝")
+	_check(gs.get_crop_options().has(BalanceConfig.HEAVENLY_SEED_CROP), "本世可种植紫芝")
+
+	# 噬金虫王：剑诀击杀额外虫尸并结束事件。
+	gs.initialize_new_game()
+	gs.realm_index = BalanceConfig.ADVANCED_COMBAT_REALM_INDEX
+	gs.qi = 1000.0
+	gs.random_event = "insect_king"
+	gs.random_event_until = Time.get_unix_time_from_system() + 60.0
+	gs.fields[0]["crop_id"] = CROP_ID
+	gs.insect_events[0] = {"active": true, "attacks": 3, "pest_level": 2, "next_attack_at": 0.0}
+	_check(gs.cast_gengjin_sword(0), "剑诀击杀噬金虫王")
+	_check(gs.insect_corpses >= BalanceConfig.INSECT_KING_CORPSE_REWARD + 3, "虫王额外虫尸 ×10")
+	_check(gs.random_event == "", "虫王击杀后事件结束")
+
+	# 存档 v18 往返：新字段全部保留。
+	gs.initialize_new_game()
+	gs.decay_active = true
+	gs.fate_opportunity_at = 12345.0
+	gs.treasure_production_bonus = 0.1
+	gs.treasure_crit_bonus = 0.05
+	gs.fate_permanent_production = 0.02
+	gs.broken_dan_experience = 0.3
+	gs.tribulation_refine_bonus = 0.1
+	gs.run_harvest_count = 777
+	gs.run_random_event_count = 3
+	gs.heavenly_seed_unlocked = true
+	gs.reincarnation_boon = "wood_spirit"
+	gs.pending_reincarnation_boon = false
+	gs.lifespan_years = 50.0
+	gs.lifespan_depleted = false
+	_check(SaveManager.save_game(), "保存 v18 存档")
+	gs.initialize_new_game()
+	_check(SaveManager.load_game(), "加载 v18 存档")
+	_check(gs.decay_active, "加载后保留衰败状态")
+	_check(is_equal_approx(float(gs.fate_opportunity_at), 12345.0), "加载后保留奇遇计时")
+	_check(is_equal_approx(float(gs.treasure_production_bonus), 0.1), "加载后保留永久生产加成")
+	_check(is_equal_approx(float(gs.treasure_crit_bonus), 0.05), "加载后保留永久暴击加成")
+	_check(is_equal_approx(float(gs.fate_permanent_production), 0.02), "加载后保留天命永久加成")
+	_check(is_equal_approx(float(gs.broken_dan_experience), 0.3), "加载后保留碎丹经验")
+	_check(is_equal_approx(float(gs.tribulation_refine_bonus), 0.1), "加载后保留雷劫淬体")
+	_check(int(gs.run_harvest_count) == 777 and int(gs.run_random_event_count) == 3, "加载后保留本世计数")
+	_check(gs.heavenly_seed_unlocked and gs.reincarnation_boon == "wood_spirit", "加载后保留本世解锁与转世天赋")
 
 
 func _finish_tribulation_for_probe(gs: Node) -> void:
 	if not gs.tribulation_active:
 		return
-	# 探针只验证流程，不把 99 次手动按钮操作写成测试噪声。
-	gs.tribulation_health = 999999.0
+	# 探针只验证流程：直接满足三道检查的条件后逐道结算。
+	gs.qi = maxf(gs.qi, BalanceConfig.tribulation_qi_requirement(gs.tribulation_target_realm))
+	gs.run_harvest_count = maxi(gs.run_harvest_count, BalanceConfig.TRIBULATION_CHECK_HARVEST_REQUIREMENT)
+	gs.run_random_event_count = maxi(gs.run_random_event_count, 1)
 	while gs.tribulation_active:
 		gs.advance_tribulation()
 
@@ -675,7 +955,10 @@ func _finish_tribulation_for_probe(gs: Node) -> void:
 func _grant_breakthrough_materials(gs: Node, target_realm: int) -> void:
 	for requirement in gs.get_breakthrough_requirements(target_realm):
 		var material_id := String(requirement.get("material_id", ""))
-		gs.breakthrough_materials[material_id] = int(requirement.get("amount", 0))
+		# 按稳定突破的 1.5 倍需求发放，保证任何模式都能发起。
+		gs.breakthrough_materials[material_id] = ceili(int(requirement.get("amount", 0)) * BalanceConfig.BREAKTHROUGH_STABLE_MATERIAL_MULT)
+	# 探针默认稳定突破必成；碎丹测试单独重置经验。
+	gs.broken_dan_experience = BalanceConfig.BROKEN_DAN_SUCCESS_CAP
 
 
 func _check_achievements(gs: Node) -> void:
@@ -706,7 +989,7 @@ func _check_achievements(gs: Node) -> void:
 	_check(gs.achievement_points == points_after_first_refresh, "重复刷新不重复发放成就点")
 	_check(gs.get_achievement_rows().size() == BalanceConfig.ACHIEVEMENTS.size(), "成就进度覆盖全部定义")
 	gs.lifespan_depleted = true
-	_check(gs.start_new_run(), "成就测试可开始新局")
+	_check(gs.reincarnate_now(), "成就测试可立即轮回")
 	_check(gs.achievements.has("first_new_run"), "开始新局成就自动解锁")
 	_check(gs.achievement_points == points_after_first_refresh + 2, "新局成就点只发放一次")
 
@@ -733,7 +1016,7 @@ func _check_frenzy_pill(gs: Node) -> void:
 	gs.lifespan_depleted = true
 	_check(not gs.buy_shop_item("frenzy_pill"), "大限期间不能购买狂暴丹")
 	gs.lifespan_years = 0.0
-	_check(gs.start_new_run(), "大限后开始新局")
+	_check(gs.reincarnate_now(), "大限后立即轮回")
 	_check(int(gs.shop_purchase_counts.get("frenzy_pill", 0)) == before_count + 1, "狂暴丹购买次数跨新局保留")
 	gs.spirit_stones = 100000.0
 	_check(is_equal_approx(shop.get_cost("frenzy_pill", before_count + 1), 150.0), "新局价格按累计购买次数递进")
@@ -745,7 +1028,7 @@ func _check_expansion(gs: Node) -> void:
 	_check(RealmConfig.realm_count() == 5, "境界扩展到 5 层")
 	_check(is_equal_approx(float(BalanceConfig.REALMS[4].get("required_cultivation", 0.0)), 100000000.0), "元婴门槛 1 亿修为")
 	_check(is_equal_approx(float(BalanceConfig.REALMS[4].get("production", 0.0)), 100.0), "元婴生产倍率 ×100")
-	_check(is_equal_approx(float(BalanceConfig.LIFESPAN_YEARS_BY_REALM[4]), 2000.0), "元婴寿元 2000 年")
+	_check(is_equal_approx(float(BalanceConfig.LIFESPAN_YEARS_BY_REALM[4]), 3000.0), "元婴寿元 3000 年")
 	_check(BalanceConfig.TALENT_BREAKTHROUGH_POINTS_BY_REALM[4] == 31, "元婴突破 +31 天赋点")
 	var yuanying_reqs: Array = gs.get_breakthrough_requirements(4)
 	_check(yuanying_reqs.size() == 7, "元婴突破需要 7 种材料")

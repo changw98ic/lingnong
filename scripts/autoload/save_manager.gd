@@ -1,18 +1,15 @@
 extends Node
 
-const SAVE_PATH := "user://lingnong_save.json"
-const SAVE_VERSION := 17
+const SAVE_VERSION := 18
+# 存档路径（探针测试时改为隔离路径，避免覆盖真实存档）。
+var save_path := "user://lingnong_save.json"
 
-## v16 只保存当前游戏规则：
-## - 无转世、无仙缘、无炼丹；天赋树使用 talent_nodes + talent_points。
-## - talent_points_earned 保存累计获得的天赋点；天劫档位不受立即消费天赋点影响。
-## - 作物成熟后自动收获并补种；点击加速直接修改成熟时间。
-## - lifespan_max_years / lifespan_years 按时间流逝，寿元归零不重置进度。
-## - 熟练度、晋级/轮回/收获计数和离线结算领取账本跨大限保留。
-## - 成就和成就点跨大限、跨新局保留，并在加载时按当前定义校正。
-## - 商店购买次数（狂暴丹等越买越贵商品的价格依据）跨大限保留。
-## - 突破材料由商店兑换，材料库存按当前局保存。
-## - 突破会先进入天劫；天劫进度和治疗/抗性/强化丹库存按当前局保存。
+## v18 只保存当前游戏规则：
+## - 轮回即核心：随时轮回 + 天人五衰三选择；转世天赋本世生效、跨世不保留。
+## - 突破前稳定/强行选择成功率，碎丹经验跨局保留；天劫改为三道生产体系检查。
+## - 宝箱（木/玉/仙/遗物）与天命奇遇的永久强化跨局保留。
+## - 寿元按时间流逝，寿元归零进入大限；熟练度、成就、商店购买次数跨局保留。
+## - 天降灵种、魔气侵染等新事件状态按当前局保存。
 
 func save_game() -> bool:
 	var data := {
@@ -36,6 +33,11 @@ func save_game() -> bool:
 		"crit_count": GameState.crit_count,
 		"rare_crit_count": GameState.rare_crit_count,
 		"windfall_count": GameState.windfall_count,
+		"treasure_production_bonus": GameState.treasure_production_bonus,
+		"treasure_crit_bonus": GameState.treasure_crit_bonus,
+		"fate_permanent_production": GameState.fate_permanent_production,
+		"broken_dan_experience": GameState.broken_dan_experience,
+		"tribulation_refine_bonus": GameState.tribulation_refine_bonus,
 		"shop_purchase_counts": GameState.shop_purchase_counts,
 		"breakthrough_materials": GameState.breakthrough_materials,
 		"realm_index": GameState.realm_index,
@@ -59,6 +61,15 @@ func save_game() -> bool:
 		"lifespan_max_years": GameState.lifespan_max_years,
 		"lifespan_years": GameState.lifespan_years,
 		"lifespan_depleted": GameState.lifespan_depleted,
+		"decay_active": GameState.decay_active,
+		"fate_opportunity_at": GameState.fate_opportunity_at,
+		"run_start_milestone_index": GameState.run_start_milestone_index,
+		"run_start_promotion_count": GameState.run_start_promotion_count,
+		"reincarnation_boon": GameState.reincarnation_boon,
+		"pending_reincarnation_boon": GameState.pending_reincarnation_boon,
+		"run_harvest_count": GameState.run_harvest_count,
+		"run_random_event_count": GameState.run_random_event_count,
+		"heavenly_seed_unlocked": GameState.heavenly_seed_unlocked,
 		"healing_pills": GameState.healing_pills,
 		"resistance_pills": GameState.resistance_pills,
 		"enhancement_pills": GameState.enhancement_pills,
@@ -66,17 +77,13 @@ func save_game() -> bool:
 		"tribulation_target_realm": GameState.tribulation_target_realm,
 		"tribulation_total_strikes": GameState.tribulation_total_strikes,
 		"tribulation_strikes_survived": GameState.tribulation_strikes_survived,
-		"tribulation_health_max": GameState.tribulation_health_max,
-		"tribulation_health": GameState.tribulation_health,
+		"tribulation_prepared": GameState.tribulation_prepared,
 		"tribulation_next_strike_at": GameState.tribulation_next_strike_at,
-		"tribulation_resistance_charges": GameState.tribulation_resistance_charges,
-		"tribulation_enhancement_active": GameState.tribulation_enhancement_active,
-		"tribulation_last_damage": GameState.tribulation_last_damage,
 		"tribulation_last_result": GameState.tribulation_last_result,
 		"spirit_rain_unlocked": GameState.spirit_rain_unlocked,
 		"unlock_auto_cultivation": GameState.unlock_auto_cultivation,
 	}
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
 		push_error("无法写入存档")
 		return false
@@ -85,9 +92,9 @@ func save_game() -> bool:
 
 
 func load_game() -> bool:
-	if not FileAccess.file_exists(SAVE_PATH):
+	if not FileAccess.file_exists(save_path):
 		return false
-	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file := FileAccess.open(save_path, FileAccess.READ)
 	if file == null:
 		return false
 	var data = JSON.parse_string(file.get_as_text())
@@ -132,6 +139,11 @@ func load_game() -> bool:
 	GameState.crit_count = maxi(0, int(data.get("crit_count", 0)))
 	GameState.rare_crit_count = maxi(0, int(data.get("rare_crit_count", 0)))
 	GameState.windfall_count = maxi(0, int(data.get("windfall_count", 0)))
+	GameState.treasure_production_bonus = maxf(0.0, float(data.get("treasure_production_bonus", 0.0)))
+	GameState.treasure_crit_bonus = maxf(0.0, float(data.get("treasure_crit_bonus", 0.0)))
+	GameState.fate_permanent_production = maxf(0.0, float(data.get("fate_permanent_production", 0.0)))
+	GameState.broken_dan_experience = clampf(float(data.get("broken_dan_experience", 0.0)), 0.0, BalanceConfig.BROKEN_DAN_SUCCESS_CAP)
+	GameState.tribulation_refine_bonus = maxf(0.0, float(data.get("tribulation_refine_bonus", 0.0)))
 	GameState._ensure_inventory_keys()
 
 	GameState.fields.clear()
@@ -212,45 +224,48 @@ func load_game() -> bool:
 	GameState.lifespan_max_years = maxf(BalanceConfig.MIN_LIFESPAN_YEARS, float(data.get("lifespan_max_years", default_max)))
 	GameState.lifespan_years = clampf(float(data.get("lifespan_years", GameState.lifespan_max_years)), 0.0, GameState.lifespan_max_years)
 	GameState.lifespan_depleted = bool(data.get("lifespan_depleted", GameState.lifespan_years <= 0.0))
+	GameState.decay_active = bool(data.get("decay_active", false)) and not GameState.lifespan_depleted
+	GameState.fate_opportunity_at = maxf(0.0, float(data.get("fate_opportunity_at", 0.0)))
+	GameState.run_start_milestone_index = clampi(int(data.get("run_start_milestone_index", GameState.talent_milestone_index)), 0, BalanceConfig.TALENT_MILESTONES.size())
+	GameState.run_start_promotion_count = maxi(0, int(data.get("run_start_promotion_count", GameState.promotion_count)))
+	GameState.reincarnation_boon = String(data.get("reincarnation_boon", ""))
+	if GameState.reincarnation_boon != "" and BalanceConfig.reincarnation_boon(GameState.reincarnation_boon).is_empty():
+		GameState.reincarnation_boon = ""
+	GameState.pending_reincarnation_boon = bool(data.get("pending_reincarnation_boon", false))
+	GameState.run_harvest_count = maxi(0, int(data.get("run_harvest_count", 0)))
+	GameState.run_random_event_count = maxi(0, int(data.get("run_random_event_count", 0)))
+	GameState.heavenly_seed_unlocked = bool(data.get("heavenly_seed_unlocked", false))
 	GameState.healing_pills = maxi(0, int(data.get("healing_pills", 0)))
 	GameState.resistance_pills = maxi(0, int(data.get("resistance_pills", 0)))
 	GameState.enhancement_pills = maxi(0, int(data.get("enhancement_pills", 0)))
 	GameState.tribulation_active = bool(data.get("tribulation_active", false))
 	GameState.tribulation_target_realm = int(data.get("tribulation_target_realm", -1))
-	GameState.tribulation_total_strikes = maxi(0, int(data.get("tribulation_total_strikes", 0)))
+	GameState.tribulation_total_strikes = maxi(0, int(data.get("tribulation_total_strikes", BalanceConfig.TRIBULATION_TOTAL_CHECKS)))
 	GameState.tribulation_strikes_survived = clampi(
 		int(data.get("tribulation_strikes_survived", 0)),
 		0,
-		GameState.tribulation_total_strikes
+		BalanceConfig.TRIBULATION_TOTAL_CHECKS
 	)
-	GameState.tribulation_health_max = maxf(0.0, float(data.get("tribulation_health_max", 0.0)))
-	GameState.tribulation_health = clampf(
-		float(data.get("tribulation_health", 0.0)),
-		0.0,
-		GameState.tribulation_health_max
-	)
+	GameState.tribulation_prepared = [false, false, false]
+	var saved_prepared = data.get("tribulation_prepared", [])
+	if saved_prepared is Array:
+		for prepared_index in range(mini(BalanceConfig.TRIBULATION_TOTAL_CHECKS, saved_prepared.size())):
+			GameState.tribulation_prepared[prepared_index] = bool(saved_prepared[prepared_index])
 	GameState.tribulation_next_strike_at = maxf(0.0, float(data.get("tribulation_next_strike_at", 0.0)))
-	GameState.tribulation_resistance_charges = maxi(0, int(data.get("tribulation_resistance_charges", 0)))
-	GameState.tribulation_enhancement_active = bool(data.get("tribulation_enhancement_active", false))
-	GameState.tribulation_last_damage = maxf(0.0, float(data.get("tribulation_last_damage", 0.0)))
 	GameState.tribulation_last_result = String(data.get("tribulation_last_result", ""))
 	if GameState.tribulation_active and (
 		GameState.lifespan_depleted
 		or
 		GameState.tribulation_target_realm <= GameState.realm_index
 		or GameState.tribulation_target_realm >= RealmConfig.realm_count()
-		or GameState.tribulation_total_strikes <= 0
-		or GameState.tribulation_health_max <= 0.0
+		or GameState.tribulation_total_strikes != BalanceConfig.TRIBULATION_TOTAL_CHECKS
 	):
 		GameState.tribulation_active = false
 		GameState.tribulation_target_realm = -1
-		GameState.tribulation_total_strikes = 0
+		GameState.tribulation_total_strikes = BalanceConfig.TRIBULATION_TOTAL_CHECKS
 		GameState.tribulation_strikes_survived = 0
-		GameState.tribulation_health_max = 0.0
-		GameState.tribulation_health = 0.0
+		GameState.tribulation_prepared = [false, false, false]
 		GameState.tribulation_next_strike_at = 0.0
-		GameState.tribulation_resistance_charges = 0
-		GameState.tribulation_enhancement_active = false
 	var default_unlock_flags := BalanceConfig.default_unlock_flags(GameState.realm_index)
 	for flag in default_unlock_flags:
 		if data.has(flag):
