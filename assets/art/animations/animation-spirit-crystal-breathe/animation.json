@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.726848,
+    "minimum_visible_ratio": 0.272021,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0.0,
+    "mode": "center_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.spirit_crystal_breathe",
+  "atlas": "res://assets/art/animations/animation-spirit-crystal-breathe/atlas.png",
+  "atlas_sha256": "9a81257a9cac502b309496b4f711e64f53d7bd038483b5567d096a1705953a56",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 342,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "prop.spirit_crystal",
+  "sprite_frames": "res://assets/art/animations/animation-spirit-crystal-breathe/sprite_frames.tres"
+}

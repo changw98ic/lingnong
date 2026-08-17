@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.524454,
+    "minimum_visible_ratio": 0.386422,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 6,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.disciple_meditating",
+  "atlas": "res://assets/art/animations/animation-disciple-meditating/atlas.png",
+  "atlas_sha256": "6ef87f09e22f4c079241466fa4f1daffca1a8ab17944452b1429f25e5a418653",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 342,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "character.disciple_meditating",
+  "sprite_frames": "res://assets/art/animations/animation-disciple-meditating/sprite_frames.tres"
+}

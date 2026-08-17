@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.692245,
+    "minimum_visible_ratio": 0.1539,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.gathering_grass_sway",
+  "atlas": "res://assets/art/animations/animation-gathering-grass-sway/atlas.png",
+  "atlas_sha256": "1159e93260673b6125ca17c9163ad580f36a1ecdbbdfd12a1908362666c40d0b",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 12,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 22,
+  "rows": 2,
+  "schema_version": 1,
+  "source_asset_id": "crop.gathering_grass",
+  "sprite_frames": "res://assets/art/animations/animation-gathering-grass-sway/sprite_frames.tres"
+}

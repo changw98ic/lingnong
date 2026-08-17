@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.441513,
+    "minimum_visible_ratio": 0.345001,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 2,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.five_element_ear_sway",
+  "atlas": "res://assets/art/animations/animation-five-element-ear-sway/atlas.png",
+  "atlas_sha256": "f434a8ea898af5fb290ca9ad6e146b64778266042e6d7d75aa7d038631f50af2",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 24,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 24,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "crop.five_element_ear",
+  "sprite_frames": "res://assets/art/animations/animation-five-element-ear-sway/sprite_frames.tres"
+}

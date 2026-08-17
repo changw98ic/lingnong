@@ -1,0 +1,1176 @@
+[
+  {
+    "id": "environment.cultivation_valley_base",
+    "name_zh": "灵田洞府静态底图",
+    "category": "environment",
+    "purpose": "主界面的永久环境底层；只提供山水、建筑、道路和动态资产安装位，不重复绘制独立动画层。",
+    "width": 1920,
+    "height": 1080,
+    "background": "opaque",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A locked 16:9 elevated three-quarter view of a secluded Chinese cultivation farm valley. Place a white-wall, green-tile cave residence across the rear center, layered blue-green mountains and soft clouds in the distance, a dry stone waterfall chute and recessed stream channel along the left, bamboo and an open pavilion along the right, and a broad empty circular mounting terrace in the center. Arrange six reusable radial garden display bays around the terrace, connected by curved stone paths and narrow recessed water channels. These are visual staging areas dynamically reused by the current production portfolio, never permanent one-species slots. Preserve calm negative space across the top HUD band, outer side edges, and lower navigation band. Keep all overlay attachment zones aligned to the composition reference.",
+    "visual": "A bright, healing, high-quality rounded 2D Chinese cultivation landscape with clean animation-film linework, soft cel shading, broad color shapes, jade green vegetation, warm ivory stone, teal roof tiles, and pale golden sunlight. Buildings use authentic Chinese timber and tiled-roof forms with softened corners. The static plate contains structural scenery only: an empty waterfall chute, a neutral stream bed, a blank central formation socket, and clean planting bays. It excludes active water ribbons, the waterwheel rotor, formation rings, crystal, crops, characters, and magical light so independently animated overlays have one unambiguous visual owner.",
+    "must_include": [
+      "High-quality rounded non-pixel 2D Chinese cultivation game art",
+      "Locked camera and exact 16:9 composition",
+      "One empty central formation mounting terrace and six reusable garden display bays",
+      "Readable paths between every visual staging area",
+      "Empty waterfall, stream, waterwheel, formation, crop, and character attachment zones",
+      "Soft daylight with a consistent upper-left light direction",
+      "Opaque full-canvas background with no empty borders"
+    ],
+    "must_avoid": [
+      "pixel art or pixel-grid edges",
+      "noise, grain, dithering, paper texture, or rough brush texture",
+      "oversharpening, edge enhancement, jagged contours, or chromatic aberration",
+      "photorealistic or 3D-rendered materials",
+      "dark horror atmosphere, science-fiction objects, or Western architecture",
+      "baked text, numerals, logos, watermarks, labels, or UI controls",
+      "characters, planted crops, treasure chests, magical particles, or animated-effect residues",
+      "dense micro-detail that would flicker when animated overlays are added",
+      "active waterfall water, active stream surface, waterwheel rotor, formation rings, spirit crystal, or double-drawn animation content",
+      "one fixed crop species permanently assigned to each display bay"
+    ],
+    "existing_target": "res://assets/scenes/cultivation-valley-base.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "environment.foreground_foliage_occluder",
+    "name_zh": "前景竹叶遮挡层",
+    "category": "environment",
+    "purpose": "覆盖主场景下沿和左右角的前景景深层，用于遮住场景边界并支持轻微视差和风吹动画。",
+    "width": 1920,
+    "height": 360,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A wide transparent foreground strip viewed from the same elevated camera as the main scene. Build asymmetrical clusters of broad bamboo leaves, tender grasses, small rounded rocks, and a few soft wildflowers from the bottom edge and lower corners. Keep the central 55 percent mostly open, keep the upper half sparse, and use only a few overlapping leaf tips to create depth without hiding the central formation or bottom navigation controls.",
+    "visual": "Rounded hand-drawn foliage with smooth deep-jade silhouettes, lighter leaf undersides, soft cel-shaded volume, warm green rim light, and restrained pale-gold flower accents. Each leaf cluster has a clear stem structure suitable for later image-to-video swaying. Edges are clean and stable, with no tiny serrations or painted texture.",
+    "must_include": [
+      "Transparent background with clean alpha edges",
+      "High-quality rounded non-pixel 2D animation style",
+      "Sparse center and denser lower corners",
+      "Clearly separated leaf clusters suitable for gentle secondary motion",
+      "Lighting and palette matched to the main environment"
+    ],
+    "must_avoid": [
+      "pixel art or pixel-grid edges",
+      "noise, grain, dithering, paper texture, or rough brush texture",
+      "oversharpening, edge enhancement, jagged contours, or chromatic aberration",
+      "opaque background, rectangular haze, or dirty alpha fringes",
+      "dense foliage covering gameplay areas",
+      "baked text, logos, watermarks, insects, characters, or UI elements",
+      "hard black outlines or harsh specular highlights"
+    ],
+    "existing_target": "res://assets/scenes/field-foreground.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "brand.lingnong_emblem",
+    "name_zh": "灵农修仙品牌徽记",
+    "category": "brand",
+    "purpose": "顶部身份区和启动画面的无文字品牌识别图形，游戏名称由 Godot 字体另外渲染。",
+    "width": 1024,
+    "height": 360,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A horizontal transparent brand lockup with one rounded circular emblem occupying the left third and a restrained cloud-and-leaf flourish extending gently toward the right. The emblem combines a young rice sprout, a jade cultivation ring, a subtle yin-yang flow, and one small mountain silhouette. Leave the right half visually quiet and empty for runtime-rendered Chinese title text.",
+    "visual": "Elegant rounded 2D emblem art in dark jade green, warm ivory, muted cyan, and pale antique gold. Use clean stable linework, smooth filled shapes, soft cel shading, and a handcrafted Chinese seal sensibility without reproducing a literal stamped character. The mark must remain legible when reduced to a compact header.",
+    "must_include": [
+      "A unique sprout-and-jade-ring cultivation emblem",
+      "Transparent background with clean alpha",
+      "Clear silhouette at small display size",
+      "Empty right-side title area",
+      "Rounded non-pixel 2D commercial game finish"
+    ],
+    "must_avoid": [
+      "any baked Chinese or English text, watermarks, logo mockup backgrounds, or presentation cards",
+      "pixel art, noise, grain, rough paper, or ink splatter",
+      "oversharpening, thin scratchy lines, or hard black outlines",
+      "photorealistic calligraphy seals or metallic 3D rendering",
+      "religious symbols unrelated to the fictional cultivation setting"
+    ],
+    "existing_target": "res://assets/brand/logo-horizontal.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "portrait.main_cultivator",
+    "name_zh": "主角修士头像",
+    "category": "portrait",
+    "purpose": "顶部身份区、角色资料和通知中的主角头像，可作为后续眨眼与呼吸视频动画母图。",
+    "width": 512,
+    "height": 512,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A centered head-and-shoulders portrait of a youthful Chinese cultivation-farm caretaker, facing three quarters toward the scene center. Keep the head, hair ornament, shoulders, and both robe collars fully visible inside a circular crop-safe area. Use a calm friendly expression, relaxed eyes, and a small natural smile. Leave generous transparent padding around the silhouette.",
+    "visual": "Rounded high-quality 2D animation character design with warm facial proportions, dark ink-green hair tied in a simple Daoist bun, a small jade-leaf hair ornament, layered warm-ivory and pale-jade robes, and restrained gold stitching. Use smooth skin colors, soft cel shadows, stable brown-green outlines, and simple large shapes that remain consistent during image-to-video animation.",
+    "must_include": [
+      "Transparent background with clean alpha edges",
+      "Friendly youthful Chinese cultivation-farm character",
+      "Complete head, hair ornament, neck, and shoulders",
+      "Rounded non-pixel 2D animation-film styling",
+      "Stable asymmetrical details suitable for blink and breathing animation"
+    ],
+    "must_avoid": [
+      "pixel art, noise, grain, skin texture, or oversharpening",
+      "photorealism, 3D rendering, or plastic anime shading",
+      "extreme facial expression, glamour pose, or oversized eyes",
+      "complex dangling accessories that obscure the face",
+      "cropped hair, cropped chin, hands, scenery, frames, text, or watermark",
+      "pure black outlines or harsh white highlights"
+    ],
+    "existing_target": "res://assets/characters/main-cultivator-portrait.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "resource_icon.cultivation",
+    "name_zh": "修为图标",
+    "category": "resource_icon",
+    "purpose": "顶部 HUD 中表示本世累计修为及每秒修为增长。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One centered jade-green spiritual seed floating inside a smooth open circular qi ribbon. The seed points upward, the ribbon forms a clear clockwise flow, and the whole symbol fits within a square icon-safe area with even transparent padding.",
+    "visual": "Rounded 2D icon with emerald and mint color blocks, a soft cyan inner glow, a small pale-gold highlight, clean warm-green outlines, and restrained cel-shaded depth. It should feel alive and cultivated rather than magical or technological.",
+    "must_include": [
+      "Single readable cultivation symbol",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish",
+      "Strong silhouette at 24-pixel display size",
+      "Jade-green dominant palette"
+    ],
+    "must_avoid": [
+      "text, numerals, badges, frames, or labels",
+      "pixel art, noise, grain, dithering, or oversharpening",
+      "lightning, fire, explosive particles, or neon glow",
+      "photorealistic gem rendering or metallic 3D shine",
+      "pure black outlines or hard drop shadows"
+    ],
+    "existing_target": "res://assets/icons/resources/cultivation.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "resource_icon.spirit_stone",
+    "name_zh": "灵石图标",
+    "category": "resource_icon",
+    "purpose": "顶部 HUD、升级费用和收据中表示灵石存量及每秒收入。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A compact cluster of three rounded cyan spirit crystals growing from one small pale-jade stone base. Place the tallest crystal in the center, angle two shorter crystals outward, and maintain even transparent padding on all sides.",
+    "visual": "Clean rounded 2D cel-shaded crystal shapes in lake blue, cyan, and pale jade, with broad soft facets and one warm reflected highlight. The crystals look precious and spiritual but not glassy, sharp, or photorealistic.",
+    "must_include": [
+      "Three-crystal cluster with one shared base",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish",
+      "Broad readable facets without micro-detail",
+      "Blue-cyan dominant palette"
+    ],
+    "must_avoid": [
+      "text, numerals, coin symbols, frames, or labels",
+      "needle-sharp crystal spikes or weapon-like silhouettes",
+      "pixel art, noise, grain, dithering, or oversharpening",
+      "photorealistic refraction, chrome, or 3D rendering",
+      "harsh bloom, black shadows, or dirty alpha edges"
+    ],
+    "existing_target": "res://assets/icons/resources/spirit-stone.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "resource_icon.physique",
+    "name_zh": "体魄图标",
+    "category": "resource_icon",
+    "purpose": "顶部 HUD、雷劫条件和成长分解中表示体魄功率。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One plump orange-red longevity fruit with two rounded green leaves and a subtle warm heart-shaped inner mark. Center the fruit upright and preserve generous transparent padding; the silhouette must read immediately without a border or container.",
+    "visual": "Warm rounded 2D cel-shaded fruit with terracotta orange, coral red, muted jade leaves, and a soft golden center. The form communicates vitality, breath, and durable health without using muscles, armor, or combat imagery.",
+    "must_include": [
+      "Single vitality fruit with two leaves",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish",
+      "Warm orange-red dominant palette",
+      "Readable silhouette at compact HUD size"
+    ],
+    "must_avoid": [
+      "text, numerals, badges, frames, or labels",
+      "bodybuilder anatomy, fists, shields, armor, or weapons",
+      "pixel art, noise, grain, rough texture, or oversharpening",
+      "photorealistic fruit skin or glossy 3D plastic",
+      "hard black outlines or aggressive flame effects"
+    ],
+    "existing_target": "res://assets/icons/resources/physique.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "resource_icon.consciousness",
+    "name_zh": "神识图标",
+    "category": "resource_icon",
+    "purpose": "顶部 HUD、成长分解和路线需求中表示神识功率。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A centered violet spiritual eye made from two rounded petal arcs surrounding a pearl-like iris, with one small open halo behind it. Keep the design symmetrical enough for quick recognition but retain a gentle organic flow.",
+    "visual": "Rounded 2D icon in muted violet, lavender, blue-gray, and pale jade highlights. Use soft cel shading, broad clean shapes, and a subtle inner glow that suggests awareness and meditation rather than surveillance or technology.",
+    "must_include": [
+      "Organic spiritual-eye motif",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish",
+      "Violet dominant palette",
+      "Clear inner pearl and outer petal silhouette"
+    ],
+    "must_avoid": [
+      "text, numerals, badges, frames, or labels",
+      "realistic human eyeball anatomy or horror imagery",
+      "pixel art, noise, grain, dithering, or oversharpening",
+      "digital interface rings, circuitry, neon, or science-fiction styling",
+      "hard black outlines or intense lens flare"
+    ],
+    "existing_target": "res://assets/icons/resources/consciousness.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "resource_icon.dao_essence",
+    "name_zh": "道蕴图标",
+    "category": "resource_icon",
+    "purpose": "顶部 HUD、轮回预览和长期成长区域中表示道蕴。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A small pale-gold Dao seal formed by two smooth interlocking leaf-shaped currents inside an incomplete jade ring. Center the seal, leave one deliberate opening in the ring, and keep all strokes broad enough to remain legible at small size.",
+    "visual": "Refined rounded 2D icon using muted antique gold, warm ivory, pale cyan, and deep jade outlines. The surface is softly cel shaded like polished carved jade, with no metallic glitter or engraved text.",
+    "must_include": [
+      "Interlocking flow motif inside an incomplete ring",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish",
+      "Pale-gold and jade palette",
+      "Simple ceremonial silhouette"
+    ],
+    "must_avoid": [
+      "Chinese characters, text, numerals, frames, or labels",
+      "religious scripture, literal real-world seals, or copyrighted symbols",
+      "pixel art, noise, grain, rough engraving, or oversharpening",
+      "metallic 3D coin rendering or excessive sparkle",
+      "pure black outlines or overexposed glow"
+    ],
+    "existing_target": "res://assets/icons/resources/dao-essence.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "resource_icon.law",
+    "name_zh": "飞升法则图标",
+    "category": "resource_icon",
+    "purpose": "表示飞升后永久保留的法则数量，与轮回道蕴和天道印记严格区分。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single complete cultivation-law icon centered on a transparent square canvas: three broad jade-white rule rings orbiting one small warm-gold seed of light, with a restrained open skyward arc at the top. Keep the silhouette compact, symmetrical, and readable at 24 pixels. Include no text, number, panel, or border.",
+    "visual": "Rounded high-quality 2D icon art using pale jade, warm ivory, muted cyan, and one restrained antique-gold center. Use broad clean shapes, soft cel shading, deep warm-gray outlines, and no tiny runes.",
+    "must_include": [
+      "A visual identity distinct from Dao essence and the Dao mark",
+      "Three broad law rings and one small central light seed",
+      "Transparent background with clean alpha",
+      "Clear silhouette at compact HUD size"
+    ],
+    "must_avoid": [
+      "yin-yang symbol, scroll, coin, chest, crystal pile, readable rune, text, number, or UI frame",
+      "pixel art, noise, grain, sharpening, thin scratchy detail, or photorealistic material"
+    ],
+    "existing_target": "res://assets/icons/resources/law.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "farm_icon.field",
+    "name_zh": "灵田等级图标",
+    "category": "farm_icon",
+    "purpose": "生产页与升级入口中表示灵田等级和农力基础。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A compact rounded terrace of dark fertile soil bordered by pale jade stones, with three healthy green seedlings arranged in a shallow arc. Show the bed from a gentle elevated three-quarter angle and keep the complete stone rim visible.",
+    "visual": "Soft cel-shaded 2D farm icon with rich warm-brown soil, jade-green sprouts, ivory stone edging, and one restrained golden sunlight accent. Shapes are broad, rounded, and readable without individual dirt grains.",
+    "must_include": [
+      "Complete field bed with three seedlings",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish",
+      "Elevated three-quarter view",
+      "Clear soil, stone rim, and plant separation"
+    ],
+    "must_avoid": [
+      "text, numerals, badges, frames, or labels",
+      "pixel art, soil noise, grain, individual pebbles, or oversharpening",
+      "modern farm machinery, fences, or Western barn imagery",
+      "photorealistic mud or 3D-rendered plants",
+      "cropped rim, black shadows, or cluttered scenery"
+    ],
+    "existing_target": "res://assets/icons/farm/field.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "farm_icon.soil",
+    "name_zh": "灵土阶数图标",
+    "category": "farm_icon",
+    "purpose": "生产页与升级入口中表示灵土阶数及其全局生产乘区。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A rounded cross-section mound showing three clean layers of fertile spirit soil beneath one tiny jade sprout. Shape the mound like a stable low pedestal, center it, and preserve transparent padding around the complete silhouette.",
+    "visual": "Rounded 2D cel shading with warm umber upper soil, muted ochre middle soil, deep teal-brown lower soil, pale jade mineral seams, and a fresh green sprout. Use smooth layer boundaries rather than granular dirt texture.",
+    "must_include": [
+      "Three readable soil layers and one small sprout",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish",
+      "Stable compact mound silhouette",
+      "Warm earth palette balanced by jade accents"
+    ],
+    "must_avoid": [
+      "text, numerals, badges, frames, labels, geological diagram annotations, or science styling",
+      "pixel art, dirt noise, grain, speckling, or oversharpening",
+      "photorealistic soil, realistic mud splashes, or 3D rendering",
+      "hard black outlines or sharp broken rocks"
+    ],
+    "existing_target": "res://assets/icons/farm/soil.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "farm_icon.gathering_array",
+    "name_zh": "聚灵阵等级图标",
+    "category": "farm_icon",
+    "purpose": "生产页、主场景中央阵法和升级入口中表示聚灵阵等级。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A centered top-down circular jade gathering array with three broad concentric rings, six evenly spaced leaf-shaped nodes, and one small faceted green crystal in the middle. Keep every ring complete and leave transparent padding outside the circle.",
+    "visual": "Rounded 2D carved-jade icon in pale cyan, mint green, warm ivory, and restrained antique gold. Rune-like decoration is abstract and broad, with soft cel shading and a gentle inner luminosity rather than sharp magical effects.",
+    "must_include": [
+      "Three complete concentric rings",
+      "Six evenly spaced organic nodes",
+      "One centered jade crystal",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D game icon finish"
+    ],
+    "must_avoid": [
+      "readable glyphs, Chinese characters, text, numerals, frames, or labels",
+      "pixel art, noise, etched micro-detail, grain, or oversharpening",
+      "pentagrams, Western occult symbols, circuitry, or science-fiction styling",
+      "lightning, explosive particles, or overexposed bloom",
+      "photorealistic stone or metallic 3D rendering"
+    ],
+    "existing_target": "res://assets/icons/farm/gathering-array.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.overview",
+    "name_zh": "洞府导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入洞府总览和主场景。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single compact Chinese mountain residence seen front-on, with one curved teal tiled roof, two pale pillars, an open central doorway, and a tiny jade step. Center the entire building with even transparent padding.",
+    "visual": "Rounded 2D icon in teal, warm ivory, dark jade, and muted gold, using broad architectural shapes and soft cel shading. The building feels peaceful and domestic rather than monumental.",
+    "must_include": [
+      "Recognizable Chinese tiled-roof residence",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Strong silhouette at navigation size"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, or notification dots",
+      "pixel art, noise, roof-tile micro-detail, or oversharpening",
+      "Western castle, Japanese torii, modern building, or science-fiction architecture",
+      "photorealism, 3D rendering, or hard black outlines"
+    ],
+    "existing_target": "res://assets/icons/navigation/overview.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.production",
+    "name_zh": "灵田导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入生产组合、作物分配和灵田升级。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One healthy three-leaf spirit seedling rising from a small rounded jade-edged soil crescent. Center the seedling and keep all leaf tips inside a compact square-safe silhouette.",
+    "visual": "Fresh rounded 2D icon with jade and mint leaves, warm-brown soil, pale-gold veins, and soft cel-shaded volume. Use large simple leaves that remain legible at small size.",
+    "must_include": [
+      "Three-leaf seedling and small soil base",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Clear silhouette at navigation size"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, or notification dots",
+      "pixel art, leaf noise, grain, or oversharpening",
+      "photorealistic botany texture, realistic thorns, dead leaves, 3D rendering, or black drop shadows"
+    ],
+    "existing_target": "res://assets/icons/navigation/production.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.paths",
+    "name_zh": "境界导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入境界路线、突破条件和谱系选择。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A seated cultivator silhouette in a calm lotus pose beneath one open arch-shaped halo, with two small branching jade paths rising symmetrically behind the shoulders. Keep the figure compact and centered.",
+    "visual": "Rounded 2D icon with a deep warm-gray robe silhouette, pale-jade halo, muted-gold path accents, and soft cel shading. It communicates meditation and branching progression without facial micro-detail.",
+    "must_include": [
+      "Seated meditation figure",
+      "Two subtle branching path accents",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, or notification dots",
+      "pixel art, anatomy detail, cloth noise, or oversharpening",
+      "combat pose, weapons, religious deity depiction, or giant aura",
+      "photorealism, 3D rendering, or pure black silhouette"
+    ],
+    "existing_target": "res://assets/icons/navigation/paths.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.tribulation",
+    "name_zh": "雷劫导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入雷劫气血门槛、锁定伤害和结算界面。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One broad rounded lightning stroke descending through a soft blue-gray cloud curl into a small jade circular grounding seal. Center the vertical motif and keep generous transparent space around it.",
+    "visual": "Rounded 2D icon using muted gold for the lightning, blue-gray and lavender for the cloud, and jade for the grounding seal. Use soft cel shading and a controlled ceremonial energy rather than an explosive storm effect.",
+    "must_include": [
+      "Single lightning stroke, cloud curl, and grounding seal",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Readable vertical silhouette"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, or notification dots",
+      "multiple chaotic lightning branches, explosion, or flashing bloom",
+      "pixel art, noise, grain, motion blur, or oversharpening",
+      "photorealistic storm clouds, 3D rendering, or pure black shadows"
+    ],
+    "existing_target": "res://assets/icons/navigation/tribulation.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.materials",
+    "name_zh": "宝物导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入宝箱累计、材料库存和道蕴印记。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A compact rounded treasure pouch with a tied cord, one jade bead, and a small pale-gold leaf charm. Show the complete pouch from a slight three-quarter angle and center it with even transparent padding.",
+    "visual": "Warm rounded 2D icon with ochre cloth, dark-jade cord, pale-gold trim, and a mint jade bead. Soft cel shading gives depth without fabric texture or metallic shine.",
+    "must_include": [
+      "Complete tied treasure pouch",
+      "One jade bead and one leaf charm",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style"
+    ],
+    "must_avoid": [
+      "text, labels, currency marks, button frames, or notification dots",
+      "pixel art, fabric noise, grain, stitching micro-detail, or oversharpening",
+      "modern backpack, leather realism, or Western money bag styling",
+      "photorealism, 3D rendering, or hard metallic reflections"
+    ],
+    "existing_target": "res://assets/icons/navigation/materials.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.receipts",
+    "name_zh": "日志导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入突破、雷劫、轮回和离线聚合收据。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One partially unrolled bamboo-and-paper scroll with a rounded jade cord and three abstract horizontal brush marks. Keep the scroll centered and fully visible with no readable writing.",
+    "visual": "Rounded 2D icon in warm parchment ivory, muted bamboo brown, dark jade, and pale gold. Use soft cel shading, broad rolled edges, and simple abstract marks that imply records without becoming text.",
+    "must_include": [
+      "Complete partially unrolled scroll",
+      "Three abstract non-readable brush marks",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style"
+    ],
+    "must_avoid": [
+      "readable text, Chinese characters, numerals, labels, or notification dots",
+      "pixel art, paper grain, stains, torn edges, or oversharpening",
+      "modern clipboard, book, tablet, or science-fiction interface",
+      "photorealism, 3D rendering, or hard black outlines"
+    ],
+    "existing_target": "res://assets/icons/navigation/receipts.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.automation",
+    "name_zh": "阵法导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入自动购买、突破、雷劫和轮回策略。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A compact circular jade formation with six rounded outer nodes, one central seed symbol, and two broad curved flow arrows integrated into the ring. Center the complete circle and keep the arrows organic rather than mechanical.",
+    "visual": "Rounded 2D carved-jade icon in mint, cyan, warm ivory, and restrained gold. Soft cel shading and broad abstract rune channels communicate a self-running cultivation array without gears or circuitry.",
+    "must_include": [
+      "Complete circular formation",
+      "Six outer nodes, central seed, and two flow arrows",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style"
+    ],
+    "must_avoid": [
+      "readable glyphs, text, labels, button frames, or notification dots",
+      "gears, robots, circuitry, digital arrows, or science-fiction styling",
+      "pixel art, etched noise, grain, or oversharpening",
+      "photorealistic jade, metallic 3D rendering, or explosive glow"
+    ],
+    "existing_target": "res://assets/icons/navigation/automation.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "navigation_icon.reincarnation",
+    "name_zh": "轮回导航图标",
+    "category": "navigation_icon",
+    "purpose": "底部主导航中进入轮回收益、飞升条件和重置确认。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "Two broad rounded currents forming an open circular spiral around a small pale-gold seed pearl. The upper current is jade green, the lower current is warm gray-blue, and both taper smoothly without sharp arrowheads.",
+    "visual": "Calm rounded 2D icon with soft cel shading, jade, muted cyan, warm ivory, and antique-gold accents. It suggests renewal and cyclic growth rather than death, portals, or destructive reset.",
+    "must_include": [
+      "Two-current open spiral",
+      "One centered seed pearl",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, or notification dots",
+      "skulls, death imagery, black holes, portals, or aggressive arrows",
+      "pixel art, noise, grain, motion blur, or oversharpening",
+      "photorealism, metallic 3D rendering, or overexposed glow"
+    ],
+    "existing_target": "res://assets/icons/navigation/reincarnation.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.auto",
+    "name_zh": "自动运行图标",
+    "category": "action_icon",
+    "purpose": "表示自动购买、自动突破或全局自动化已经开启。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "Two smooth jade leaf-shaped currents circling one small pale-gold seed, forming a calm open loop. Keep the loop centered, broad, and clearly readable without a surrounding button frame.",
+    "visual": "Rounded 2D status icon with mint, jade, and soft gold cel-shaded shapes. The motion cue is organic and cultivation-themed, with no mechanical gear imagery.",
+    "must_include": [
+      "Organic circular motion and central seed",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Readable active-state silhouette"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, checkmarks, or notification dots",
+      "gears, robots, circuitry, or digital refresh symbols",
+      "pixel art, noise, grain, or oversharpening",
+      "photorealism, 3D rendering, or neon glow"
+    ],
+    "existing_target": "res://assets/icons/actions/auto.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.available",
+    "name_zh": "可执行状态图标",
+    "category": "action_icon",
+    "purpose": "表示路线、升级或操作已经满足全部条件，可以执行。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A plump jade bud opening upward with one small pale-gold star nestled at its center. Center the bud and preserve an uncluttered silhouette with no external ring or frame.",
+    "visual": "Bright rounded 2D icon in mint, jade, warm ivory, and muted gold, with soft cel shading and a restrained positive glow. It reads as readiness and opportunity rather than completion.",
+    "must_include": [
+      "Opening jade bud and central small star",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Positive readable state cue"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, checkmarks, or notification dots",
+      "pixel art, noise, spark showers, grain, or oversharpening",
+      "neon green, overexposed bloom, or explosive particles",
+      "photorealism, 3D rendering, or pure black outlines"
+    ],
+    "existing_target": "res://assets/icons/actions/available.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.breakthrough",
+    "name_zh": "突破图标",
+    "category": "action_icon",
+    "purpose": "突破按钮、突破批次和收据中表示境界突破。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A rounded jade seed splitting a thin circular shell while one soft pale-gold sprout rises through the opening. Keep the break clean and controlled, with only two large shell pieces and no debris.",
+    "visual": "Rounded 2D icon using deep jade, mint, warm ivory, and pale gold, with soft cel shading and a gentle upward energy. The image communicates a cultivation threshold opening, not impact or destruction.",
+    "must_include": [
+      "Jade seed, opening shell, and rising sprout",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Clear upward progression cue"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, weapons, or notification dots",
+      "explosion, shattered debris, lightning storm, or aggressive impact lines",
+      "pixel art, noise, grain, motion blur, or oversharpening",
+      "photorealism, metallic 3D rendering, or overexposed glow"
+    ],
+    "existing_target": "res://assets/icons/actions/breakthrough.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.receipt",
+    "name_zh": "批次收据图标",
+    "category": "action_icon",
+    "purpose": "表示宝箱、材料和丹药已经自动结算形成一份批次收据，不触发领取操作。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single compact rounded receipt-scroll icon centered on transparent canvas, showing one simplified folded paper shape, one small jade check seal, and one subtle grouped-line motif. Keep all shapes bold and legible at 24 pixels. Include no hand, arrow, gift box, button frame, text, or number.",
+    "visual": "Warm ivory paper with a muted-jade check seal, deep warm-brown rounded outline, one restrained pale-gold corner accent, broad clean color shapes, and no readable writing.",
+    "must_include": [
+      "One clearly readable settled-receipt silhouette",
+      "One small jade completion seal",
+      "Transparent background and clean alpha",
+      "Legibility at compact HUD size"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, hands, or notification dots",
+      "coin shower, gem explosion, confetti, or strong bloom",
+      "pixel art, wood grain, noise, or oversharpening",
+      "photorealism, metallic 3D rendering, or hard black shadows",
+      "claim button symbolism, reaching hand, download arrow, unopened reward, or pending state"
+    ],
+    "existing_target": "res://assets/icons/actions/receipt.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.completed",
+    "name_zh": "已完成状态图标",
+    "category": "action_icon",
+    "purpose": "表示境界、任务、自动化蓝图或结算步骤已经完成。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A pale-jade circular seal containing one broad leaf-shaped check stroke, with a tiny warm-gold seed at the stroke origin. Keep the seal complete, centered, and free of decorative text.",
+    "visual": "Rounded 2D status icon in pale jade, deep green, warm ivory, and muted gold. Use soft cel shading and a settled balanced silhouette that reads as finished rather than merely available.",
+    "must_include": [
+      "Complete circular seal and leaf-shaped completion stroke",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Calm completed-state cue"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, stars, or notification dots",
+      "corporate flat-design checkmark or modern app styling",
+      "pixel art, noise, grain, or oversharpening",
+      "photorealism, metallic 3D rendering, or neon green glow"
+    ],
+    "existing_target": "res://assets/icons/actions/completed.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.info",
+    "name_zh": "信息图标",
+    "category": "action_icon",
+    "purpose": "提示规则说明、收益分解和非阻塞的补充信息。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A small rounded jade lantern containing one simple vertical pearl-and-stem information motif. Center the complete lantern, use broad shapes, and avoid any Latin letterform.",
+    "visual": "Soft rounded 2D icon in pale jade, lake blue, warm ivory, and muted gold, with gentle cel shading and a calm scholarly feeling. The inner motif is symbolic, not typographic.",
+    "must_include": [
+      "Complete jade lantern and abstract information motif",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Readable neutral-information state"
+    ],
+    "must_avoid": [
+      "letters, Chinese characters, text, labels, button frames, or notification dots",
+      "question marks, speech bubbles, modern app symbols, or science-fiction UI",
+      "pixel art, noise, grain, or oversharpening",
+      "photorealism, glassy 3D rendering, or strong glow"
+    ],
+    "existing_target": "res://assets/icons/actions/info.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.locked",
+    "name_zh": "未解锁状态图标",
+    "category": "action_icon",
+    "purpose": "表示境界路线、自动化蓝图或内容门尚未解锁。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A rounded closed jade gate clasp with two symmetrical cloud curls and one small sealed seed at the center. Keep the clasp compact and centered without chains or a modern padlock body.",
+    "visual": "Muted rounded 2D status icon in gray-jade, warm ivory, desaturated teal, and a small dull-gold accent. Soft cel shading communicates unavailable content without making the state ominous.",
+    "must_include": [
+      "Closed cultivation-gate clasp and sealed seed",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Muted but readable locked state"
+    ],
+    "must_avoid": [
+      "text, labels, button frames, chains, keys, or notification dots",
+      "modern steel padlock, prison imagery, skulls, or horror styling",
+      "pixel art, noise, scratches, grain, or oversharpening",
+      "photorealistic metal, 3D rendering, or pure black shadows"
+    ],
+    "existing_target": "res://assets/icons/actions/locked.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.unread_receipt",
+    "name_zh": "未读收据图标",
+    "category": "action_icon",
+    "purpose": "表示已有自动结算记录尚未查看，不表示奖励仍待领取。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single compact rounded receipt-scroll icon centered on transparent canvas, paired with one small warm-gold unread dot at the upper-right edge. Use bold simple shapes readable at 24 pixels. Include no hand, arrow, gift box, claim button, text, or number.",
+    "visual": "Warm ivory paper, muted-jade inner line, deep warm-brown rounded outline, and one restrained warm-gold unread dot with no glow burst.",
+    "must_include": [
+      "One settled-receipt silhouette",
+      "One small warm-gold unread dot",
+      "Transparent background and clean alpha",
+      "Legibility at compact HUD size"
+    ],
+    "must_avoid": [
+      "text, labels, hands, large button frames, or any extra badge beyond the single required unread dot",
+      "coin shower, spark explosion, confetti, or strong bloom",
+      "pixel art, wood grain, noise, or oversharpening",
+      "photorealism, metallic 3D rendering, or hard black shadows",
+      "claim button symbolism, unopened reward, download arrow, or pending payout"
+    ],
+    "existing_target": "res://assets/icons/actions/unread-receipt.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.save",
+    "name_zh": "保存图标",
+    "category": "action_icon",
+    "purpose": "手动保存当前进度以及确认关键操作已经写入存档。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A compact rolled jade-edged record scroll tied with a dark-green cord and secured by one small round pale-gold seal. Center the complete scroll at a gentle diagonal and keep the seal blank.",
+    "visual": "Rounded 2D icon in warm parchment, jade green, muted gold, and soft brown, with broad cel-shaded folds and no paper grain. It feels like preserving a cultivation record, not a computer storage device.",
+    "must_include": [
+      "Rolled record scroll, cord, and blank round seal",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Clear save-record metaphor"
+    ],
+    "must_avoid": [
+      "floppy disk, cloud upload, computer icon, text, labels, readable seal characters, signatures, watermarks, notification dots, or button frames",
+      "pixel art, paper grain, stains, noise, or oversharpening",
+      "photorealism, 3D rendering, or hard black outlines"
+    ],
+    "existing_target": "res://assets/icons/actions/save.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "action_icon.warning",
+    "name_zh": "警告状态图标",
+    "category": "action_icon",
+    "purpose": "提示存档失败、自动化停止、条件冲突或需要玩家关注的非致命问题。",
+    "width": 128,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A rounded amber gourd-shaped warning charm with one dark-red central dot-and-stem symbol and a small jade cord at the top. Keep the silhouette compact, centered, and free of a triangular road-sign frame.",
+    "visual": "Warm rounded 2D status icon in amber, muted coral, dark jade, and warm ivory, with soft cel shading and controlled contrast. It attracts attention without flashing, danger stripes, or aggressive red bloom.",
+    "must_include": [
+      "Amber warning charm and abstract central alert symbol",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D icon style",
+      "Readable caution state without harshness"
+    ],
+    "must_avoid": [
+      "letters, text, labels, exclamation marks, button frames, or notification dots",
+      "modern traffic sign, hazard stripes, sirens, or science-fiction alarms",
+      "pixel art, noise, grain, flashing effects, or oversharpening",
+      "photorealism, metallic 3D rendering, or pure black shadows"
+    ],
+    "existing_target": "res://assets/icons/actions/warning.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.top_hud_frame",
+    "name_zh": "顶部低密度 HUD 框",
+    "category": "ui",
+    "purpose": "主界面的可伸缩顶部薄框；身份、核心资源和状态模块由 Godot 独立摆放，不固化资源槽数量。",
+    "width": 1600,
+    "height": 104,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single wide and very shallow transparent HUD foundation spanning the top of a 16:9 screen. Provide one flexible rounded identity anchor at the far left, a quiet stretchable center rail that can accept independent resource chips, and one compact status anchor at the far right. Do not draw fixed resource slots, separators, icons, text boxes, or a five-column grid. Preserve generous transparent gaps and keep the scene visible through and between modules.",
+    "visual": "A translucent warm-ivory jade membrane with very soft green tint, rounded corners, thin muted-gold and pale-jade edge accents, and minimal cloud-corner ornaments. The frame should feel integrated into the bright landscape rather than like an opaque dashboard.",
+    "must_include": [
+      "Transparent outer canvas and softly translucent inner surface",
+      "A stretchable low-density rail with no fixed slot count",
+      "Separate left identity and right status anchor zones",
+      "Rounded non-pixel 2D Chinese cultivation UI styling",
+      "Clean scalable edges suitable for nine-patch preparation"
+    ],
+    "must_avoid": [
+      "baked text, numerals, icons, portraits, logos, bars, or status lights",
+      "pixel art, noise, paper grain, etched texture, or oversharpening",
+      "dark opaque dashboard panels, dense dividers, table layout, or web-admin styling",
+      "metallic 3D bevels, glassmorphism glare, hard shadows, or pure black borders"
+    ],
+    "existing_target": "res://assets/ui/top-hud-frame.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.resource_chip",
+    "name_zh": "资源胶囊底框",
+    "category": "ui",
+    "purpose": "顶部 HUD 中承载单个资源图标、存量和每秒增量。",
+    "width": 360,
+    "height": 104,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A compact horizontal pill-shaped UI foundation with one circular icon recess on the left and a wide empty two-line content area on the right. Keep the internal layout spacious and leave all content areas blank.",
+    "visual": "Soft translucent warm-ivory jade surface with a pale-green inner tint, one thin muted-gold edge, rounded ends, and a barely visible cloud flourish near the far-right edge. It must remain readable over both sky and foliage without becoming opaque.",
+    "must_include": [
+      "Transparent outer canvas",
+      "One empty left icon recess and one empty right content zone",
+      "Rounded non-pixel 2D Chinese cultivation UI styling",
+      "Nine-patch-friendly straight center spans",
+      "Soft contrast suitable for overlaying runtime text"
+    ],
+    "must_avoid": [
+      "baked text, numerals, icons, plus signs, progress bars, or badges",
+      "pixel art, noise, paper texture, grain, or oversharpening",
+      "dark dashboard styling, dense borders, metallic bevels, or glossy glass",
+      "hard shadows, pure black outlines, or excessive ornaments"
+    ],
+    "existing_target": "res://assets/ui/resource-chip.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.bottom_navigation_dock",
+    "name_zh": "底部导航托盘",
+    "category": "ui",
+    "purpose": "承载四个常驻主入口；其余功能通过场景热点、条件按钮或二级菜单出现。",
+    "width": 920,
+    "height": 150,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A compact centered bottom navigation tray for exactly four primary game entrances. Provide four large evenly spaced circular icon anchors with broad transparent gaps, a low rounded jade-and-warm-ivory base, and a shallow silhouette that leaves most of the scene visible. Do not include any icons, labels, notification dots, secondary shortcuts, or more than four anchor positions.",
+    "visual": "Warm-ivory and pale-jade rounded 2D UI shell with soft translucency, thin muted-gold edging, restrained carved-cloud corner details, and a gentle soft shadow. The dock supports icons while allowing the animated landscape to remain visible and dominant.",
+    "must_include": [
+      "Exactly four primary icon anchor positions",
+      "Compact centered width with generous spacing",
+      "Transparent outer canvas and softly translucent rounded base",
+      "Empty anchors for runtime icons and labels",
+      "Low-density game navigation rather than a toolbar"
+    ],
+    "must_avoid": [
+      "baked text, icons, selected states, notification dots, or labels",
+      "pixel art, noise, paper grain, complex engraving, or oversharpening",
+      "desktop taskbar, web-admin sidebar, dense menu, or card-grid styling",
+      "dark opaque slab, metallic 3D bevel, hard shadow, or pure black border"
+    ],
+    "existing_target": "res://assets/ui/bottom-navigation-dock.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.round_icon_button_frame",
+    "name_zh": "圆形图标按钮底框",
+    "category": "ui",
+    "purpose": "侧边快捷入口和底部导航图标的统一无文字按钮底框。",
+    "width": 192,
+    "height": 192,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One centered circular button foundation with a large empty inner icon well, a broad comfortable touch silhouette, and one subtle leaf notch at the lower edge. Keep the ring complete and leave transparent padding around it.",
+    "visual": "Rounded warm-ivory jade UI frame with a pale-green inner wash, thin muted-gold outer rim, soft cel-shaded depth, and a restrained shadow. The center remains plain so many different runtime icons stay readable.",
+    "must_include": [
+      "Empty central icon well",
+      "Transparent outer canvas",
+      "Complete rounded ring",
+      "Rounded non-pixel 2D Chinese cultivation UI styling",
+      "Clear normal-state contrast"
+    ],
+    "must_avoid": [
+      "baked icon, text, numerals, notification dot, glow, or selected state",
+      "pixel art, noise, paper grain, ornament clutter, or oversharpening",
+      "metallic 3D bevel, glossy plastic, hard shadow, or pure black outline",
+      "square corners or modern mobile-system icon styling"
+    ],
+    "existing_target": "res://assets/ui/round-icon-button-frame.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.primary_action_button",
+    "name_zh": "主操作按钮底框",
+    "category": "ui",
+    "purpose": "用于购买最大、突破、轮回确认等当前页面唯一主操作，文字和图标由 Godot 运行时叠加。",
+    "width": 480,
+    "height": 128,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A wide rounded rectangular action-button foundation with a clean empty center, lightly reinforced left and right endcaps, and a subtle upward leaf flourish under the center line. Preserve broad straight center spans for scalable slicing.",
+    "visual": "Jade-green primary button surface with mint upper light, deep-jade lower shading, thin warm-gold edging, and soft rounded cel-shaded volume. It is inviting and tactile but not glossy, embossed, or oversized.",
+    "must_include": [
+      "Empty center for runtime text and optional icon",
+      "Transparent outer canvas",
+      "Rounded non-pixel 2D Chinese cultivation UI styling",
+      "Nine-patch-friendly center region",
+      "Strong but calm primary-action contrast"
+    ],
+    "must_avoid": [
+      "baked text, icons, arrows, particles, or pressed-state effects",
+      "pixel art, noise, texture grain, edge sharpening, or tiny engravings",
+      "neon green, glossy plastic, metallic bevels, or web-dashboard styling",
+      "hard shadow, pure black border, or extreme highlight"
+    ],
+    "existing_target": "res://assets/ui/primary-action-button.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.context_panel",
+    "name_zh": "轻量上下文面板",
+    "category": "ui",
+    "purpose": "在主场景上临时展示境界计划、轮回预览或少量详细信息，不长期遮挡场景。",
+    "width": 640,
+    "height": 420,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A medium floating rounded panel with one shallow empty header band, one large uninterrupted content field, and one narrow empty action strip along the bottom. Use only four restrained corner ornaments and keep the interior free of dividers, rows, icons, and text.",
+    "visual": "A warm-ivory translucent jade-paper surface with pale-green edge tint, muted-gold corner filigree, soft cel-shaded thickness, and a gentle diffuse shadow. The panel feels like an elegant in-world cultivation notice, not parchment texture or a management dashboard.",
+    "must_include": [
+      "Transparent outer canvas",
+      "One empty header area, one open content area, and one empty action area",
+      "Rounded non-pixel 2D Chinese cultivation UI styling",
+      "Low ornament density",
+      "Scalable clean central surface"
+    ],
+    "must_avoid": [
+      "baked text, icons, charts, rows, tabs, buttons, or close symbol",
+      "pixel art, paper fibers, stains, noise, grain, or oversharpening",
+      "table grid, admin dashboard, card stack, dark modal, or web styling",
+      "metallic 3D bevel, hard shadow, pure black outline, or dense filigree"
+    ],
+    "existing_target": "res://assets/ui/context-panel.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.progress_bar_frame",
+    "name_zh": "成长进度条底框",
+    "category": "ui",
+    "purpose": "用于境界门槛、雷劫气血安全线和少量关键长期进度，填充值由 Godot 动态绘制。",
+    "width": 720,
+    "height": 96,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A long low rounded progress trough with a fully empty inner channel, soft leaf-shaped endcaps, and one tiny centered marker notch above the track. Keep the inner channel uninterrupted and suitable for runtime fill clipping.",
+    "visual": "Pale-jade and warm-ivory 2D frame with thin muted-gold edging, soft cel-shaded depth, and restrained translucent shadows. The empty track is a calm desaturated green-gray with no baked fill.",
+    "must_include": [
+      "Completely empty uninterrupted progress channel",
+      "Transparent outer canvas",
+      "Rounded non-pixel 2D Chinese cultivation UI styling",
+      "Clean stretchable center span",
+      "Subtle marker notch without a numeric label"
+    ],
+    "must_avoid": [
+      "baked progress fill, percentages, text, icons, ticks, or glow animation",
+      "pixel art, noise, grain, scratches, or oversharpening",
+      "health-bar aggression, metallic machinery, modern web component styling, or glass glare",
+      "hard shadow, pure black outline, or excessive ornament"
+    ],
+    "existing_target": "res://assets/ui/progress-bar-frame.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "ui.status_pill",
+    "name_zh": "运行状态胶囊底框",
+    "category": "ui",
+    "purpose": "显示运行中、等待雷劫、自动化停止等单行状态，状态图标和文字由运行时提供。",
+    "width": 360,
+    "height": 92,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A compact horizontal rounded status pill with one small empty circular indicator recess on the left and one wide empty single-line label area. Keep the right end clean and preserve transparent padding around the whole shape.",
+    "visual": "Soft translucent pale-jade UI surface with a warm-ivory center, thin muted-gold rim, and gentle cel-shaded depth. The base uses neutral colors so runtime tinting can communicate normal, pending, warning, and completed states.",
+    "must_include": [
+      "Empty left indicator recess and empty right label zone",
+      "Transparent outer canvas",
+      "Rounded non-pixel 2D Chinese cultivation UI styling",
+      "Neutral tintable base colors",
+      "Nine-patch-friendly center span"
+    ],
+    "must_avoid": [
+      "baked text, status dot, icon, color state, badge, or animation",
+      "pixel art, noise, paper grain, scratches, or oversharpening",
+      "dark dashboard chip, glossy glass, metallic bevel, or modern web styling",
+      "hard shadow, pure black outline, or decorative clutter"
+    ],
+    "existing_target": "res://assets/ui/status-pill.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  }
+]

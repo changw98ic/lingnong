@@ -1,0 +1,1325 @@
+{
+  "animation_count": 26,
+  "animations": {
+    "animation.bamboo_leaves_sway": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.739003,
+        "minimum_visible_ratio": 0.248769,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 2,
+        "mode": "lower_right_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.bamboo_leaves_sway",
+      "atlas": "res://assets/art/animations/animation-bamboo-leaves-sway/atlas.png",
+      "atlas_sha256": "9cd06a6f0d5a66230eb4a4f8173122530e098638d90937f909a14c40e398a2b7",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 384,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "effect_source.bamboo_leaves",
+      "sprite_frames": "res://assets/art/animations/animation-bamboo-leaves-sway/sprite_frames.tres"
+    },
+    "animation.breakthrough": {
+      "alpha": {
+        "minimum_black_ratio": 0.385078,
+        "minimum_content_ratio": 0.505364,
+        "mode": "black_additive_content",
+        "verified": true
+      },
+      "anchor": {
+        "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+        "canvas_dimensions_verified": true,
+        "mode": "fixed_canvas_registration",
+        "verified": false
+      },
+      "animation_id": "animation.breakthrough",
+      "atlas": "res://assets/art/animations/animation-breakthrough/atlas.png",
+      "atlas_sha256": "402e3a7836e020615933b1800288251e5ee018d058dff0687c94b1792c3beac2",
+      "blend_mode": "additive",
+      "columns": 8,
+      "frame_count": 20,
+      "frame_height": 384,
+      "frame_width": 384,
+      "loop_mode": "seam_blend",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 20,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "effect_source.breakthrough",
+      "sprite_frames": "res://assets/art/animations/animation-breakthrough/sprite_frames.tres"
+    },
+    "animation.butterfly_flight": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.716492,
+        "minimum_visible_ratio": 0.184814,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 5.0,
+        "mode": "body_center_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.butterfly_flight",
+      "atlas": "res://assets/art/animations/animation-butterfly-flight/atlas.png",
+      "atlas_sha256": "ffc5c803c2c0e5d80e46e873e3c3fc6c7cf4a69079c3bb6b5279cd494017955a",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 16,
+      "frame_height": 128,
+      "frame_width": 128,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 16,
+      "rows": 2,
+      "schema_version": 1,
+      "source_asset_id": "character.butterfly",
+      "sprite_frames": "res://assets/art/animations/animation-butterfly-flight/sprite_frames.tres"
+    },
+    "animation.chest_common_open": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.532986,
+        "minimum_visible_ratio": 0.361979,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.chest_common_open",
+      "atlas": "res://assets/art/animations/animation-chest-common-open/atlas.png",
+      "atlas_sha256": "faddcb3e588b7f9353bc49e4efdb350e5517741f27a01e9e33b26764951df781",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 24,
+      "frame_height": 384,
+      "frame_width": 384,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 24,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "chest.common",
+      "sprite_frames": "res://assets/art/animations/animation-chest-common-open/sprite_frames.tres"
+    },
+    "animation.chest_elite_open": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.43297,
+        "minimum_visible_ratio": 0.445692,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.chest_elite_open",
+      "atlas": "res://assets/art/animations/animation-chest-elite-open/atlas.png",
+      "atlas_sha256": "3e46bb11cac0a9479b60cf417477e3070a05913810f207d9a68fa701c7259da2",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 24,
+      "frame_height": 384,
+      "frame_width": 384,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 24,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "chest.elite",
+      "sprite_frames": "res://assets/art/animations/animation-chest-elite-open/sprite_frames.tres"
+    },
+    "animation.chest_rare_open": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.354533,
+        "minimum_visible_ratio": 0.49157,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.chest_rare_open",
+      "atlas": "res://assets/art/animations/animation-chest-rare-open/atlas.png",
+      "atlas_sha256": "844a54f2dc2922c2ce14cc8f355aaaefa776b08f9deb7f759ff72be67914cf49",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 24,
+      "frame_height": 384,
+      "frame_width": 384,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 24,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "chest.rare",
+      "sprite_frames": "res://assets/art/animations/animation-chest-rare-open/sprite_frames.tres"
+    },
+    "animation.clouds_drift": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.717155,
+        "minimum_visible_ratio": 0.241753,
+        "verified": true
+      },
+      "anchor": {
+        "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+        "canvas_dimensions_verified": true,
+        "mode": "fixed_canvas_registration",
+        "verified": false
+      },
+      "animation_id": "animation.clouds_drift",
+      "atlas": "res://assets/art/animations/animation-clouds-drift/atlas.png",
+      "atlas_sha256": "10edd77f833dc8b4a8a8318ac941af0f20b8d76edd32e83b4384b0d33facc367",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 12,
+      "frame_height": 256,
+      "frame_width": 512,
+      "loop_mode": "seam_blend",
+      "padding": 4,
+      "playback_fps": 4,
+      "playback_frame_count": 12,
+      "rows": 2,
+      "schema_version": 1,
+      "source_asset_id": "effect_source.cloud_mist",
+      "sprite_frames": "res://assets/art/animations/animation-clouds-drift/sprite_frames.tres"
+    },
+    "animation.disciple_casting": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.582568,
+        "minimum_visible_ratio": 0.310513,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.disciple_casting",
+      "atlas": "res://assets/art/animations/animation-disciple-casting/atlas.png",
+      "atlas_sha256": "46ea401074c61bfb8095f2a020a2d50ef28f90a43992dde928333131cc83a7b2",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 32,
+      "frame_height": 342,
+      "frame_width": 256,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 32,
+      "rows": 4,
+      "schema_version": 1,
+      "source_asset_id": "character.disciple_spellcasting",
+      "sprite_frames": "res://assets/art/animations/animation-disciple-casting/sprite_frames.tres"
+    },
+    "animation.disciple_inspecting": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.63882,
+        "minimum_visible_ratio": 0.349529,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.disciple_inspecting",
+      "atlas": "res://assets/art/animations/animation-disciple-inspecting/atlas.png",
+      "atlas_sha256": "8467bd19d592752e94811d6e54eaa526b796eedce74f9b730c613b482acd9e89",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 342,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "character.disciple_observing",
+      "sprite_frames": "res://assets/art/animations/animation-disciple-inspecting/sprite_frames.tres"
+    },
+    "animation.disciple_meditating": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.524454,
+        "minimum_visible_ratio": 0.386422,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 6,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.disciple_meditating",
+      "atlas": "res://assets/art/animations/animation-disciple-meditating/atlas.png",
+      "atlas_sha256": "6ef87f09e22f4c079241466fa4f1daffca1a8ab17944452b1429f25e5a418653",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 342,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "character.disciple_meditating",
+      "sprite_frames": "res://assets/art/animations/animation-disciple-meditating/sprite_frames.tres"
+    },
+    "animation.disciple_watering": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.629557,
+        "minimum_visible_ratio": 0.345543,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.disciple_watering",
+      "atlas": "res://assets/art/animations/animation-disciple-watering/atlas.png",
+      "atlas_sha256": "34c1fcc4964a9822225b93b7c4b825f47b7f604f53dc0549eb560483ddbabc4d",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 32,
+      "frame_height": 342,
+      "frame_width": 256,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 32,
+      "rows": 4,
+      "schema_version": 1,
+      "source_asset_id": "character.disciple_watering",
+      "sprite_frames": "res://assets/art/animations/animation-disciple-watering/sprite_frames.tres"
+    },
+    "animation.five_element_ear_sway": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.441513,
+        "minimum_visible_ratio": 0.345001,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 2,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.five_element_ear_sway",
+      "atlas": "res://assets/art/animations/animation-five-element-ear-sway/atlas.png",
+      "atlas_sha256": "f434a8ea898af5fb290ca9ad6e146b64778266042e6d7d75aa7d038631f50af2",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 24,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 24,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "crop.five_element_ear",
+      "sprite_frames": "res://assets/art/animations/animation-five-element-ear-sway/sprite_frames.tres"
+    },
+    "animation.gathering_array_cycle": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.507202,
+        "minimum_visible_ratio": 0.491842,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0.0,
+        "mode": "center_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.gathering_array_cycle",
+      "atlas": "res://assets/art/animations/animation-gathering-array-cycle/atlas.png",
+      "atlas_sha256": "0cbf8c8b8f2896b40642450146fad534405c0f8c85a6adda47267d67dd9d8537",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 24,
+      "frame_height": 384,
+      "frame_width": 512,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 24,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "prop.gathering_array",
+      "sprite_frames": "res://assets/art/animations/animation-gathering-array-cycle/sprite_frames.tres"
+    },
+    "animation.gathering_grass_sway": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.692245,
+        "minimum_visible_ratio": 0.1539,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.gathering_grass_sway",
+      "atlas": "res://assets/art/animations/animation-gathering-grass-sway/atlas.png",
+      "atlas_sha256": "1159e93260673b6125ca17c9163ad580f36a1ecdbbdfd12a1908362666c40d0b",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 12,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 22,
+      "rows": 2,
+      "schema_version": 1,
+      "source_asset_id": "crop.gathering_grass",
+      "sprite_frames": "res://assets/art/animations/animation-gathering-grass-sway/sprite_frames.tres"
+    },
+    "animation.heaven_lotus_breathe": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.506699,
+        "minimum_visible_ratio": 0.430206,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 2,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.heaven_lotus_breathe",
+      "atlas": "res://assets/art/animations/animation-heaven-lotus-breathe/atlas.png",
+      "atlas_sha256": "767a58f323cd482c40408e095b58e6259113b12ac6375452ac26c76020fc96d9",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 24,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 24,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "crop.heaven_lotus",
+      "sprite_frames": "res://assets/art/animations/animation-heaven-lotus-breathe/sprite_frames.tres"
+    },
+    "animation.mind_flower_breathe": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.612228,
+        "minimum_visible_ratio": 0.350739,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 2,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.mind_flower_breathe",
+      "atlas": "res://assets/art/animations/animation-mind-flower-breathe/atlas.png",
+      "atlas_sha256": "387f85dce53289a1198f370f35434363efbcb4bac74afbbb7d9648bc540eb53c",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "crop.mind_flower",
+      "sprite_frames": "res://assets/art/animations/animation-mind-flower-breathe/sprite_frames.tres"
+    },
+    "animation.nourishing_ginseng_breathe": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.719254,
+        "minimum_visible_ratio": 0.261765,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 4,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.nourishing_ginseng_breathe",
+      "atlas": "res://assets/art/animations/animation-nourishing-ginseng-breathe/atlas.png",
+      "atlas_sha256": "fff386570ef37a9ea699b6a08391b22e555a85eb4f50245ef14d5ce2bf1ecc93",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "crop.nourishing_ginseng",
+      "sprite_frames": "res://assets/art/animations/animation-nourishing-ginseng-breathe/sprite_frames.tres"
+    },
+    "animation.purple_mushroom_breathe": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.560623,
+        "minimum_visible_ratio": 0.420547,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.purple_mushroom_breathe",
+      "atlas": "res://assets/art/animations/animation-purple-mushroom-breathe/atlas.png",
+      "atlas_sha256": "5223878423fcdbc79930964544f54c6f9be742f401e58d630c19a69020dba015",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "crop.purple_mushroom",
+      "sprite_frames": "res://assets/art/animations/animation-purple-mushroom-breathe/sprite_frames.tres"
+    },
+    "animation.reincarnation": {
+      "alpha": {
+        "minimum_black_ratio": 0.307943,
+        "minimum_content_ratio": 0.398363,
+        "mode": "black_additive_content",
+        "verified": true
+      },
+      "anchor": {
+        "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+        "canvas_dimensions_verified": true,
+        "mode": "fixed_canvas_registration",
+        "verified": false
+      },
+      "animation_id": "animation.reincarnation",
+      "atlas": "res://assets/art/animations/animation-reincarnation/atlas.png",
+      "atlas_sha256": "72e88feb8582b1dcc59ccac09ccb45054bea91b5902c42ecd5327a6e5e7cb932",
+      "blend_mode": "additive",
+      "columns": 8,
+      "frame_count": 28,
+      "frame_height": 384,
+      "frame_width": 384,
+      "loop_mode": "seam_blend",
+      "padding": 4,
+      "playback_fps": 8,
+      "playback_frame_count": 28,
+      "rows": 4,
+      "schema_version": 1,
+      "source_asset_id": "effect_source.reincarnation",
+      "sprite_frames": "res://assets/art/animations/animation-reincarnation/sprite_frames.tres"
+    },
+    "animation.spirit_beast_idle": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.608704,
+        "minimum_visible_ratio": 0.381454,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.spirit_beast_idle",
+      "atlas": "res://assets/art/animations/animation-spirit-beast-idle/atlas.png",
+      "atlas_sha256": "60f5e2eeed664fe03b09f5267b52d3b4a074f726ef7ede94933f3feefd076d2d",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "character.spirit_beast",
+      "sprite_frames": "res://assets/art/animations/animation-spirit-beast-idle/sprite_frames.tres"
+    },
+    "animation.spirit_crystal_breathe": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.726848,
+        "minimum_visible_ratio": 0.272021,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0.0,
+        "mode": "center_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.spirit_crystal_breathe",
+      "atlas": "res://assets/art/animations/animation-spirit-crystal-breathe/atlas.png",
+      "atlas_sha256": "9a81257a9cac502b309496b4f711e64f53d7bd038483b5567d096a1705953a56",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 342,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "prop.spirit_crystal",
+      "sprite_frames": "res://assets/art/animations/animation-spirit-crystal-breathe/sprite_frames.tres"
+    },
+    "animation.stream_flow": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.770752,
+        "minimum_visible_ratio": 0.227989,
+        "verified": true
+      },
+      "anchor": {
+        "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+        "canvas_dimensions_verified": true,
+        "mode": "fixed_canvas_registration",
+        "verified": false
+      },
+      "animation_id": "animation.stream_flow",
+      "atlas": "res://assets/art/animations/animation-stream-flow/atlas.png",
+      "atlas_sha256": "0bf0094394ba6ba4b20e6b0d1530481cacdd3c1aee01a7fc2363073122368ee9",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 256,
+      "frame_width": 512,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 18,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "effect_source.stream",
+      "sprite_frames": "res://assets/art/animations/animation-stream-flow/sprite_frames.tres"
+    },
+    "animation.sun_fruit_breathe": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.636719,
+        "minimum_visible_ratio": 0.356323,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.sun_fruit_breathe",
+      "atlas": "res://assets/art/animations/animation-sun-fruit-breathe/atlas.png",
+      "atlas_sha256": "3961e1322efb7a4de9be717734ae2b717930ab2618f3af472fd7a5d6c29c3834",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 256,
+      "frame_width": 256,
+      "loop_mode": "ping_pong",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 34,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "crop.sun_fruit",
+      "sprite_frames": "res://assets/art/animations/animation-sun-fruit-breathe/sprite_frames.tres"
+    },
+    "animation.tribulation": {
+      "alpha": {
+        "minimum_black_ratio": 0.550873,
+        "minimum_content_ratio": 0.355042,
+        "mode": "black_additive_content",
+        "verified": true
+      },
+      "anchor": {
+        "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+        "canvas_dimensions_verified": true,
+        "mode": "fixed_canvas_registration",
+        "verified": false
+      },
+      "animation_id": "animation.tribulation",
+      "atlas": "res://assets/art/animations/animation-tribulation/atlas.png",
+      "atlas_sha256": "7b520dadf8f2f1ff9264c2c14f6b3e90982dffe85770d504fb67cc6d3abaced9",
+      "blend_mode": "additive",
+      "columns": 8,
+      "frame_count": 16,
+      "frame_height": 384,
+      "frame_width": 256,
+      "loop_mode": "seam_blend",
+      "padding": 4,
+      "playback_fps": 10,
+      "playback_frame_count": 16,
+      "rows": 2,
+      "schema_version": 1,
+      "source_asset_id": "effect_source.tribulation",
+      "sprite_frames": "res://assets/art/animations/animation-tribulation/sprite_frames.tres"
+    },
+    "animation.waterfall_flow": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.69514,
+        "minimum_visible_ratio": 0.266561,
+        "verified": true
+      },
+      "anchor": {
+        "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+        "canvas_dimensions_verified": true,
+        "mode": "fixed_canvas_registration",
+        "verified": false
+      },
+      "animation_id": "animation.waterfall_flow",
+      "atlas": "res://assets/art/animations/animation-waterfall-flow/atlas.png",
+      "atlas_sha256": "8da1e60f3a40de85a6db993b4dd9f6288107336713cd292f7a94f5350ad66c3d",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 18,
+      "frame_height": 384,
+      "frame_width": 256,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 18,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "effect_source.waterfall",
+      "sprite_frames": "res://assets/art/animations/animation-waterfall-flow/sprite_frames.tres"
+    },
+    "animation.waterwheel_turn": {
+      "alpha": {
+        "minimum_transparent_corners": 4,
+        "minimum_transparent_ratio": 0.484673,
+        "minimum_visible_ratio": 0.507345,
+        "verified": true
+      },
+      "anchor": {
+        "max_x_drift_px": 0.0,
+        "max_y_drift_px": 0,
+        "mode": "bottom_center_root_region",
+        "tolerance_px": 12.0,
+        "verified": true
+      },
+      "animation_id": "animation.waterwheel_turn",
+      "atlas": "res://assets/art/animations/animation-waterwheel-turn/atlas.png",
+      "atlas_sha256": "646df494f10df8c3636bc076025ed6fe63de6f2c419c9bb47133149c3fd3de7d",
+      "blend_mode": "mix",
+      "columns": 8,
+      "frame_count": 24,
+      "frame_height": 384,
+      "frame_width": 384,
+      "loop_mode": "continuous",
+      "padding": 4,
+      "playback_fps": 6,
+      "playback_frame_count": 24,
+      "rows": 3,
+      "schema_version": 1,
+      "source_asset_id": "prop.waterwheel",
+      "sprite_frames": "res://assets/art/animations/animation-waterwheel-turn/sprite_frames.tres"
+    }
+  },
+  "schema_version": 1,
+  "static": {
+    "action_icon.auto": {
+      "height": 128,
+      "sha256": "b7ef5eb293df6b4a0043fdf7110cf7c699953a4453a505c274dbb6e996fb5de2",
+      "texture": "res://assets/art/static/action_icon/action-icon-auto.png",
+      "width": 128
+    },
+    "action_icon.available": {
+      "height": 128,
+      "sha256": "ed83cf70d14ebb0801962aaacdc98a0c95c89995363cdba553d18648858b5093",
+      "texture": "res://assets/art/static/action_icon/action-icon-available.png",
+      "width": 128
+    },
+    "action_icon.breakthrough": {
+      "height": 128,
+      "sha256": "e03e9aa8dd2358003d361c5cf2d034ebb97f8481654e4bb9ff6afad85b39cc3b",
+      "texture": "res://assets/art/static/action_icon/action-icon-breakthrough.png",
+      "width": 128
+    },
+    "action_icon.completed": {
+      "height": 128,
+      "sha256": "649ce5004752d6f1e2cc75a9da73e3df8cabc9eb85f39f8a26c2ece8b20215f1",
+      "texture": "res://assets/art/static/action_icon/action-icon-completed.png",
+      "width": 128
+    },
+    "action_icon.info": {
+      "height": 128,
+      "sha256": "add66db57da9febc85532697ccaad97d1fac9594909f20dc619927b61298aed8",
+      "texture": "res://assets/art/static/action_icon/action-icon-info.png",
+      "width": 128
+    },
+    "action_icon.locked": {
+      "height": 128,
+      "sha256": "c45165fa49ba13caa326ad43291297f220839031c5f1c150837033fa62bf84c8",
+      "texture": "res://assets/art/static/action_icon/action-icon-locked.png",
+      "width": 128
+    },
+    "action_icon.receipt": {
+      "height": 128,
+      "sha256": "fd1ed4e15f62e925444a5a41648b037d700db5e55f466c7afd000d0db9599e68",
+      "texture": "res://assets/art/static/action_icon/action-icon-receipt.png",
+      "width": 128
+    },
+    "action_icon.save": {
+      "height": 128,
+      "sha256": "5d26af9eaaa200a1bfef52107216f23ffd69608cb2996a1e8597dfb3c3351267",
+      "texture": "res://assets/art/static/action_icon/action-icon-save.png",
+      "width": 128
+    },
+    "action_icon.unread_receipt": {
+      "height": 128,
+      "sha256": "84ac8182c6b525890a9fd2dafd077721b84e24d7af135dbce6e22772d3938a8a",
+      "texture": "res://assets/art/static/action_icon/action-icon-unread-receipt.png",
+      "width": 128
+    },
+    "action_icon.warning": {
+      "height": 128,
+      "sha256": "eec860c803f6757226b20e229c2a083b7ac96b7c75db08b10bdc6285638101e8",
+      "texture": "res://assets/art/static/action_icon/action-icon-warning.png",
+      "width": 128
+    },
+    "brand.lingnong_emblem": {
+      "height": 360,
+      "sha256": "de2c2fddd4409f27a0b4b38f4d9f2657fcd994121cb0f84c43af23728ced72d9",
+      "texture": "res://assets/art/static/brand/brand-lingnong-emblem.png",
+      "width": 1024
+    },
+    "character.butterfly": {
+      "height": 512,
+      "sha256": "ff5497c2f4a9ed71b409dfe81115804455b406912912543efa6641c910f536ae",
+      "texture": "res://assets/art/static/character/character-butterfly.png",
+      "width": 512
+    },
+    "character.disciple_meditating": {
+      "height": 1024,
+      "sha256": "03d2515457ba7073f9c620fd6f6ebfb675c78e98806c73948ce2fde7754afdf4",
+      "texture": "res://assets/art/static/character/character-disciple-meditating.png",
+      "width": 768
+    },
+    "character.disciple_model": {
+      "height": 1024,
+      "sha256": "da12271513dcb1cdbabdf3f8f2b35ab930b0daefa605c6f595ffd5032aa7d517",
+      "texture": "res://assets/art/static/character/character-disciple-model.png",
+      "width": 768
+    },
+    "character.disciple_observing": {
+      "height": 1024,
+      "sha256": "71c3de6c9852f352706a56e481951f1d18ff62643caff50774944470f11e2d79",
+      "texture": "res://assets/art/static/character/character-disciple-observing.png",
+      "width": 768
+    },
+    "character.disciple_spellcasting": {
+      "height": 1024,
+      "sha256": "ed7930ac09f4170257849fef1e7e445bf63f3995db5f22590b8b0447ab126fef",
+      "texture": "res://assets/art/static/character/character-disciple-spellcasting.png",
+      "width": 768
+    },
+    "character.disciple_watering": {
+      "height": 1024,
+      "sha256": "b0443aa8ffbfd07961542fd900bfe97aa1fb1673183b058aa54179b74519b7d4",
+      "texture": "res://assets/art/static/character/character-disciple-watering.png",
+      "width": 768
+    },
+    "character.spirit_beast": {
+      "height": 768,
+      "sha256": "d97a5f1c122a30cfbb7865f06f6ecf48ae119036685926b0b775eb0584ac5735",
+      "texture": "res://assets/art/static/character/character-spirit-beast.png",
+      "width": 768
+    },
+    "chest.common": {
+      "height": 1024,
+      "sha256": "b48c10ff7ad1f205488b0843e3b34945323e2e7ad2ab8bb55be1e58dfe0860c5",
+      "texture": "res://assets/art/static/chest/chest-common.png",
+      "width": 1024
+    },
+    "chest.elite": {
+      "height": 1024,
+      "sha256": "3f81580d6e523f1f0eb1577a89c9611236efb782beee28a17a9819b5b91039a3",
+      "texture": "res://assets/art/static/chest/chest-elite.png",
+      "width": 1024
+    },
+    "chest.rare": {
+      "height": 1024,
+      "sha256": "2504831b268feed7f0eda5646fb6287ba4f574bf9757889f8e8f7f2b8d4315dc",
+      "texture": "res://assets/art/static/chest/chest-rare.png",
+      "width": 1024
+    },
+    "crop.five_element_ear": {
+      "height": 1024,
+      "sha256": "b8702e7f167f7b85d83bd45a0ba15081361ad03a6f72228ca47d2e4c7b22753d",
+      "texture": "res://assets/art/static/crop/crop-five-element-ear.png",
+      "width": 1024
+    },
+    "crop.gathering_grass": {
+      "height": 1024,
+      "sha256": "107a0debcc871d4b03e305b25ff49925c4fe7935815dbc2731a884b5fe2c780b",
+      "texture": "res://assets/art/static/crop/crop-gathering-grass.png",
+      "width": 1024
+    },
+    "crop.heaven_lotus": {
+      "height": 1024,
+      "sha256": "054cc4187dc3f1c5ba30380f88fb22c08bebea1ad56154522795e143d71dc7c1",
+      "texture": "res://assets/art/static/crop/crop-heaven-lotus.png",
+      "width": 1024
+    },
+    "crop.mind_flower": {
+      "height": 1024,
+      "sha256": "3db4e00ef3f218d5d881b0f80c91c663b8449e1bbd4ef68fd79427c4b54f1e39",
+      "texture": "res://assets/art/static/crop/crop-mind-flower.png",
+      "width": 1024
+    },
+    "crop.nourishing_ginseng": {
+      "height": 1024,
+      "sha256": "6aacb8f04518a3d79e5d79a276198e9a1c966fdf8d7db095b28b356718a05d56",
+      "texture": "res://assets/art/static/crop/crop-nourishing-ginseng.png",
+      "width": 1024
+    },
+    "crop.purple_mushroom": {
+      "height": 1024,
+      "sha256": "c54d004b132c36edc5082b037bba52a80224a7b27195c64eafd9ec3a250df67f",
+      "texture": "res://assets/art/static/crop/crop-purple-mushroom.png",
+      "width": 1024
+    },
+    "crop.sun_fruit": {
+      "height": 1024,
+      "sha256": "37f6a59dd197b2ae86a5f3798b59335361a68f4a075445d56b89f10797a65544",
+      "texture": "res://assets/art/static/crop/crop-sun-fruit.png",
+      "width": 1024
+    },
+    "effect_source.bamboo_leaves": {
+      "height": 1536,
+      "sha256": "f756d25468488ad6693c595a9df28c2298c2ab3b4b6ea7fb8d11d53fddbe5e5f",
+      "texture": "res://assets/art/static/effect_source/effect-source-bamboo-leaves.png",
+      "width": 1024
+    },
+    "effect_source.breakthrough": {
+      "height": 1024,
+      "sha256": "18c88cf71e80bb8fa6e2207f02d082f2aec49d2fe2b49b4e486b5ecc046a0758",
+      "texture": "res://assets/art/static/effect_source/effect-source-breakthrough.png",
+      "width": 1024
+    },
+    "effect_source.cloud_mist": {
+      "height": 768,
+      "sha256": "b25f8688b578d693f8806771ec8f40569799cf3f8e28d244a1f12b9686c0bc0f",
+      "texture": "res://assets/art/static/effect_source/effect-source-cloud-mist.png",
+      "width": 1536
+    },
+    "effect_source.reincarnation": {
+      "height": 1024,
+      "sha256": "cac2d8e5b572b47f2bdca1a988d05ac77e28868cf14e010b433a6c93b079ab6b",
+      "texture": "res://assets/art/static/effect_source/effect-source-reincarnation.png",
+      "width": 1024
+    },
+    "effect_source.stream": {
+      "height": 768,
+      "sha256": "1695631a695b0f90f374bea704024a20de70d171819f30913e488023f394ead5",
+      "texture": "res://assets/art/static/effect_source/effect-source-stream.png",
+      "width": 1536
+    },
+    "effect_source.tribulation": {
+      "height": 1536,
+      "sha256": "fe1fa262a8f9b60a2403f592473a6d1b802a81678bdec3596d5da5ab2810b704",
+      "texture": "res://assets/art/static/effect_source/effect-source-tribulation.png",
+      "width": 1024
+    },
+    "effect_source.waterfall": {
+      "height": 1536,
+      "sha256": "308788304ce77f092d9ae74b5bd61e02e4e71040ab559c9e075a7cb6107a3778",
+      "texture": "res://assets/art/static/effect_source/effect-source-waterfall.png",
+      "width": 1024
+    },
+    "environment.cultivation_valley_base": {
+      "height": 1080,
+      "sha256": "471649ce3ffa4446275e0f729b3be5493328766a0f76d181f18b001a74a37aa6",
+      "texture": "res://assets/art/static/environment/environment-cultivation-valley-base.png",
+      "width": 1920
+    },
+    "environment.foreground_foliage_occluder": {
+      "height": 360,
+      "sha256": "51de3852a33d2af86bf741b9a2123d55628ed154579f9163184f3b62dd326d32",
+      "texture": "res://assets/art/static/environment/environment-foreground-foliage-occluder.png",
+      "width": 1920
+    },
+    "farm_icon.field": {
+      "height": 192,
+      "sha256": "2b0730e98371576ab435d918abb15340bbee6ac3a3a5e941a79eb845ca1d2170",
+      "texture": "res://assets/art/static/farm_icon/farm-icon-field.png",
+      "width": 192
+    },
+    "farm_icon.gathering_array": {
+      "height": 192,
+      "sha256": "60a192b607e1a9c512332b451b0b3948e2b673789ff6a355b08cbc77c2516fd8",
+      "texture": "res://assets/art/static/farm_icon/farm-icon-gathering-array.png",
+      "width": 192
+    },
+    "farm_icon.soil": {
+      "height": 192,
+      "sha256": "4fa6c6c8372ee5f97f4adcb81312888eb5582574c797dfbd7e231e86ab1c1c1b",
+      "texture": "res://assets/art/static/farm_icon/farm-icon-soil.png",
+      "width": 192
+    },
+    "material.bi_shui_lian": {
+      "height": 768,
+      "sha256": "aa0af33e5b3193bf2f82ab4fdf71e8bdbc300b3a94f556405dc59d0a08001cdc",
+      "texture": "res://assets/art/static/material/material-bi-shui-lian.png",
+      "width": 768
+    },
+    "material.body_pill": {
+      "height": 768,
+      "sha256": "4d958c946cd13de5fdbb89c5d877380fc4c9143fbe64e0f26afb29ac3f9878c5",
+      "texture": "res://assets/art/static/material/material-body-pill.png",
+      "width": 768
+    },
+    "material.cang_tian_zi_qi": {
+      "height": 768,
+      "sha256": "4cf1acef5a0ecf0cb4f3bae9691a52c27aaf3570af02ee8eec45cc6b29f49c2b",
+      "texture": "res://assets/art/static/material/material-cang-tian-zi-qi.png",
+      "width": 768
+    },
+    "material.da_di_ku_cao": {
+      "height": 768,
+      "sha256": "fa9ea7f1d6d7a6ece6fafaf19826b80db8ec8ce1e71f583bae65d0b3c4f8b9e8",
+      "texture": "res://assets/art/static/material/material-da-di-ku-cao.png",
+      "width": 768
+    },
+    "material.dao_mark": {
+      "height": 768,
+      "sha256": "0280be49ffbdee8364e6f0391d1fa961a2cd498a33df4510dd6ee7538097107d",
+      "texture": "res://assets/art/static/material/material-dao-mark.png",
+      "width": 768
+    },
+    "material.dragon_tiger_pill": {
+      "height": 768,
+      "sha256": "c9be62f042b91cf65a8e219a7473754af08011a955006605a681a1c711885b84",
+      "texture": "res://assets/art/static/material/material-dragon-tiger-pill.png",
+      "width": 768
+    },
+    "material.fu_lu_zhou": {
+      "height": 768,
+      "sha256": "e45811b7b6553b07580017d1c2d65a815cdfc8e541370b4b68e66e895b3b6778",
+      "texture": "res://assets/art/static/material/material-fu-lu-zhou.png",
+      "width": 768
+    },
+    "material.fu_qi_dan": {
+      "height": 768,
+      "sha256": "10d8aee8383d216429e71faa4250087af1784dcc0df3b8a0f204428d9739bdd1",
+      "texture": "res://assets/art/static/material/material-fu-qi-dan.png",
+      "width": 768
+    },
+    "material.jin_yang_hua": {
+      "height": 768,
+      "sha256": "a5a626e0ec2cd006a408308fcf39eb6b74df851f45d290b3d5a505938757f8cc",
+      "texture": "res://assets/art/static/material/material-jin-yang-hua.png",
+      "width": 768
+    },
+    "material.lei_ji_tao_mu": {
+      "height": 768,
+      "sha256": "c938bcf744d98286c089e0259bcba1db615e07f0c09132d9c09331f3947de8eb",
+      "texture": "res://assets/art/static/material/material-lei-ji-tao-mu.png",
+      "width": 768
+    },
+    "material.nourishing_spirit_pill": {
+      "height": 768,
+      "sha256": "03ebe469f9605034aaa5b2646d2c9d1f83bc96a92ded41f9061a627cd8255898",
+      "texture": "res://assets/art/static/material/material-nourishing-spirit-pill.png",
+      "width": 768
+    },
+    "material.san_qing_chi_ling": {
+      "height": 768,
+      "sha256": "9f7d5717406feab20e8c0dde18237057f88b7594ed7135fc989d191508c88848",
+      "texture": "res://assets/art/static/material/material-san-qing-chi-ling.png",
+      "width": 768
+    },
+    "material.spirit_pill": {
+      "height": 768,
+      "sha256": "b583f9ba2e874a7a41a0ab26cee213526c1de28b45020f901b05e90a77d89be5",
+      "texture": "res://assets/art/static/material/material-spirit-pill.png",
+      "width": 768
+    },
+    "material.yan_ling_shu_xin": {
+      "height": 768,
+      "sha256": "e817ff0fd6fb824c47acec058641699c64c5d8549c7b2eee932c5a9d1d7dc491",
+      "texture": "res://assets/art/static/material/material-yan-ling-shu-xin.png",
+      "width": 768
+    },
+    "material.yang_ji_di_xin": {
+      "height": 768,
+      "sha256": "5c793d31de50ed82c0af59b3d2edf5e3b802aa3ae158cd96c6394274d51645b6",
+      "texture": "res://assets/art/static/material/material-yang-ji-di-xin.png",
+      "width": 768
+    },
+    "material.yin_ji_yue_hua": {
+      "height": 768,
+      "sha256": "233cc032260100a528570566a55802692ced57efc55fb0aadf7936727efdd382",
+      "texture": "res://assets/art/static/material/material-yin-ji-yue-hua.png",
+      "width": 768
+    },
+    "material.zi_mu_gen": {
+      "height": 768,
+      "sha256": "bdc8e803e010f56927e87639eec3aa94ca6bc66b9cbbb98621346125e1f06140",
+      "texture": "res://assets/art/static/material/material-zi-mu-gen.png",
+      "width": 768
+    },
+    "navigation_icon.automation": {
+      "height": 128,
+      "sha256": "76ad2e9fd6b076f72f07b7f93d1dde79714aec06f909af6f7481b1ce448c8d6d",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-automation.png",
+      "width": 128
+    },
+    "navigation_icon.materials": {
+      "height": 128,
+      "sha256": "08ffba768d32175af124cdf4019a9dc83e87ac96a659c691299ef9ed6f2c5aa8",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-materials.png",
+      "width": 128
+    },
+    "navigation_icon.overview": {
+      "height": 128,
+      "sha256": "721a43f119b98f04b556e7c16e6f3ef580070fb72ed9c173e87df9486937fbea",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-overview.png",
+      "width": 128
+    },
+    "navigation_icon.paths": {
+      "height": 128,
+      "sha256": "4928d89c1534f216e77b941300da7ae276ee50561181799614f2e9a60949ba6e",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-paths.png",
+      "width": 128
+    },
+    "navigation_icon.production": {
+      "height": 128,
+      "sha256": "4383026ce7bf496d44d5411e6f7be962d35995734ac8c300ac18e63e5a68fe4a",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-production.png",
+      "width": 128
+    },
+    "navigation_icon.receipts": {
+      "height": 128,
+      "sha256": "6bd5b9ba51757b7bfc0ea0b530892b30ac4bd0497a1f0bac811754560deb857c",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-receipts.png",
+      "width": 128
+    },
+    "navigation_icon.reincarnation": {
+      "height": 128,
+      "sha256": "0a88223d0c7e8939c6d65ae3f1297c17b47b7eac3ff76eeb29025e39b7ef8233",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-reincarnation.png",
+      "width": 128
+    },
+    "navigation_icon.tribulation": {
+      "height": 128,
+      "sha256": "a60fb024bbfe15da0840afd59f391c94bd94ca013ab365bb71baa0b2b7eacfe8",
+      "texture": "res://assets/art/static/navigation_icon/navigation-icon-tribulation.png",
+      "width": 128
+    },
+    "portrait.main_cultivator": {
+      "height": 512,
+      "sha256": "e9b1d7c539eba59605ef7c072d9dbfcc64f3243f3fa5117a2dc656239b9b0883",
+      "texture": "res://assets/art/static/portrait/portrait-main-cultivator.png",
+      "width": 512
+    },
+    "prop.gathering_array": {
+      "height": 1024,
+      "sha256": "d24d0eb3d27d69622ccc62dbdc0117ee07520537e17e257ae9db2eb4c6667110",
+      "texture": "res://assets/art/static/prop/prop-gathering-array.png",
+      "width": 1536
+    },
+    "prop.spirit_crystal": {
+      "height": 1024,
+      "sha256": "cc11f414d5e258360bad9d26ed3ce7fe0e3b39fd950ab60c9e44bbab41b4b2f4",
+      "texture": "res://assets/art/static/prop/prop-spirit-crystal.png",
+      "width": 768
+    },
+    "prop.waterwheel": {
+      "height": 1024,
+      "sha256": "679cb5577bb567264bbae3c9c70bb999466f6237fb61eaca65f5eae52f2b551b",
+      "texture": "res://assets/art/static/prop/prop-waterwheel.png",
+      "width": 1024
+    },
+    "realm.foundation": {
+      "height": 768,
+      "sha256": "0d16394b7dcb007e91bc012b92a8f3927c565a18c0c1f1e1c4aca0293c07816e",
+      "texture": "res://assets/art/static/realm/realm-foundation.png",
+      "width": 768
+    },
+    "realm.golden_core": {
+      "height": 768,
+      "sha256": "6b8d06f1967794f5dbbad760cec775fc478cc9f5a0c1f150e368ec2d3bdb7658",
+      "texture": "res://assets/art/static/realm/realm-golden-core.png",
+      "width": 768
+    },
+    "realm.qi_refining": {
+      "height": 768,
+      "sha256": "0480dd9ec02d0d738f58dd237ccf46dd508831dbc688c5c51c9af1a22753b36d",
+      "texture": "res://assets/art/static/realm/realm-qi-refining.png",
+      "width": 768
+    },
+    "resource_icon.consciousness": {
+      "height": 192,
+      "sha256": "c5e018569dc5557389d7c7a18a6e72d5f2615b1d993ffea1c7ab6edb1dbfa1b9",
+      "texture": "res://assets/art/static/resource_icon/resource-icon-consciousness.png",
+      "width": 192
+    },
+    "resource_icon.cultivation": {
+      "height": 192,
+      "sha256": "d58f4611e471913e74fab2d5cf6d7c32b51f3a294d1dd71f1fdee1d53bc7c1ae",
+      "texture": "res://assets/art/static/resource_icon/resource-icon-cultivation.png",
+      "width": 192
+    },
+    "resource_icon.dao_essence": {
+      "height": 192,
+      "sha256": "f78f48c5c48d5e3372b4c8e322377527db9f0a1c750366fac719d705b0b2fd31",
+      "texture": "res://assets/art/static/resource_icon/resource-icon-dao-essence.png",
+      "width": 192
+    },
+    "resource_icon.law": {
+      "height": 192,
+      "sha256": "07c0948a98d53ca9200885b2fceca4431adb25f734118dcda7b67acd933d11f7",
+      "texture": "res://assets/art/static/resource_icon/resource-icon-law.png",
+      "width": 192
+    },
+    "resource_icon.physique": {
+      "height": 192,
+      "sha256": "2e9e961aac2675facf414a0ece88873dd8c694ec9415965c70cc70c43e740476",
+      "texture": "res://assets/art/static/resource_icon/resource-icon-physique.png",
+      "width": 192
+    },
+    "resource_icon.spirit_stone": {
+      "height": 192,
+      "sha256": "ccd13c1aeb3e5af44bfb5220f5ea887784344ef0c630d94f5a0b11ecf8c4b4ab",
+      "texture": "res://assets/art/static/resource_icon/resource-icon-spirit-stone.png",
+      "width": 192
+    },
+    "ui.bottom_navigation_dock": {
+      "height": 150,
+      "sha256": "dfa98a4b56c3aacf06da908458b68f1b79e4e7f6e139c489686dd422c987e47c",
+      "texture": "res://assets/art/static/ui/ui-bottom-navigation-dock.png",
+      "width": 920
+    },
+    "ui.context_panel": {
+      "height": 420,
+      "sha256": "c71076487dc2e3c858f7a1ae4a848111bc46258ab0597ed051e574d8fa09a1b9",
+      "texture": "res://assets/art/static/ui/ui-context-panel.png",
+      "width": 640
+    },
+    "ui.primary_action_button": {
+      "height": 128,
+      "sha256": "793fcfdb64db4f65e076e404cec8c8909a738a40e27619658e20bd8846de45af",
+      "texture": "res://assets/art/static/ui/ui-primary-action-button.png",
+      "width": 480
+    },
+    "ui.progress_bar_frame": {
+      "height": 96,
+      "sha256": "ee9605fa6560bb613a7daad69f89755950f78450063f22ddfa0f4f2a5e141943",
+      "texture": "res://assets/art/static/ui/ui-progress-bar-frame.png",
+      "width": 720
+    },
+    "ui.resource_chip": {
+      "height": 104,
+      "sha256": "cce13e0a0a4b11841a5523724605c91d5a7f7d78a80a7019025424352e6d6e11",
+      "texture": "res://assets/art/static/ui/ui-resource-chip.png",
+      "width": 360
+    },
+    "ui.round_icon_button_frame": {
+      "height": 192,
+      "sha256": "6de6c40738da9fd7ed723b11ddbcfb2c54fab395fe7ae2925890376e7168c704",
+      "texture": "res://assets/art/static/ui/ui-round-icon-button-frame.png",
+      "width": 192
+    },
+    "ui.status_pill": {
+      "height": 92,
+      "sha256": "dc924e03b4dd754bc91181917487af16aa1b5899b042501b7916fdf23259b8f2",
+      "texture": "res://assets/art/static/ui/ui-status-pill.png",
+      "width": 360
+    },
+    "ui.top_hud_frame": {
+      "height": 104,
+      "sha256": "764582dfbd029fbc01b9fd2476d47ad30c10306e27b98b812e406625aeb3a9db",
+      "texture": "res://assets/art/static/ui/ui-top-hud-frame.png",
+      "width": 1600
+    }
+  },
+  "static_count": 86
+}

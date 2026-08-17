@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.612228,
+    "minimum_visible_ratio": 0.350739,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 2,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.mind_flower_breathe",
+  "atlas": "res://assets/art/animations/animation-mind-flower-breathe/atlas.png",
+  "atlas_sha256": "387f85dce53289a1198f370f35434363efbcb4bac74afbbb7d9648bc540eb53c",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "crop.mind_flower",
+  "sprite_frames": "res://assets/art/animations/animation-mind-flower-breathe/sprite_frames.tres"
+}

@@ -1,0 +1,30 @@
+{
+  "alpha": {
+    "minimum_black_ratio": 0.385078,
+    "minimum_content_ratio": 0.505364,
+    "mode": "black_additive_content",
+    "verified": true
+  },
+  "anchor": {
+    "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+    "canvas_dimensions_verified": true,
+    "mode": "fixed_canvas_registration",
+    "verified": false
+  },
+  "animation_id": "animation.breakthrough",
+  "atlas": "res://assets/art/animations/animation-breakthrough/atlas.png",
+  "atlas_sha256": "402e3a7836e020615933b1800288251e5ee018d058dff0687c94b1792c3beac2",
+  "blend_mode": "additive",
+  "columns": 8,
+  "frame_count": 20,
+  "frame_height": 384,
+  "frame_width": 384,
+  "loop_mode": "seam_blend",
+  "padding": 4,
+  "playback_fps": 8,
+  "playback_frame_count": 20,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "effect_source.breakthrough",
+  "sprite_frames": "res://assets/art/animations/animation-breakthrough/sprite_frames.tres"
+}

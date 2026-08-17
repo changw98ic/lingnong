@@ -1,0 +1,30 @@
+{
+  "alpha": {
+    "minimum_black_ratio": 0.550873,
+    "minimum_content_ratio": 0.355042,
+    "mode": "black_additive_content",
+    "verified": true
+  },
+  "anchor": {
+    "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+    "canvas_dimensions_verified": true,
+    "mode": "fixed_canvas_registration",
+    "verified": false
+  },
+  "animation_id": "animation.tribulation",
+  "atlas": "res://assets/art/animations/animation-tribulation/atlas.png",
+  "atlas_sha256": "7b520dadf8f2f1ff9264c2c14f6b3e90982dffe85770d504fb67cc6d3abaced9",
+  "blend_mode": "additive",
+  "columns": 8,
+  "frame_count": 16,
+  "frame_height": 384,
+  "frame_width": 256,
+  "loop_mode": "seam_blend",
+  "padding": 4,
+  "playback_fps": 10,
+  "playback_frame_count": 16,
+  "rows": 2,
+  "schema_version": 1,
+  "source_asset_id": "effect_source.tribulation",
+  "sprite_frames": "res://assets/art/animations/animation-tribulation/sprite_frames.tres"
+}

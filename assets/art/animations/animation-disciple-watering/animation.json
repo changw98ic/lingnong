@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.629557,
+    "minimum_visible_ratio": 0.345543,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.disciple_watering",
+  "atlas": "res://assets/art/animations/animation-disciple-watering/atlas.png",
+  "atlas_sha256": "34c1fcc4964a9822225b93b7c4b825f47b7f604f53dc0549eb560483ddbabc4d",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 32,
+  "frame_height": 342,
+  "frame_width": 256,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 8,
+  "playback_frame_count": 32,
+  "rows": 4,
+  "schema_version": 1,
+  "source_asset_id": "character.disciple_watering",
+  "sprite_frames": "res://assets/art/animations/animation-disciple-watering/sprite_frames.tres"
+}

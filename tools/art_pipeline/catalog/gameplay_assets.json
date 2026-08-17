@@ -1,0 +1,1452 @@
+[
+  {
+    "id": "crop.gathering_grass",
+    "name_zh": "聚灵草",
+    "category": "crop",
+    "purpose": "普通灵植生产母图；用于主界面灵田展示、作物选择和后续轻柔呼吸动画。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete cultivation herb centered in a square canvas, shown from the same elevated three-quarter game camera as the composition reference. Show the entire root crown, every leaf tip, and a compact base silhouette. Keep the bottom-center growth anchor fixed and leave at least twelve percent transparent padding on all sides.",
+    "visual": "A young cluster of plump jade-green spirit grass with six to eight rounded leaves curling gently upward around a small turquoise qi bud. The leaves have pale mint central veins, soft blue-green shadows, and one restrained warm-gold accent near the heart. It should read instantly as the humble first crop: fresh, friendly, vigorous, and easy to animate without changing its structure.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One compact root crown and a clearly readable bottom-center growth anchor",
+      "Six to eight broad rounded leaves with stable separations",
+      "A small restrained turquoise qi bud at the center",
+      "A silhouette suitable for slow breathing and gentle leaf-sway video animation"
+    ],
+    "must_avoid": [
+      "unrequested objects, altered identity, or content outside the asset specification"
+    ],
+    "existing_target": "res://assets/crops/crop-01.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "crop.nourishing_ginseng",
+    "name_zh": "养元参",
+    "category": "crop",
+    "purpose": "精良灵植生产母图；用于体魄路线灵田展示、作物选择和根叶呼吸动画。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete ginseng plant centered in a square transparent canvas, viewed from the elevated three-quarter game camera. Expose the upper shoulder of the root while keeping the plant naturally planted-looking without adding soil. Keep the root base at bottom center, display all leaves and root tendrils, and preserve generous empty space for later motion.",
+    "visual": "A warm ivory-gold, rounded ginseng root with two stout arms, short soft root tendrils, and a crown of five broad healthy jade leaves. Subtle amber life-force bands glow inside the root rather than outside it. The design should feel nourishing and sturdy, never humanoid or comical, with smooth cel-shaded volume and restrained gold highlights.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "A plump ivory-gold ginseng root with two simple side branches",
+      "Five broad jade-green leaves arranged in one readable crown",
+      "Subtle internal amber vitality bands with no floating particles",
+      "A stable root-base anchor for gentle root pulse and leaf sway"
+    ],
+    "must_avoid": [
+      "human face, human limbs, mascot expression, or realistic medicinal specimen"
+    ],
+    "existing_target": "res://assets/crops/crop-02.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "crop.mind_flower",
+    "name_zh": "凝神花",
+    "category": "crop",
+    "purpose": "精良灵植生产母图；用于神识路线灵田展示、作物选择和花瓣呼吸动画。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete flowering herb centered on a transparent square canvas, using the composition reference's elevated three-quarter view. Arrange one primary bloom and two smaller supporting buds over a compact leaf rosette. Keep stems readable and separated, anchor the plant at bottom center, and leave clear space around every petal.",
+    "visual": "A serene blue-white spirit flower with rounded layered petals, a soft indigo inner ring, and a tiny pearl-like pale-gold center. Its stems are muted teal and its leaves are broad, smooth, and slightly cupped. The color transition should move from cool moon-white edges to calm lake-blue centers, communicating concentration and clarity without glitter or sharp crystal spikes.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One dominant rounded bloom and two smaller buds",
+      "Blue-white petals with a calm indigo inner ring",
+      "Broad muted-teal leaves and clearly separated stems",
+      "A peaceful silhouette designed for slow petal breathing and delayed leaf motion"
+    ],
+    "must_avoid": [
+      "spiky petals, icy crystal blades, starburst glare, or dense glowing specks"
+    ],
+    "existing_target": "res://assets/crops/crop-03.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "crop.sun_fruit",
+    "name_zh": "赤阳果",
+    "category": "crop",
+    "purpose": "精良灵植生产母图；用于体魄与灵石路线展示、成熟脉冲和枝叶呼吸动画。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single compact fruiting plant centered in a square transparent canvas from the elevated three-quarter game camera. Display three clearly separated ripe fruits beneath a rounded leaf canopy. Keep the stem base fixed at bottom center, avoid overlapping every fruit, and reserve clean transparent space for a subtle ripening pulse.",
+    "visual": "A vigorous low shrub bearing three round coral-red to warm-orange sun fruits, each with a soft golden underside and a small jade calyx. Thick rounded leaves use fresh green tops and muted teal shadows. A very restrained warm inner radiance makes the fruit feel spiritually ripe while preserving matte painted surfaces and a cozy farming-game mood.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "Exactly three clearly readable round ripe fruits",
+      "Coral-red and warm-orange fruit with small jade calyxes",
+      "A compact canopy of thick rounded green leaves",
+      "A fixed stem-base anchor suitable for a slow ripening glow and leaf sway"
+    ],
+    "must_avoid": [
+      "flames, burning fruit, hard specular glare, neon red, or realistic tomato rendering"
+    ],
+    "existing_target": "res://assets/crops/crop-04.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "crop.five_element_ear",
+    "name_zh": "五行穗",
+    "category": "crop",
+    "purpose": "稀有灵植生产母图；用于五行分配路线展示和穗叶缓慢摆动动画。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete grain-like spirit plant centered on transparent canvas, shown from the composition reference's elevated three-quarter view. Use five main grain ears in a balanced fan, all connected to one compact base. Keep each ear visually separate, preserve a bottom-center anchor, and leave enough room for asynchronous swaying without collision.",
+    "visual": "A refined cluster of five plump cultivation grain ears whose muted accents suggest wood, fire, earth, metal, and water without becoming a rainbow. The dominant body is pale jade-gold, with restrained leaf accents of moss green, warm coral, ochre, pearl white, and lake blue. Rounded kernels, smooth stems, and soft cel shading create a rare but natural agricultural form.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "Exactly five main rounded grain ears in a readable fan",
+      "A dominant pale jade-gold body with five restrained elemental accents",
+      "One shared compact base and stable bottom-center anchor",
+      "Separated ears suitable for slow offset swaying"
+    ],
+    "must_avoid": [
+      "rainbow gradients, elemental icons, written symbols, sharp wheat awns, or photorealistic grain"
+    ],
+    "existing_target": "res://assets/crops/crop-05.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "crop.heaven_lotus",
+    "name_zh": "天道莲",
+    "category": "crop",
+    "purpose": "稀有灵植生产母图；用于稀有箱路线展示、莲瓣开合和叶面呼吸动画。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A complete lotus plant isolated in a square transparent canvas and viewed from the elevated three-quarter game camera. Place one open flower above two broad leaves and one small closed bud, all connected to a compact invisible-water root point at bottom center. Do not draw a pond, water plane, pedestal, or ground shadow.",
+    "visual": "An elegant jade-white lotus with large rounded petals, a warm soft-gold seed center, two blue-green circular leaves, and one pale bud. Petal edges carry a faint mint tint and the undersides use low-saturation teal shadows. The plant should feel sacred, calm, and alive through clean shapes and gentle inner luminosity rather than particles or overpowering glow.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One open jade-white lotus, two broad blue-green leaves, and one closed bud",
+      "A warm soft-gold seed center",
+      "A compact bottom-center anchor with no pond or pedestal",
+      "Layered petals suitable for very slow opening, breathing, and secondary leaf motion"
+    ],
+    "must_avoid": [
+      "water background, lily pond scenery, radiant halo burst, excessive petals, or photorealistic lotus texture"
+    ],
+    "existing_target": "res://assets/crops/crop-06.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "crop.purple_mushroom",
+    "name_zh": "紫芝",
+    "category": "crop",
+    "purpose": "稀有灵植生产母图；用于后期通用产能展示和菌盖呼吸摆动动画。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete lingzhi cluster centered in a square transparent canvas from the elevated three-quarter game camera. Arrange one large cap and three smaller caps at different heights while preserving a single compact root base. Keep cap contours separated and leave ample transparent space around the cluster for subtle breathing motion.",
+    "visual": "A rare cluster of rounded violet lingzhi mushrooms with smooth layered caps, muted plum edges, pale lavender growth rings, and short warm-gray stems. Small jade-green leaves at the base tie it to the farm palette. The caps should look softly waxed and hand-painted, not wet, plastic, realistic, or aggressively luminous.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One large cap and exactly three smaller readable caps",
+      "Rounded violet caps with pale lavender growth rings",
+      "Short warm-gray stems and a few jade leaves at the shared base",
+      "A compact stable silhouette for gentle cap breathing and delayed stem sway"
+    ],
+    "must_avoid": [
+      "realistic fungal pores, slimy surfaces, horror imagery, poisonous spots, or neon purple glow"
+    ],
+    "existing_target": "res://assets/crops/crop-07.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.fu_qi_dan",
+    "name_zh": "服气丹精粹",
+    "category": "material",
+    "purpose": "普通与练气路线材料图；在材料仓、突破需求和宝箱收据中识别服气丹精粹。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single compact essence token centered on a transparent square canvas, built from one main object and at most two supporting wisps. Keep a simple circular silhouette with generous empty padding and no container, label, inventory slot, or pedestal.",
+    "visual": "A small celadon-green alchemical essence pearl wrapped by one soft cream-colored vapor ribbon and a tiny jade leaf seal without writing. The pearl is matte and softly translucent at its edge, with a restrained warm center that suggests breathable life energy rather than a literal pill.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One celadon essence pearl",
+      "One soft cream vapor ribbon",
+      "A tiny blank jade leaf seal",
+      "A readable icon-scale silhouette that still looks like a physical essence unit"
+    ],
+    "must_avoid": [
+      "pill bottle, medicine package, readable talisman, smoke cloud, or glossy glass marble"
+    ],
+    "existing_target": "res://assets/materials/fu-qi-dan.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.body_pill",
+    "name_zh": "锻体丹药力",
+    "category": "material",
+    "purpose": "体魄路线药力材料图；用于锻体练气配方、预留和自动转化体魄精华。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single rounded essence core centered on transparent canvas, with two broad energy bands hugging the core and no detached particles. Keep the mass compact, symmetrical enough for inventory recognition, and isolated from any vessel or platform.",
+    "visual": "A warm amber-red vitality core with soft terracotta outer bands and a muted gold heart. The broad bands suggest dense bodily strength through weight and compression, while rounded edges and matte cel shading keep the object gentle rather than fiery or violent.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "A warm amber-red core",
+      "Two broad compressed vitality bands",
+      "A muted gold center",
+      "Dense rounded volume that communicates physique power"
+    ],
+    "must_avoid": [
+      "muscles, fist icon, flames, blood, weapon motifs, or a literal edible pill"
+    ],
+    "existing_target": "res://assets/materials/body-pill.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.spirit_pill",
+    "name_zh": "凝神丸药力",
+    "category": "material",
+    "purpose": "神识路线药力材料图；用于天人练气配方、预留和自动转化神识精华。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single calm essence core centered on transparent canvas, encircled by one smooth horizontal ribbon. Preserve a compact oval silhouette, balanced negative space, and no container, hand, scene element, or written mark.",
+    "visual": "A moon-white and lake-blue mind essence pearl with a soft indigo inner crescent and one muted lavender ribbon. The surface is matte and softly luminous, conveying clarity and concentration through calm layered color rather than sparkle or sharp crystal facets.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One moon-white and lake-blue essence pearl",
+      "A soft indigo inner crescent without symbolic text",
+      "One smooth muted-lavender orbit ribbon",
+      "A calm compact silhouette"
+    ],
+    "must_avoid": [
+      "eye icon, brain icon, sharp crystal, galaxy texture, stars, or excessive glow"
+    ],
+    "existing_target": "res://assets/materials/spirit-pill.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.dragon_tiger_pill",
+    "name_zh": "龙虎丹药力",
+    "category": "material",
+    "purpose": "高阶体魄药力材料图；用于稀有箱收据、金丹材料仓和高倍率体魄精华。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single high-tier essence core centered on transparent canvas. Wrap two broad opposing energy ribbons around the core in a balanced circular flow, leaving their ends clearly separated. Do not add literal animals, calligraphy, a pill vessel, or background effects.",
+    "visual": "A deep cinnabar and antique-gold vitality core with two rounded flowing bands that subtly imply dragon-like ascent and tiger-like weight only through motion shape. Jade-green edge accents connect it to the cultivation palette. The design feels potent and prestigious while remaining clean, friendly, and non-combative.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One deep cinnabar and antique-gold core",
+      "Two clearly separated opposing rounded energy bands",
+      "Small jade-green edge accents",
+      "A prestigious high-tier material silhouette without literal creatures"
+    ],
+    "must_avoid": [
+      "literal dragon or tiger heads, combat emblem, aggressive claws, flames, sparks, or photorealistic gold"
+    ],
+    "existing_target": "res://assets/materials/dragon-tiger-pill.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.nourishing_spirit_pill",
+    "name_zh": "养神丹药力",
+    "category": "material",
+    "purpose": "高阶神识药力材料图；用于稀有箱收据、金丹材料仓和高倍率神识精华。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single high-tier mind essence centered in a transparent square canvas. Use one main pearl, a soft petal-like cradle, and one restrained orbit band. Keep every element attached or closely nested so the image remains stable for small-size display.",
+    "visual": "A luminous but restrained pearl-white core seated in rounded lavender-blue petals, crossed by one thin teal orbit band. A gentle warm-gold point at the center adds high-tier value. The shapes suggest restoration and deep mental calm without stars, eyes, faces, or cosmic scenery.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One pearl-white central core",
+      "A rounded lavender-blue petal cradle",
+      "One thin teal orbit band",
+      "A tiny restrained warm-gold center"
+    ],
+    "must_avoid": [
+      "galaxy, night sky, eye symbol, floating stars, sharp lotus petals, or blinding bloom"
+    ],
+    "existing_target": "res://assets/materials/nourishing-spirit-pill.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.jin_yang_hua",
+    "name_zh": "金阳花精粹",
+    "category": "material",
+    "purpose": "丹道与五行筑基材料图；用于精良箱材料流、路线配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single complete golden flower essence centered on transparent canvas, combining one flower head, a short curved stem, and two leaves. Keep the flower front readable from a slight elevated three-quarter angle and leave clean padding around all petals.",
+    "visual": "A rounded warm-gold cultivation flower with eight broad petals, an amber center, a short muted-green stem, and two jade leaves. A faint cream inner ring suggests condensed sunlight without turning the object into a glowing sun icon.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "Exactly eight broad rounded golden petals",
+      "An amber flower center",
+      "A short muted-green stem with two jade leaves",
+      "A physical botanical essence form rather than a symbolic sun"
+    ],
+    "must_avoid": [
+      "sun disk icon, sharp rays, fire, pollen particles, realistic flower texture, or yellow neon"
+    ],
+    "existing_target": "res://assets/materials/jin-yang-hua.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.zi_mu_gen",
+    "name_zh": "紫木根精粹",
+    "category": "material",
+    "purpose": "人道与五行筑基材料图；用于精良箱材料流、路线配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single compact root segment centered on transparent canvas, angled diagonally from lower left to upper right. Show both cut ends, three rounded root branches, and one small sprout while keeping the silhouette simple and fully contained.",
+    "visual": "A smooth violet-brown spiritual root with pale lavender growth rings visible on one cut end, three soft branching roots, and one muted jade sprout. Subtle plum energy veins sit beneath the matte bark surface without emitting sparks or becoming realistic wood grain.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One violet-brown root segment",
+      "Pale lavender rings on one cut end",
+      "Three rounded root branches",
+      "One small muted-jade sprout"
+    ],
+    "must_avoid": [
+      "gnarled horror roots, realistic bark noise, dirt clumps, faces, hands, or sharp splinters"
+    ],
+    "existing_target": "res://assets/materials/zi-mu-gen.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.bi_shui_lian",
+    "name_zh": "碧水莲精粹",
+    "category": "material",
+    "purpose": "五行筑基材料图；用于精良箱水行材料流、路线配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single small lotus essence centered on transparent canvas, viewed slightly from above. Use one half-open bloom resting above one cupped leaf and one clear dew bead. Do not include water, pond scenery, ripples, a pedestal, or extra flowers.",
+    "visual": "A turquoise-white half-open lotus with rounded petals, a blue-green cupped leaf, and one large clear jade dew bead held at the center. Soft lake-blue shadows and a muted pearl highlight communicate condensed water essence with a clean, calm, tactile form.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One half-open turquoise-white lotus",
+      "One cupped blue-green leaf",
+      "Exactly one large jade dew bead",
+      "Soft lake-blue shading with a compact icon silhouette"
+    ],
+    "must_avoid": [
+      "pond, water surface, many droplets, splash effects, ice crystals, or photorealistic transparency"
+    ],
+    "existing_target": "res://assets/materials/bi-shui-lian.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.yan_ling_shu_xin",
+    "name_zh": "炎灵树心精粹",
+    "category": "material",
+    "purpose": "丹道与五行筑基材料图；用于精良箱火行材料流、路线配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single heart-shaped tree core centered on transparent canvas and tilted slightly toward the viewer. Keep the outer bark shell intact around a visible inner core, with one small leaf shoot at the top and no detached embers.",
+    "visual": "A rounded warm-brown tree heart with a coral-orange inner core, soft antique-gold growth rings, and one fresh jade shoot. The warmth appears as smooth internal color rather than open flame, char, sparks, or molten damage.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One rounded warm-brown tree heart",
+      "A visible coral-orange inner core",
+      "Soft antique-gold growth rings",
+      "One small fresh jade shoot"
+    ],
+    "must_avoid": [
+      "open fire, embers, smoke, burnt bark, realistic wood grain, or anatomical heart imagery"
+    ],
+    "existing_target": "res://assets/materials/yan-ling-shu-xin.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.da_di_ku_cao",
+    "name_zh": "大地苦草精粹",
+    "category": "material",
+    "purpose": "人道与五行筑基材料图；用于精良箱土行材料流、路线配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single hardy herb bundle centered on transparent canvas, with one compact base, seven readable leaves, and two small seed heads. Use a low sturdy silhouette and show the complete plant without soil or a pot.",
+    "visual": "A sturdy ochre-green bitter herb with seven thick rounded leaves, muted olive shadows, two small bronze seed heads, and a warm clay-colored root crown. The design conveys grounded endurance through broad weighty forms rather than dirt, rocks, or brown visual noise.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "Exactly seven thick rounded leaves",
+      "Two small bronze seed heads",
+      "A warm clay-colored root crown",
+      "A low sturdy silhouette that communicates earth-aligned resilience"
+    ],
+    "must_avoid": [
+      "soil mound, rocks, dusty texture, dead grass, sharp thorns, or photorealistic weeds"
+    ],
+    "existing_target": "res://assets/materials/da-di-ku-cao.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.lei_ji_tao_mu",
+    "name_zh": "雷击桃木精粹",
+    "category": "material",
+    "purpose": "一纹金丹材料图；用于稀有箱材料流、金丹配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single short peach-wood branch centered diagonally on transparent canvas. Show one clean broken end, two rounded branch forks, and one small peach blossom bud. Keep all energy detail contained inside the wood with no active bolt leaving the silhouette.",
+    "visual": "A smooth warm umber peach-wood segment marked by one elegant blue-gold inner vein left by heavenly lightning. The bark is simplified and matte, the broken end is rounded rather than splintered, and one pale pink bud signals living peach wood despite the strike.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One warm-umber peach-wood segment",
+      "One contained blue-gold lightning vein inside the wood",
+      "Two rounded branch forks",
+      "One pale pink peach blossom bud"
+    ],
+    "must_avoid": [
+      "active lightning bolts, sparks, charred gore, sharp splinters, realistic bark noise, or weapon shape"
+    ],
+    "existing_target": "res://assets/materials/lei-ji-tao-mu.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.fu_lu_zhou",
+    "name_zh": "福禄咒精粹",
+    "category": "material",
+    "purpose": "一纹金丹材料图；用于稀有箱符箓材料流、金丹配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single rolled and folded talisman essence centered on transparent canvas, shown in a gentle three-quarter view. Use one warm paper ribbon wrapped around a jade seal bead. Keep all paper markings abstract and non-legible, with no surrounding altar or ritual tools.",
+    "visual": "A soft ivory-gold talisman ribbon with rounded corners, simple cinnabar decorative strokes that do not form readable characters, and a small celadon seal bead. One muted gold energy fold gives it a blessed quality while preserving a clean physical silhouette.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One ivory-gold talisman ribbon with rounded corners",
+      "Abstract non-legible cinnabar decorative strokes",
+      "One small celadon seal bead",
+      "A compact blessed-material silhouette"
+    ],
+    "must_avoid": [
+      "readable Chinese characters, real religious scripture, hanging UI scroll, fire, paper texture noise, or sharp folded edges"
+    ],
+    "existing_target": "res://assets/materials/fu-lu-zhou.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.san_qing_chi_ling",
+    "name_zh": "三清敕令精粹",
+    "category": "material",
+    "purpose": "三纹金丹材料图；用于稀有箱敕令材料流、金丹配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single ceremonial command token centered frontally on transparent canvas. Build it as one rounded jade plaque with a balanced three-lobed crown and a short silk knot below. Keep the face free of writing and leave generous padding around the full token.",
+    "visual": "A pale celadon ceremonial plaque edged in muted antique gold, topped by three rounded cloud-lobes and finished with a short teal silk knot. The center carries only a shallow abstract concentric motif, never a character or readable seal. The finish is matte carved jade with soft hand-painted shading.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One pale-celadon rounded command plaque",
+      "A three-lobed cloud crown",
+      "A short teal silk knot",
+      "An abstract non-text concentric center motif"
+    ],
+    "must_avoid": [
+      "readable decree text, official seal characters, weapon shape, hard metal shine, ornate frame, or dangling UI badge"
+    ],
+    "existing_target": "res://assets/materials/san-qing-chi-ling.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.yang_ji_di_xin",
+    "name_zh": "阳极地心精粹",
+    "category": "material",
+    "purpose": "三纹、六纹与九纹金丹材料图；用于稀有箱阳极材料流、配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single spherical earth-heart core centered on transparent canvas, split into three broad rounded shell segments that reveal the inner center. Keep all segments connected, preserve a compact circle, and add no ground, lava pool, or orbiting debris.",
+    "visual": "A warm ochre and coral earth-heart core with a mellow antique-gold center, wrapped in three rounded terracotta shell plates. Smooth jade-green edge accents keep it within the game's palette. Heat is communicated by soft internal color gradients, not flames, lava splashes, or harsh glare.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One compact spherical earth-heart core",
+      "Three connected rounded terracotta shell plates",
+      "A mellow antique-gold center",
+      "Small jade-green edge accents"
+    ],
+    "must_avoid": [
+      "lava splash, flames, cracked planet, floating rocks, black char, or photorealistic molten material"
+    ],
+    "existing_target": "res://assets/materials/yang-ji-di-xin.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.yin_ji_yue_hua",
+    "name_zh": "阴极月华精粹",
+    "category": "material",
+    "purpose": "六纹与九纹金丹材料图；用于稀有箱阴极材料流、配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single moonlight condensate centered on transparent canvas. Seat one pearl-shaped droplet inside a broad crescent cradle, keeping both forms connected and the overall silhouette nearly circular. Do not add a night sky, stars, clouds, or orbiting particles.",
+    "visual": "A pearl-white moonlight droplet resting in a rounded silver-blue crescent cradle, with muted lavender shadows and a tiny teal reflection. The material feels cool, quiet, and dense, using soft cel shading rather than glass realism or sparkling cosmic effects.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One pearl-shaped moonlight droplet",
+      "One broad connected silver-blue crescent cradle",
+      "Muted lavender shadows",
+      "A tiny restrained teal reflection"
+    ],
+    "must_avoid": [
+      "night sky, stars, galaxy, sharp crescent points, glass realism, glitter, or blue neon"
+    ],
+    "existing_target": "res://assets/materials/yin-ji-yue-hua.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.cang_tian_zi_qi",
+    "name_zh": "苍天紫气精粹",
+    "category": "material",
+    "purpose": "九纹金丹主材料图；用于稀有箱紫气材料流、顶阶配方和突破预留。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single condensed qi vessel centered on transparent canvas, shaped as one broad horizontal cloud ribbon curling around a small central pearl. Keep the ribbon connected, soft-edged, and compact with no loose particle field or background sky.",
+    "visual": "A dignified violet dawn-qi ribbon with plum shadows, pale lavender upper edges, and one muted golden-white pearl at its center. The cloud form is rounded and substantial enough to read as a stored material unit, not ambient mist, smoke, or a magical explosion.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One broad connected violet dawn-qi ribbon",
+      "Plum shadows and pale lavender upper edges",
+      "One muted golden-white central pearl",
+      "A compact stored-material silhouette"
+    ],
+    "must_avoid": [
+      "smoke plume, storm cloud, galaxy, many particles, neon purple, lightning, or background atmosphere"
+    ],
+    "existing_target": "res://assets/materials/cang-tian-zi-qi.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "material.dao_mark",
+    "name_zh": "天道印记",
+    "category": "material",
+    "purpose": "稀有箱永久奖励材料图；用于长期乘区、材料仓和聚合收据中的唯一识别。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single circular heavenly mark centered frontally on transparent canvas. Form one complete ring around a small jade-gold seed shape, using symmetrical rounded cloud segments. Keep the mark free of writing, numerals, a badge border, or external rays.",
+    "visual": "A refined pale-jade circular seal with muted antique-gold inlay, six rounded cloud-like segments, and a small sprouting seed motif at the center. It should feel rare and permanent through balanced geometry and carved-jade depth, not through excessive glow or ornate UI decoration.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete pale-jade circular seal",
+      "Muted antique-gold inlay",
+      "Exactly six rounded cloud-like segments",
+      "A small abstract sprouting seed center with no text"
+    ],
+    "must_avoid": [
+      "yin-yang symbol, readable rune, UI medallion frame, radiant sunburst, excessive glow, or photorealistic jewelry"
+    ],
+    "existing_target": "res://assets/materials/dao-mark.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "chest.common",
+    "name_zh": "普通宝箱",
+    "category": "chest",
+    "purpose": "普通灵植批量收据和奖励演出的静态母图；后续用于轻微弹跳与开启视频。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single closed treasure chest centered in a square transparent canvas, shown from a front-left elevated three-quarter view. Keep the base horizontal, show the complete lid and feet, leave extra space above for opening motion, and use a stable bottom-center anchor.",
+    "visual": "A friendly compact chest made from warm honey-colored wood with rounded planks, muted bronze corner guards, a simple celadon clasp, and one small jade leaf ornament. It looks useful and humble, with matte painted surfaces and no written tier label.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "A closed rounded honey-wood chest",
+      "Muted bronze corner guards",
+      "One simple celadon clasp",
+      "Extra transparent headroom for a lid-opening animation"
+    ],
+    "must_avoid": [
+      "open chest, coins spilling out, skull lock, realistic wood grain, sharp metal corners, or pirate styling"
+    ],
+    "existing_target": "res://assets/chests/chest-common.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "chest.elite",
+    "name_zh": "精良宝箱",
+    "category": "chest",
+    "purpose": "精良灵植批量收据和奖励演出的静态母图；后续用于弹跳、开盖和柔光视频。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single closed medium-tier chest centered in a square transparent canvas, shown from the same front-left elevated three-quarter view as the common chest. Keep a stable bottom-center anchor, fully show the lid and feet, and reserve clear space above and beside the lid for opening motion.",
+    "visual": "A refined deep-teal lacquered wood chest with rounded ivory-jade corner plates, warm antique-gold bands, a flower-bud clasp, and restrained cloud-scroll carving with no writing. The surfaces remain matte and hand-painted, visibly richer than the common chest but not royal or overloaded.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "A closed deep-teal lacquered chest",
+      "Rounded ivory-jade corner plates",
+      "Warm antique-gold bands and one flower-bud clasp",
+      "Clear tier upgrade over the common chest without excessive ornament"
+    ],
+    "must_avoid": [
+      "open lid, reward contents, readable symbols, sharp metal spikes, glossy lacquer realism, or jewel overload"
+    ],
+    "existing_target": "res://assets/chests/chest-fine.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "chest.rare",
+    "name_zh": "稀有宝箱",
+    "category": "chest",
+    "purpose": "稀有灵植批量收据和顶阶奖励演出的静态母图；后续用于蓄力、开启和柔和宝光视频。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single closed high-tier chest centered in a square transparent canvas from a front-left elevated three-quarter view. Preserve the same footprint and anchor logic as the lower tiers, show every edge without cropping, and leave generous transparent space above for a ceremonial lid opening.",
+    "visual": "A prestigious pale-jade and dark-malachite chest with broad rounded antique-gold fittings, a circular heaven-seed lock, and restrained carved cloud bands. Fine turquoise seams suggest stored spiritual power, but the object stays matte, solid, calm, and readable rather than glowing like a special effect.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "A closed pale-jade and dark-malachite chest",
+      "Broad rounded antique-gold fittings",
+      "One circular heaven-seed lock without text",
+      "Restrained turquoise energy seams and generous opening headroom"
+    ],
+    "must_avoid": [
+      "open lid, treasure spilling out, crown motifs, excessive gemstones, blinding glow, sharp corners, or realistic metal reflections"
+    ],
+    "existing_target": "res://assets/chests/chest-rare.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "realm.qi_refining",
+    "name_zh": "练气境徽记",
+    "category": "realm",
+    "purpose": "练气大境界的路线总览、突破结果和历史谱系标识。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single front-facing circular realm emblem centered on a transparent square canvas. Keep the emblem perfectly contained with even padding, a clean outer silhouette, and no plate, ribbon, text field, numeral, or surrounding interface frame.",
+    "visual": "A pale celadon jade ring containing three rounded jade-green qi ribbons flowing around a small cream seed of light. The carved forms are soft and botanical, with muted gold pin accents and gentle depth suitable for a major-realm badge.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete pale-celadon circular jade ring",
+      "Exactly three rounded jade-green qi ribbons",
+      "One small cream seed of light",
+      "Balanced front-facing emblem geometry with no text"
+    ],
+    "must_avoid": [
+      "letters, Chinese characters, level numbers, sharp vortex blades, neon glow, or metallic achievement badge styling"
+    ],
+    "existing_target": "res://assets/realms/realm-qi-refining.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "realm.foundation",
+    "name_zh": "筑基境徽记",
+    "category": "realm",
+    "purpose": "筑基大境界的路线总览、突破结果和历史谱系标识。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single front-facing realm emblem centered in a transparent square canvas. Use a compact circular outer boundary surrounding a stable layered foundation motif. Keep all corners rounded and maintain even empty padding without a title ribbon or UI frame.",
+    "visual": "A jade-white foundation seal built from three nested rounded stone terraces supporting a young teal lotus shoot, enclosed by a muted antique-gold circular line. The visual weight sits low and stable, communicating an established cultivation base with calm architectural symmetry.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "Three nested rounded jade foundation terraces",
+      "One young teal lotus shoot",
+      "A complete muted antique-gold circular enclosure",
+      "A low stable symmetrical silhouette"
+    ],
+    "must_avoid": [
+      "pagoda logo, building facade, readable rune, sharp geometric star, achievement ribbon, or heavy stone texture"
+    ],
+    "existing_target": "res://assets/realms/realm-foundation.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "realm.golden_core",
+    "name_zh": "金丹境徽记",
+    "category": "realm",
+    "purpose": "金丹大境界的路线总览、雷劫结果和历史谱系标识。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single front-facing circular realm emblem centered on transparent canvas. Place one core at the exact center and surround it with three broad rounded orbital bands inside a complete jade ring. Preserve even padding and exclude all words, numbers, stars, and interface framing.",
+    "visual": "A warm matte golden core with a soft ivory center, surrounded by three flowing antique-gold and malachite orbital bands inside a pale-jade ring. Nine tiny shallow inlay notches may appear around the inner rim as abstract progression detail, never as digits or readable runes.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One centered warm matte golden core",
+      "Exactly three broad rounded orbital bands",
+      "One complete pale-jade outer ring",
+      "Nine tiny abstract inlay notches with no numeric appearance"
+    ],
+    "must_avoid": [
+      "sunburst, planet, atom icon, written runes, fiery aura, sharp rays, or glossy gold jewelry"
+    ],
+    "existing_target": "res://assets/realms/realm-golden-core.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "prop.gathering_array",
+    "name_zh": "中央聚灵阵",
+    "category": "prop",
+    "purpose": "主界面中央生产核心；六条通道连接六个可复用展示位，而七种灵植根据当前生产组合动态轮换显示。",
+    "width": 1536,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A complete large circular gathering array isolated on transparent canvas and viewed from the exact elevated three-quarter camera of the composition reference, so the circle appears as a broad ellipse. Place the array at canvas center, show every outer edge, use six evenly spaced radial channels, preserve a clear empty socket for the separate spirit crystal, and leave generous transparent margins for rotation and glow motion.",
+    "visual": "A multi-ring formation built from smooth pale-jade stone, muted celadon inlays, warm ivory seams, and restrained antique-gold accents. Six rounded channels extend from the outer ring toward six farm directions. Decorative markings are abstract flowing line motifs, never readable script. The structure is substantial, clean, softly weathered, and suitable for a bright healing cultivation garden.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "A complete elliptical array in elevated three-quarter perspective",
+      "Exactly six evenly spaced radial channels",
+      "A clear empty central socket for the separate spirit crystal",
+      "Multiple separable concentric rings suitable for slow counter-rotation",
+      "Six reusable display channels that are not permanently assigned to crop species"
+    ],
+    "must_avoid": [
+      "central crystal baked into the array, readable runes, text, numbers, hard sci-fi circuitry, sharp star geometry, ground texture, or explosive magic"
+    ],
+    "existing_target": "res://assets/props/gathering-array.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "prop.spirit_crystal",
+    "name_zh": "聚灵灵晶",
+    "category": "prop",
+    "purpose": "主界面聚灵阵中心能量核心；表现聚灵阵等级和生产脉冲的独立母图，后续用于呼吸、悬浮和缓慢转动视频。",
+    "width": 768,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete upright spirit crystal centered on a portrait transparent canvas, viewed from the same elevated three-quarter camera as the central array. Keep the crystal's vertical axis straight, show the complete pointed top and rounded base fitting, reserve transparent space above and below for gentle floating, and use a stable centerline anchor.",
+    "visual": "A large rounded-faceted emerald and turquoise spirit crystal with broad clean planes, a pale mint inner core, soft lake-blue lower shadows, and a small warm-gold base collar. Facets are simplified and softly rounded rather than razor sharp. The crystal feels alive through restrained internal color depth, not through bloom, sparks, or particle clouds.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete upright emerald-turquoise crystal",
+      "Broad simplified rounded facets",
+      "A pale mint internal core",
+      "A small warm-gold base collar and clear vertical floating space"
+    ],
+    "must_avoid": [
+      "crystal cluster, razor-sharp shards, realistic refraction, lens flare, particle halo, electric arcs, pedestal scenery, or UI frame"
+    ],
+    "existing_target": "res://assets/props/spirit-crystal.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "prop.waterwheel",
+    "name_zh": "木制水车",
+    "category": "prop",
+    "purpose": "主界面溪流旁的持续生产动景；静态母图用于图生视频生成匀速旋转和轻微木构受力。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete traditional wooden waterwheel isolated on transparent canvas, viewed from the composition reference's elevated front-right three-quarter angle. Center the axle precisely, keep the entire circular rim and every paddle visible, include only the compact support frame attached to the wheel, and leave even padding around the full rotation radius. Do not include water, riverbank, building, or scenery.",
+    "visual": "A rounded traditional Chinese farm waterwheel made from warm chestnut wood, with twelve broad paddles, a celadon-painted central hub, muted bronze pins, and simplified sturdy joinery. Wood grain is represented by a few clean hand-painted bands only. The design feels gentle, rural, and mechanically believable without metal machinery or harsh realism.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete circular waterwheel with a precisely centered axle",
+      "Exactly twelve broad rounded wooden paddles",
+      "A compact attached support frame",
+      "Clear padding beyond the entire rotation radius"
+    ],
+    "must_avoid": [
+      "water or splash baked into the asset, mill building, cropped rim, uneven paddle count, gears, modern machinery, detailed wood noise, or metallic industrial styling"
+    ],
+    "existing_target": "res://assets/props/waterwheel.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "effect_source.waterfall",
+    "name_zh": "瀑布动态母图",
+    "category": "effect_source",
+    "purpose": "主界面左侧瀑布的图生视频母图；生成连续落水、薄雾和底部柔和水花后再拆帧。",
+    "width": 1024,
+    "height": 1536,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single isolated vertical waterfall ribbon on a transparent portrait canvas, matching the composition reference's elevated three-quarter scene angle. Show the full flow from a clean rounded upper lip to a contained soft splash base. Keep the central fall continuous, leave generous transparent margins on both sides, and exclude cliff, rocks, plants, pool, sky, or landscape.",
+    "visual": "A bright turquoise and pale-cyan waterfall made from broad smooth animated-water bands, soft jade-blue shadow lanes, thin ivory foam edges, and a low rounded mist cushion at the base. The water is clean, graphic, and softly cel shaded, with clear flow lanes that can move downward without changing silhouette.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One continuous full-height waterfall ribbon",
+      "Broad turquoise and pale-cyan flow lanes",
+      "A contained rounded ivory foam and mist base",
+      "Stable outer silhouette suitable for seamless downward-flow video"
+    ],
+    "must_avoid": [
+      "cliff, rocks, pool, riverbank, background scenery, realistic spray, noisy droplets, frozen water texture, or cropped source and base"
+    ],
+    "existing_target": "res://assets/effects/sources/waterfall.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "effect_source.stream",
+    "name_zh": "溪流动态母图",
+    "category": "effect_source",
+    "purpose": "主界面溪流表面的图生视频母图；生成缓慢定向水流和少量循环涟漪后再拆帧。",
+    "width": 1536,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single isolated S-curved ribbon of shallow stream water crossing a wide transparent canvas from upper right to lower left, using the elevated three-quarter perspective of the composition reference. The complete water ribbon must remain inside the canvas with two clean open ends, broad enough for visible flow, and free of banks, stones, plants, bridges, fish, or scenery.",
+    "visual": "Clear jade-turquoise stream water rendered as large calm color bands with pale cyan highlights, soft teal depth zones, and a few broad cream-white ripple arcs integrated into the surface. The water should feel refreshing and gently directional without photographic transparency, tiny foam detail, or turbulent splashes.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete S-curved stream ribbon",
+      "Two clean open flow ends",
+      "Broad jade-turquoise and pale-cyan surface bands",
+      "A few large simple ripple arcs aligned with one stable flow direction"
+    ],
+    "must_avoid": [
+      "riverbank, stones, plants, bridge, fish, lotus, realistic reflection, tiny foam noise, chaotic waves, or background ground"
+    ],
+    "existing_target": "res://assets/effects/sources/stream.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "effect_source.cloud_mist",
+    "name_zh": "山间云雾动态母图",
+    "category": "effect_source",
+    "purpose": "远山与洞府之间的环境动态母图；生成极慢横向漂移和呼吸变化后再拆帧。",
+    "width": 1536,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A wide isolated bank of mountain mist centered on a transparent landscape canvas. Build three overlapping horizontal mist layers with soft rounded ends, a lower dense band, and two lighter upper trails. Keep the whole form contained with ample side room for slow lateral drift, and include no mountains, sky, sun, trees, birds, or particles.",
+    "visual": "Soft jade-white and pale blue-green cloud mist with large rounded hand-painted shapes, low-contrast teal undersides, and very gentle translucency at the outer edges. The mist feels light, clean, and healing, with coherent connected masses rather than smoke simulation or granular fog.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "Exactly three overlapping horizontal mist layers",
+      "Large rounded jade-white forms",
+      "Low-contrast pale teal undersides",
+      "Generous side padding for slow seamless lateral motion"
+    ],
+    "must_avoid": [
+      "mountains, sky, sun, birds, smoke plume, storm cloud, granular fog, tiny particles, hard edges, or photorealistic volumetrics"
+    ],
+    "existing_target": "res://assets/effects/sources/cloud-mist.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "effect_source.bamboo_leaves",
+    "name_zh": "前景竹叶动态母图",
+    "category": "effect_source",
+    "purpose": "主界面边缘前景遮挡层的图生视频母图；生成轻柔摆动、叶片延迟和阵风反馈后再拆帧。",
+    "width": 1024,
+    "height": 1536,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete foreground bamboo branch cluster isolated on a transparent portrait canvas, designed to enter the game frame from the lower-right edge. Use one main curved stem with three secondary twigs and clearly separated leaf groups. Keep the stem base fixed near the lower-right corner, preserve all leaf tips inside the canvas, and leave open transparent space toward the upper-left for swaying.",
+    "visual": "A lush but simplified bamboo cluster with rounded lance-shaped leaves in fresh jade, moss green, and muted teal shadow, attached to a smooth warm-green stem. Leaves are grouped into large readable fans with minimal internal veins, creating a soft foreground frame rather than dense botanical texture.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One curved main bamboo stem anchored at the lower-right",
+      "Exactly three readable secondary twigs",
+      "Large separated fans of rounded jade-green leaves",
+      "Open upper-left space for gentle delayed swaying"
+    ],
+    "must_avoid": [
+      "dense bamboo forest, hundreds of leaves, realistic leaf veins, serrated edges, noise, hard black silhouette, or background scenery"
+    ],
+    "existing_target": "res://assets/effects/sources/bamboo-leaves.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "character.disciple_model",
+    "name_zh": "弟子统一角色母设定",
+    "category": "character",
+    "purpose": "四种环境弟子动作共用的唯一身份参考，先生成并在后续动作母图中作为附加参考上传。",
+    "width": 768,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One complete young cultivation disciple isolated on a transparent portrait canvas in a relaxed neutral three-quarter standing pose. Show the full body from topknot to both feet, keep both arms resting naturally beside the torso, keep the feet on one shared baseline, and leave generous transparent padding. Include no action prop, spell effect, plant, ground, text, or alternate pose.",
+    "visual": "A friendly gender-neutral young disciple about three heads tall, with a round face, simple black topknot, jade-green outer robe, warm-ivory inner shirt, muted-brown waist cord, and dark-teal cloth shoes. Use broad minimal cloth folds, clean rounded deep-brown outlines, soft cel shading, and a calm focused expression. This exact face, costume, palette, and proportion must be reused by every disciple action asset.",
+    "must_include": [
+      "One neutral full-body three-quarter character",
+      "Exact reusable face, topknot, jade-green robe, warm-ivory inner layer, brown waist cord, and dark-teal shoes",
+      "Stable bottom-center foot anchor",
+      "Transparent background with clean alpha",
+      "Rounded non-pixel 2D commercial game finish"
+    ],
+    "must_avoid": [
+      "action pose, watering vessel, meditation cushion, plant, spell glyph, background, text, multiple views, turnaround sheet, or alternate costume",
+      "pixel art, noise, grain, sharpening, photorealism, 3D rendering, exaggerated anime proportions, or ornate accessories"
+    ],
+    "existing_target": "res://assets/characters/disciple-model.png",
+    "animation_candidate": false,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "character.disciple_watering",
+    "name_zh": "弟子浇水动作母图",
+    "category": "character",
+    "purpose": "灵田自动生产的环境角色母图；生成缓慢提壶、倾倒水流和复位动画后再拆帧。",
+    "width": 768,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One complete young cultivation disciple isolated on transparent portrait canvas in a left-facing three-quarter view, standing with knees softly bent and holding a small round watering vessel in both hands at waist height. Tilt the vessel only slightly in the source pose, keep both feet visible and planted on the same baseline, leave clear space in front of the spout, and exclude water, crop, soil, or scenery.",
+    "visual": "A friendly gender-neutral young disciple with a round face, simple black topknot, jade-green outer robe, warm ivory inner shirt, dark teal shoes, and a muted brown belt. The small celadon watering vessel has a rounded body and short spout. Cloth folds are broad and minimal, with a calm focused expression and no exaggerated anime features.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "The same reusable young cultivation disciple design: round face, black hair in one simple topknot, jade-green robe, warm ivory inner layer, dark teal cloth shoes, and a muted brown waist cord",
+      "A compact chibi proportion of about three heads tall with rounded hands and feet",
+      "A fully visible body and a stable bottom-center foot anchor",
+      "Clear separated limbs and cloth shapes suitable for image-to-video motion",
+      "A small rounded celadon watering vessel held with both hands",
+      "A slight preparatory vessel tilt with empty space ahead of the spout"
+    ],
+    "must_avoid": [
+      "water stream baked into the pose, plant, farm plot, background, adult heroic proportions, oversized head, detailed fingers, flowing hair, or ornate costume"
+    ],
+    "existing_target": "res://assets/characters/disciple-watering.png",
+    "animation_candidate": true,
+    "reference_asset_ids": [
+      "character.disciple_model"
+    ]
+  },
+  {
+    "id": "character.disciple_meditating",
+    "name_zh": "弟子打坐动作母图",
+    "category": "character",
+    "purpose": "洞府与聚灵阵周围的修炼角色母图；生成呼吸、衣袖起伏和轻微灵气响应后再拆帧。",
+    "width": 768,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One complete young cultivation disciple isolated on transparent portrait canvas, seated in a stable cross-legged meditation pose facing slightly left of camera. Place both hands relaxed together before the lower abdomen, keep the torso upright, show the complete robe hem and feet arrangement, center the seated base, and leave clear space around the head and shoulders. Add no cushion, floor, aura, or scenery.",
+    "visual": "The same friendly three-head-tall disciple with a round face, closed relaxed eyes, one simple black topknot, jade-green robe, warm ivory inner layer, dark teal shoes, and muted brown waist cord. Sleeves and robe hem form broad rounded shapes suitable for subtle breathing, with a peaceful cultivation mood and restrained hand-painted shading.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "The same reusable young cultivation disciple design: round face, black hair in one simple topknot, jade-green robe, warm ivory inner layer, dark teal cloth shoes, and a muted brown waist cord",
+      "A compact chibi proportion of about three heads tall with rounded hands and feet",
+      "A fully visible body and a stable bottom-center foot anchor",
+      "Clear separated limbs and cloth shapes suitable for image-to-video motion",
+      "A stable cross-legged seated pose",
+      "Closed relaxed eyes",
+      "Both hands resting together before the lower abdomen"
+    ],
+    "must_avoid": [
+      "meditation cushion, magic circle, aura baked into the character, floating pose, prayer text, mudra detail, exaggerated anime face, or background"
+    ],
+    "existing_target": "res://assets/characters/disciple-meditating.png",
+    "animation_candidate": true,
+    "reference_asset_ids": [
+      "character.disciple_model"
+    ]
+  },
+  {
+    "id": "character.disciple_observing",
+    "name_zh": "弟子观察灵植动作母图",
+    "category": "character",
+    "purpose": "灵田巡查与自动化反馈的环境角色母图；生成俯身观察、点头和衣袖摆动后再拆帧。",
+    "width": 768,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One complete young cultivation disciple isolated on transparent portrait canvas in a right-facing three-quarter pose, leaning forward slightly with one hand near the chin and the other hand resting behind the back. Keep both feet visible on one baseline, maintain a stable bottom-center anchor, and leave empty viewing space in front of the face. Include no crop, magnifying glass, clipboard, label, or scenery.",
+    "visual": "The same round-faced three-head-tall disciple with a simple black topknot, jade-green robe, warm ivory inner layer, dark teal shoes, and muted brown waist cord. The eyes are attentive and curious, the body language is gentle, and all cloth folds use clean broad shapes rather than fine line detail.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "The same reusable young cultivation disciple design: round face, black hair in one simple topknot, jade-green robe, warm ivory inner layer, dark teal cloth shoes, and a muted brown waist cord",
+      "A compact chibi proportion of about three heads tall with rounded hands and feet",
+      "A fully visible body and a stable bottom-center foot anchor",
+      "Clear separated limbs and cloth shapes suitable for image-to-video motion",
+      "A slight forward lean",
+      "One hand near the chin and the other behind the back",
+      "An attentive gentle expression and clear empty gaze direction"
+    ],
+    "must_avoid": [
+      "crop baked into the image, magnifying glass, book, clipboard, text, comic punctuation, extreme bow, adult scholar proportions, or background"
+    ],
+    "existing_target": "res://assets/characters/disciple-observing.png",
+    "animation_candidate": true,
+    "reference_asset_ids": [
+      "character.disciple_model"
+    ]
+  },
+  {
+    "id": "character.disciple_spellcasting",
+    "name_zh": "弟子施展灵术动作母图",
+    "category": "character",
+    "purpose": "灵田自动照料与聚灵阵反馈的环境角色母图；生成简单引导手势、袖摆和柔和灵气流动后再拆帧。",
+    "width": 768,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "One complete young cultivation disciple isolated on transparent portrait canvas in a front-right three-quarter stance. Extend one open palm gently forward at chest height while the other hand steadies the opposite wrist. Keep both feet visible, stance compact, body centered, and leave a large empty area beyond the open palm for a separately composited effect. Do not include magic, weapon, talisman, crop, or scenery in the source image.",
+    "visual": "The same friendly three-head-tall disciple with a round focused face, simple black topknot, jade-green robe, warm ivory inner layer, dark teal shoes, and muted brown waist cord. Sleeves are broad and rounded, the gesture is calm and practical, and the pose reads as tending spiritual plants rather than combat.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "The same reusable young cultivation disciple design: round face, black hair in one simple topknot, jade-green robe, warm ivory inner layer, dark teal cloth shoes, and a muted brown waist cord",
+      "A compact chibi proportion of about three heads tall with rounded hands and feet",
+      "A fully visible body and a stable bottom-center foot anchor",
+      "Clear separated limbs and cloth shapes suitable for image-to-video motion",
+      "One gently extended open palm",
+      "The other hand supporting the casting wrist",
+      "A compact non-combat stance with clear effect space beyond the palm"
+    ],
+    "must_avoid": [
+      "baked-in magic effect, lightning, fireball, weapon, talisman text, combat pose, dramatic flying sleeves, aggressive expression, or background"
+    ],
+    "existing_target": "res://assets/characters/disciple-spellcasting.png",
+    "animation_candidate": true,
+    "reference_asset_ids": [
+      "character.disciple_model"
+    ]
+  },
+  {
+    "id": "character.spirit_beast",
+    "name_zh": "灵兽待机母图",
+    "category": "character",
+    "purpose": "主界面陪伴型灵兽的标准母图；生成呼吸、眨眼、耳朵摆动和尾巴轻摇后再拆帧。",
+    "width": 768,
+    "height": 768,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete small spirit beast centered on transparent square canvas, seated in a front-left three-quarter pose. Keep all four paws or tucked feet readable, the tail fully visible beside the body, both ears inside the frame, and a stable bottom-center sitting anchor. Add no fruit, food, accessories, ground, scenery, or UI.",
+    "visual": "A small round cream-white fox-rabbit spirit beast with two soft jade-green leaf-shaped ears, a pale mint forehead sprout mark without text, warm amber eyes, tiny rounded paws, and one fluffy curled tail tipped in muted teal. The design is charming and calm, with soft cel shading and restrained facial detail rather than a large anime mascot head.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete seated cream-white fox-rabbit spirit beast",
+      "Two soft jade-green leaf-shaped ears",
+      "Warm amber eyes and tiny rounded paws",
+      "One fully visible fluffy curled tail with a muted-teal tip",
+      "A stable seated anchor suitable for breathing, blinking, ear, and tail motion"
+    ],
+    "must_avoid": [
+      "wings, horn, clothing, fruit, food, weapon, human body, oversized anime eyes, realistic fur strands, ground shadow, or background"
+    ],
+    "existing_target": "res://assets/characters/spirit-beast.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "character.butterfly",
+    "name_zh": "灵蝶母图",
+    "category": "character",
+    "purpose": "灵蝶振翅与轻微上下浮动的母图；曲线飞行路径统一由 Godot 控制，不烘焙进视频。",
+    "width": 512,
+    "height": 512,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single complete butterfly centered on transparent square canvas in a gentle top-front three-quarter view, wings open at a relaxed mid position. Keep the body centered, left and right wings balanced but not perfectly mirrored, show both antennae, and leave ample transparent space around the full wing span for flapping and floating motion.",
+    "visual": "A delicate rounded spirit butterfly with pale jade and warm cream wings, muted gold edge dots limited to four total, a small teal body, and thin warm-gray antennae. Wing panels use large clean shapes and soft blue-green shadows, reading clearly at game scale without realistic vein networks or glitter.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete butterfly with both wings fully visible",
+      "Pale-jade and warm-cream rounded wing panels",
+      "Exactly four restrained muted-gold edge dots",
+      "A small teal body and two warm-gray antennae",
+      "Generous padding for wing flapping and floating"
+    ],
+    "must_avoid": [
+      "multiple butterflies, realistic wing scales, dense vein patterns, moth body, neon colors, glitter, particle trail, or flower background"
+    ],
+    "existing_target": "res://assets/characters/butterfly.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "effect_source.breakthrough",
+    "name_zh": "突破特效母图",
+    "category": "effect_source",
+    "purpose": "首次境界突破演出的图生视频母图；生成由内向外聚合、环形展开和柔和稳定的突破动画后再拆帧。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single centered breakthrough energy formation isolated on transparent square canvas, with an intentionally empty circular center large enough to surround a separately composited character or realm emblem. Build three nested soft rings and six inward-curving energy petals, keep the outer boundary fully contained, and leave even transparent padding. Include no character, emblem, text, ground, or scenery.",
+    "visual": "A calm jade-green and warm-gold cultivation breakthrough effect made from broad translucent ribbons, rounded cloud-petal shapes, and restrained ivory highlights. Energy gathers toward the empty center and then reads outward through clean ring spacing. The effect feels uplifting and consequential without explosion, rays, sparks, or particle clutter.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One large empty circular center for separate compositing",
+      "Exactly three nested soft energy rings",
+      "Exactly six broad inward-curving cloud petals",
+      "Jade-green, warm-gold, and ivory color hierarchy",
+      "Clean separable shapes suitable for inward gathering and outward expansion"
+    ],
+    "must_avoid": [
+      "character, realm badge, text, readable rune, explosion, shockwave debris, starburst rays, lightning, dense particles, or overexposed bloom"
+    ],
+    "existing_target": "res://assets/effects/sources/breakthrough.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "effect_source.tribulation",
+    "name_zh": "雷劫特效母图",
+    "category": "effect_source",
+    "purpose": "金丹雷劫演出的图生视频母图；生成单次天雷落下、阵环响应和余光消退后再拆帧。",
+    "width": 1024,
+    "height": 1536,
+    "background": "transparent",
+    "references": [
+      "style",
+      "composition"
+    ],
+    "composition": "A single vertical tribulation effect isolated on transparent portrait canvas. Place one broad stylized celestial lightning ribbon from the top center toward an empty impact circle in the lower third, with two soft cloud arcs near the source and one contained jade-gold response ring around the empty impact point. Keep the entire bolt and ring inside the canvas and leave the impact center empty for a separately composited target.",
+    "visual": "A controlled pale-cyan and ivory heavenly lightning ribbon with rounded hand-painted edges, muted blue-violet inner shadows, two soft storm-cloud arcs, and a restrained jade-gold response ring. The bolt is solemn and readable rather than realistic, jagged, violent, or explosive; no debris or particle storm accompanies it.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One complete vertical celestial lightning ribbon",
+      "Two soft rounded cloud arcs at the source",
+      "One contained jade-gold response ring",
+      "A clear empty lower impact center for separate compositing",
+      "Soft-edged pale-cyan, ivory, and muted blue-violet bands"
+    ],
+    "must_avoid": [
+      "character, landscape, dark storm sky, multiple branching bolts, realistic electricity, fire, explosion, debris, dense sparks, screen flash, or motion blur"
+    ],
+    "existing_target": "res://assets/effects/sources/tribulation.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  },
+  {
+    "id": "effect_source.reincarnation",
+    "name_zh": "轮回特效母图",
+    "category": "effect_source",
+    "purpose": "主动轮回与自动轮回收据演出的图生视频母图；生成收束、旋转和重生展开动画后再拆帧。",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent",
+    "references": [
+      "style"
+    ],
+    "composition": "A single centered reincarnation vortex isolated on transparent square canvas, with a clear empty center and two broad interlocking spiral ribbons forming one complete circle. Add six rounded seed-leaf shapes evenly around the outer flow, keep every element contained with even padding, and exclude characters, realm badges, text, ground, scenery, or UI.",
+    "visual": "A serene circular reincarnation effect formed by one jade-green ribbon and one warm ivory-gold ribbon, softly interlocking around an empty center. Six small celadon seed leaves follow the flow, suggesting renewal and lineage without copying a literal yin-yang symbol. Shading is soft, matte, and luminous only at restrained inner edges.",
+    "must_include": [
+      "High-quality rounded 2D Chinese cultivation game animation style",
+      "Clean stable outlines in deep warm brown, muted jade, or warm gray, never pure black",
+      "Large clean color shapes, soft cel shading, restrained smooth gradients, and gentle natural lighting",
+      "A fully isolated subject with generous transparent padding and no baked-in ground or scenery",
+      "One clear empty center for separate compositing",
+      "Exactly two broad interlocking spiral ribbons",
+      "Exactly six rounded celadon seed leaves",
+      "A complete jade-green and warm ivory-gold circular flow",
+      "Separable shapes suitable for inward collapse and renewed outward unfurling"
+    ],
+    "must_avoid": [
+      "literal yin-yang symbol, readable rune, text, clock face, black void, death imagery, explosion, dense particles, or overexposed portal glow"
+    ],
+    "existing_target": "res://assets/effects/sources/reincarnation.png",
+    "animation_candidate": true,
+    "reference_asset_ids": []
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.582568,
+    "minimum_visible_ratio": 0.310513,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.disciple_casting",
+  "atlas": "res://assets/art/animations/animation-disciple-casting/atlas.png",
+  "atlas_sha256": "46ea401074c61bfb8095f2a020a2d50ef28f90a43992dde928333131cc83a7b2",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 32,
+  "frame_height": 342,
+  "frame_width": 256,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 8,
+  "playback_frame_count": 32,
+  "rows": 4,
+  "schema_version": 1,
+  "source_asset_id": "character.disciple_spellcasting",
+  "sprite_frames": "res://assets/art/animations/animation-disciple-casting/sprite_frames.tres"
+}

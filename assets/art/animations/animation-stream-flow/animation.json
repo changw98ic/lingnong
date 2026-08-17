@@ -1,0 +1,30 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.770752,
+    "minimum_visible_ratio": 0.227989,
+    "verified": true
+  },
+  "anchor": {
+    "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+    "canvas_dimensions_verified": true,
+    "mode": "fixed_canvas_registration",
+    "verified": false
+  },
+  "animation_id": "animation.stream_flow",
+  "atlas": "res://assets/art/animations/animation-stream-flow/atlas.png",
+  "atlas_sha256": "0bf0094394ba6ba4b20e6b0d1530481cacdd3c1aee01a7fc2363073122368ee9",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 256,
+  "frame_width": 512,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 18,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "effect_source.stream",
+  "sprite_frames": "res://assets/art/animations/animation-stream-flow/sprite_frames.tres"
+}

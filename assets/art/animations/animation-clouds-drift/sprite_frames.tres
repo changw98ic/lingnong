@@ -1,0 +1,108 @@
+[gd_resource type="SpriteFrames" load_steps=14 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/animations/animation-clouds-drift/atlas.png" id="1_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0000"]
+atlas = ExtResource("1_atlas")
+region = Rect2(4, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0001"]
+atlas = ExtResource("1_atlas")
+region = Rect2(520, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0002"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1036, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0003"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1552, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0004"]
+atlas = ExtResource("1_atlas")
+region = Rect2(2068, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0005"]
+atlas = ExtResource("1_atlas")
+region = Rect2(2584, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0006"]
+atlas = ExtResource("1_atlas")
+region = Rect2(3100, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0007"]
+atlas = ExtResource("1_atlas")
+region = Rect2(3616, 4, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0008"]
+atlas = ExtResource("1_atlas")
+region = Rect2(4, 264, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0009"]
+atlas = ExtResource("1_atlas")
+region = Rect2(520, 264, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0010"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1036, 264, 512, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0011"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1552, 264, 512, 256)
+
+[resource]
+animations = [{
+"frames": [
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0000")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0001")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0002")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0003")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0004")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0005")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0006")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0007")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0008")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0009")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0010")
+},
+{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0011")
+}
+],
+"loop": true,
+"name": &"default",
+"speed": 4.0
+}]

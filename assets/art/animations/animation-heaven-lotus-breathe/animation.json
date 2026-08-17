@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.506699,
+    "minimum_visible_ratio": 0.430206,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 2,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.heaven_lotus_breathe",
+  "atlas": "res://assets/art/animations/animation-heaven-lotus-breathe/atlas.png",
+  "atlas_sha256": "767a58f323cd482c40408e095b58e6259113b12ac6375452ac26c76020fc96d9",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 24,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 24,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "crop.heaven_lotus",
+  "sprite_frames": "res://assets/art/animations/animation-heaven-lotus-breathe/sprite_frames.tres"
+}

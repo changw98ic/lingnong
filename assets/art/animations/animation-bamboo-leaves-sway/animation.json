@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.739003,
+    "minimum_visible_ratio": 0.248769,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 2,
+    "mode": "lower_right_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.bamboo_leaves_sway",
+  "atlas": "res://assets/art/animations/animation-bamboo-leaves-sway/atlas.png",
+  "atlas_sha256": "9cd06a6f0d5a66230eb4a4f8173122530e098638d90937f909a14c40e398a2b7",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 384,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "effect_source.bamboo_leaves",
+  "sprite_frames": "res://assets/art/animations/animation-bamboo-leaves-sway/sprite_frames.tres"
+}

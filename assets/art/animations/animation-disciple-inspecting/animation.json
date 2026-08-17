@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.63882,
+    "minimum_visible_ratio": 0.349529,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.disciple_inspecting",
+  "atlas": "res://assets/art/animations/animation-disciple-inspecting/atlas.png",
+  "atlas_sha256": "8467bd19d592752e94811d6e54eaa526b796eedce74f9b730c613b482acd9e89",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 342,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "character.disciple_observing",
+  "sprite_frames": "res://assets/art/animations/animation-disciple-inspecting/sprite_frames.tres"
+}

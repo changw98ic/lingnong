@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.716492,
+    "minimum_visible_ratio": 0.184814,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 5.0,
+    "mode": "body_center_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.butterfly_flight",
+  "atlas": "res://assets/art/animations/animation-butterfly-flight/atlas.png",
+  "atlas_sha256": "ffc5c803c2c0e5d80e46e873e3c3fc6c7cf4a69079c3bb6b5279cd494017955a",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 16,
+  "frame_height": 128,
+  "frame_width": 128,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 8,
+  "playback_frame_count": 16,
+  "rows": 2,
+  "schema_version": 1,
+  "source_asset_id": "character.butterfly",
+  "sprite_frames": "res://assets/art/animations/animation-butterfly-flight/sprite_frames.tres"
+}

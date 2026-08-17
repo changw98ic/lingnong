@@ -1,0 +1,30 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.717155,
+    "minimum_visible_ratio": 0.241753,
+    "verified": true
+  },
+  "anchor": {
+    "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+    "canvas_dimensions_verified": true,
+    "mode": "fixed_canvas_registration",
+    "verified": false
+  },
+  "animation_id": "animation.clouds_drift",
+  "atlas": "res://assets/art/animations/animation-clouds-drift/atlas.png",
+  "atlas_sha256": "10edd77f833dc8b4a8a8318ac941af0f20b8d76edd32e83b4384b0d33facc367",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 12,
+  "frame_height": 256,
+  "frame_width": 512,
+  "loop_mode": "seam_blend",
+  "padding": 4,
+  "playback_fps": 4,
+  "playback_frame_count": 12,
+  "rows": 2,
+  "schema_version": 1,
+  "source_asset_id": "effect_source.cloud_mist",
+  "sprite_frames": "res://assets/art/animations/animation-clouds-drift/sprite_frames.tres"
+}

@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.484673,
+    "minimum_visible_ratio": 0.507345,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.waterwheel_turn",
+  "atlas": "res://assets/art/animations/animation-waterwheel-turn/atlas.png",
+  "atlas_sha256": "646df494f10df8c3636bc076025ed6fe63de6f2c419c9bb47133149c3fd3de7d",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 24,
+  "frame_height": 384,
+  "frame_width": 384,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 24,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "prop.waterwheel",
+  "sprite_frames": "res://assets/art/animations/animation-waterwheel-turn/sprite_frames.tres"
+}

@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.608704,
+    "minimum_visible_ratio": 0.381454,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.spirit_beast_idle",
+  "atlas": "res://assets/art/animations/animation-spirit-beast-idle/atlas.png",
+  "atlas_sha256": "60f5e2eeed664fe03b09f5267b52d3b4a074f726ef7ede94933f3feefd076d2d",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "character.spirit_beast",
+  "sprite_frames": "res://assets/art/animations/animation-spirit-beast-idle/sprite_frames.tres"
+}

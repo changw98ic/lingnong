@@ -1,0 +1,30 @@
+{
+  "alpha": {
+    "minimum_black_ratio": 0.307943,
+    "minimum_content_ratio": 0.398363,
+    "mode": "black_additive_content",
+    "verified": true
+  },
+  "anchor": {
+    "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+    "canvas_dimensions_verified": true,
+    "mode": "fixed_canvas_registration",
+    "verified": false
+  },
+  "animation_id": "animation.reincarnation",
+  "atlas": "res://assets/art/animations/animation-reincarnation/atlas.png",
+  "atlas_sha256": "72e88feb8582b1dcc59ccac09ccb45054bea91b5902c42ecd5327a6e5e7cb932",
+  "blend_mode": "additive",
+  "columns": 8,
+  "frame_count": 28,
+  "frame_height": 384,
+  "frame_width": 384,
+  "loop_mode": "seam_blend",
+  "padding": 4,
+  "playback_fps": 8,
+  "playback_frame_count": 28,
+  "rows": 4,
+  "schema_version": 1,
+  "source_asset_id": "effect_source.reincarnation",
+  "sprite_frames": "res://assets/art/animations/animation-reincarnation/sprite_frames.tres"
+}

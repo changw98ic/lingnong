@@ -1,0 +1,30 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.69514,
+    "minimum_visible_ratio": 0.266561,
+    "verified": true
+  },
+  "anchor": {
+    "assumption": "the extraction canvas is fixed, but internal effect attachment-point drift was not measured",
+    "canvas_dimensions_verified": true,
+    "mode": "fixed_canvas_registration",
+    "verified": false
+  },
+  "animation_id": "animation.waterfall_flow",
+  "atlas": "res://assets/art/animations/animation-waterfall-flow/atlas.png",
+  "atlas_sha256": "8da1e60f3a40de85a6db993b4dd9f6288107336713cd292f7a94f5350ad66c3d",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 384,
+  "frame_width": 256,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 18,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "effect_source.waterfall",
+  "sprite_frames": "res://assets/art/animations/animation-waterfall-flow/sprite_frames.tres"
+}

@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.560623,
+    "minimum_visible_ratio": 0.420547,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.purple_mushroom_breathe",
+  "atlas": "res://assets/art/animations/animation-purple-mushroom-breathe/atlas.png",
+  "atlas_sha256": "5223878423fcdbc79930964544f54c6f9be742f401e58d630c19a69020dba015",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "crop.purple_mushroom",
+  "sprite_frames": "res://assets/art/animations/animation-purple-mushroom-breathe/sprite_frames.tres"
+}

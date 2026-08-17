@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.719254,
+    "minimum_visible_ratio": 0.261765,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 4,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.nourishing_ginseng_breathe",
+  "atlas": "res://assets/art/animations/animation-nourishing-ginseng-breathe/atlas.png",
+  "atlas_sha256": "fff386570ef37a9ea699b6a08391b22e555a85eb4f50245ef14d5ce2bf1ecc93",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "crop.nourishing_ginseng",
+  "sprite_frames": "res://assets/art/animations/animation-nourishing-ginseng-breathe/sprite_frames.tres"
+}

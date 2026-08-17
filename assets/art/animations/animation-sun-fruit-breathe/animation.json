@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.636719,
+    "minimum_visible_ratio": 0.356323,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.sun_fruit_breathe",
+  "atlas": "res://assets/art/animations/animation-sun-fruit-breathe/atlas.png",
+  "atlas_sha256": "3961e1322efb7a4de9be717734ae2b717930ab2618f3af472fd7a5d6c29c3834",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 18,
+  "frame_height": 256,
+  "frame_width": 256,
+  "loop_mode": "ping_pong",
+  "padding": 4,
+  "playback_fps": 6,
+  "playback_frame_count": 34,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "crop.sun_fruit",
+  "sprite_frames": "res://assets/art/animations/animation-sun-fruit-breathe/sprite_frames.tres"
+}

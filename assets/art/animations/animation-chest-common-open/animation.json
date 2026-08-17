@@ -1,0 +1,31 @@
+{
+  "alpha": {
+    "minimum_transparent_corners": 4,
+    "minimum_transparent_ratio": 0.532986,
+    "minimum_visible_ratio": 0.361979,
+    "verified": true
+  },
+  "anchor": {
+    "max_x_drift_px": 0.0,
+    "max_y_drift_px": 0,
+    "mode": "bottom_center_root_region",
+    "tolerance_px": 12.0,
+    "verified": true
+  },
+  "animation_id": "animation.chest_common_open",
+  "atlas": "res://assets/art/animations/animation-chest-common-open/atlas.png",
+  "atlas_sha256": "faddcb3e588b7f9353bc49e4efdb350e5517741f27a01e9e33b26764951df781",
+  "blend_mode": "mix",
+  "columns": 8,
+  "frame_count": 24,
+  "frame_height": 384,
+  "frame_width": 384,
+  "loop_mode": "continuous",
+  "padding": 4,
+  "playback_fps": 8,
+  "playback_frame_count": 24,
+  "rows": 3,
+  "schema_version": 1,
+  "source_asset_id": "chest.common",
+  "sprite_frames": "res://assets/art/animations/animation-chest-common-open/sprite_frames.tres"
+}

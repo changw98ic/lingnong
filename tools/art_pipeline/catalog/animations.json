@@ -1,0 +1,707 @@
+[
+  {
+    "id": "animation.clouds_drift",
+    "source_asset_id": "effect_source.cloud_mist",
+    "name_zh": "云雾缓行",
+    "purpose": "为仙山主场景提供极慢的远景呼吸感，不承载交互或数值反馈。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 4,
+    "loop_mode": "seam_blend",
+    "width": 1536,
+    "height": 768,
+    "matte": "magenta",
+    "motion": "Drift internal wisps and soft cloud detail sideways at an extremely slow even pace while the full cloud-layer canvas remains registered to the scene. Allow gentle horizontal motion inside each cloud mass and use the seam overlap to return naturally; do not lock individual cloud positions.",
+    "locked_elements": [
+      "the camera, full overlay canvas, frame boundaries, horizon registration, and layer order",
+      "the number, identity, relative scale, and overall soft silhouette family of the major cloud masses",
+      "the original pale jade-blue palette, rounded linework, soft cel shading, and fixed sunlight direction"
+    ],
+    "must_avoid": [
+      "fast travel, large displacement, storm turbulence, or newly invented cloud masses",
+      "camera motion, parallax drift, reframing, or baked camera shake",
+      "pixel art, noise, grain, oversharpening, edge enhancement, flicker, or motion blur"
+    ],
+    "godot_fps": 4,
+    "frame_width": 512,
+    "frame_height": 256,
+    "anchor_check": "fixed_canvas"
+  },
+  {
+    "id": "animation.waterfall_flow",
+    "source_asset_id": "effect_source.waterfall",
+    "name_zh": "瀑布流水",
+    "purpose": "提供连续向下的环境流水动画，让洞府背景保持生命感。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "continuous",
+    "width": 1024,
+    "height": 1536,
+    "matte": "magenta",
+    "motion": "Move the isolated waterfall water continuously downward in slow rounded ribbons for exactly one closed flow cycle. Let the contained foam base shift gently and the small mist cushion breathe faintly while the waterfall outer boundary, top entry lip, and bottom contact point remain fixed.",
+    "locked_elements": [
+      "the camera, crop, waterfall width, top entry lip, bottom contact point, and full-canvas registration",
+      "the isolated water ribbon outer silhouette and contained foam-base footprint",
+      "the original water palette, rounded contour treatment, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "reversing or pausing the downward water direction",
+      "inventing rocks, shoreline, vegetation, scenery, changing the water level, widening the falls, or generating large splashes",
+      "camera motion, pixel art, texture crawling, noise, sharpening, flicker, or motion blur"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 384,
+    "anchor_check": "fixed_canvas"
+  },
+  {
+    "id": "animation.stream_flow",
+    "source_asset_id": "effect_source.stream",
+    "name_zh": "溪流循环",
+    "purpose": "连接瀑布、水车与灵田，提供安静且持续的水面运动。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "continuous",
+    "width": 1536,
+    "height": 768,
+    "matte": "magenta",
+    "motion": "Create one steady directional current cycle inside the isolated stream ribbon using slow surface ripples and small rounded eddies. Keep the water-ribbon outer silhouette, open inlet, open outlet, flow direction, and overall brightness stable from the first moment to the last.",
+    "locked_elements": [
+      "the camera, full overlay canvas, stream-ribbon width, open inlet, open outlet, and bottom-center registration",
+      "the isolated water outer silhouette and original reflection-band layout",
+      "the original jade-blue palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "reversing the current, wave surges, flooding, foam explosions, or random droplets",
+      "inventing shoreline, stones, plants, bridges, props, or reflected scenery"
+    ],
+    "godot_fps": 6,
+    "frame_width": 512,
+    "frame_height": 256,
+    "anchor_check": "fixed_canvas"
+  },
+  {
+    "id": "animation.waterwheel_turn",
+    "source_asset_id": "prop.waterwheel",
+    "name_zh": "水车缓转",
+    "purpose": "表现洞府水力设施持续运作，作为主场景的低速机械循环。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "continuous",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Rotate the wooden wheel clockwise at a constant gentle speed for exactly one full revolution. Keep the axle and support frame immobile, allowing only an extremely small delayed wooden weight response that returns precisely to the opening state.",
+    "locked_elements": [
+      "the camera, subject scale, and bottom-center anchor at the same pixel position",
+      "the axle center, support frame, spoke count, paddle count, and complete wooden silhouette",
+      "the original wood colors, rounded deep-brown outlines, soft cel shading, and fixed light direction"
+    ],
+    "must_avoid": [
+      "variable speed, reverse rotation, high-speed spinning, wobbling axle, or metallic machinery",
+      "warped spokes, changing paddle count, detached parts, or background spill onto the subject"
+    ],
+    "godot_fps": 6,
+    "frame_width": 384,
+    "frame_height": 384,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.bamboo_leaves_sway",
+    "source_asset_id": "effect_source.bamboo_leaves",
+    "name_zh": "竹叶轻摆",
+    "purpose": "为主场景前景和画面边缘提供低幅度的风感遮挡动画。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 1024,
+    "height": 1536,
+    "matte": "magenta",
+    "motion": "Move from the neutral pose toward one mild-breeze extreme: bend the bamboo stems by only a small angle and let the smaller leaf clusters follow with subtle delayed motion. Keep the roots fixed and end at a natural opposite extreme suitable for mirrored return playback.",
+    "locked_elements": [
+      "the camera, subject scale, root placement, and lower-right stem-base anchor at the same pixel position",
+      "the number, attachment points, leaf shapes, and layering order of all stems and leaf clusters; allow only the requested wind-driven position changes",
+      "the original jade-green palette, rounded linework, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "strong wind, whipping motion, large bends, detached leaves, or newly growing branches",
+      "root movement, topology changes, leaf-count changes, unrequested deformation, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 384,
+    "anchor_check": "lower_right_root_region"
+  },
+  {
+    "id": "animation.gathering_array_cycle",
+    "source_asset_id": "prop.gathering_array",
+    "name_zh": "聚灵阵循环",
+    "purpose": "表现聚灵阵持续汇聚灵气，并承载全局生产倍率的核心视觉反馈。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "continuous",
+    "width": 1536,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Rotate two or three existing jade formation rings slowly in alternating directions for exactly one complete cycle. Send soft cyan energy through the six fixed channels toward the center and add one restrained luminosity pulse without changing any rune or ring geometry.",
+    "locked_elements": [
+      "the camera, formation center, subject scale, and geometric center at the same pixel position",
+      "the exact ring count, rune geometry, six-channel layout, symmetry, and rotation axes",
+      "the original jade-cyan and muted-gold colors, rounded linework, soft glow falloff, and fixed lighting"
+    ],
+    "must_avoid": [
+      "lightning, explosive magic, particle bursts, rapid rotation, or excessive bloom",
+      "changing runes, adding rings, shifting the center, breaking symmetry, or contaminating the chroma-magenta matte"
+    ],
+    "godot_fps": 6,
+    "frame_width": 512,
+    "frame_height": 384,
+    "anchor_check": "center_region"
+  },
+  {
+    "id": "animation.spirit_crystal_breathe",
+    "source_asset_id": "prop.spirit_crystal",
+    "name_zh": "灵晶核心呼吸",
+    "purpose": "作为中央聚灵阵的稳定视觉焦点，持续表现温和的灵气充盈。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 768,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Move from the neutral state toward one gentle luminous extreme: keep the crystal in exactly the same position while its internal jade light slowly brightens and one restrained highlight breathes across the existing facets. Keep every facet and the crystal orientation unchanged, ending at a stable luminous extreme for mirrored return playback.",
+    "locked_elements": [
+      "the camera, crystal scale, geometric center, and full crystal position at the same pixels",
+      "the exact facet geometry, orientation, silhouette, highlight placement, and shadow footprint",
+      "the original jade palette, rounded contour treatment, soft cel shading, and fixed light direction"
+    ],
+    "must_avoid": [
+      "spinning, levitation, translation, sharp flashes, electrical arcs, or particle explosions",
+      "facet morphing, crystal splitting, hue drift, moving shadow direction, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 342,
+    "anchor_check": "center_region"
+  },
+  {
+    "id": "animation.gathering_grass_sway",
+    "source_asset_id": "crop.gathering_grass",
+    "name_zh": "聚灵草成熟待机",
+    "purpose": "表现聚灵草成熟后的自动生产脉动；不表现种植、点击或完整生长阶段。",
+    "duration_seconds": 2,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Move from the mature neutral pose toward one gentle harvest-pulse extreme: open the rounded leaves by a very small amount while a soft jade-green glow gathers from the leaf tips toward the root. End before the glow releases so mirrored playback returns naturally to the neutral state.",
+    "locked_elements": [
+      "the camera, mature plant scale, root position, and bottom-center anchor at the same pixel position",
+      "the leaf count, stem structure, neutral silhouette identity, and viewing angle; allow only the requested gentle leaf, petal, fruit, or cap motion",
+      "the original jade-green palette, rounded outlines, soft cel shading, and fixed light direction"
+    ],
+    "must_avoid": [
+      "full growth stages, harvesting disappearance, fruit creation, leaf-count changes, or soil movement",
+      "fast shaking, large deformation, detached leaves, invented particles, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.nourishing_ginseng_breathe",
+    "source_asset_id": "crop.nourishing_ginseng",
+    "name_zh": "养元参成熟待机",
+    "purpose": "表现养元参成熟后的体魄滋养气息；不表现人工照料和完整生长过程。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Move from the mature neutral pose toward one nourished extreme: lift the broad leaves slightly while a warm amber-green pulse travels downward into the fixed ginseng root. Keep the root still and end at a calm opposite extreme for mirrored return playback.",
+    "locked_elements": [
+      "the camera, mature plant scale, root placement, and bottom-center anchor at the same pixel position",
+      "the leaf count, root shape, stem structure, neutral silhouette identity, and viewing angle; allow only the requested gentle leaf, petal, fruit, or cap motion",
+      "the original warm green and amber palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "root walking, human facial features, full growth stages, harvest removal, or structural transformation",
+      "fast shaking, large squash, detached leaves, new roots, particles, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.mind_flower_breathe",
+    "source_asset_id": "crop.mind_flower",
+    "name_zh": "凝神花成熟待机",
+    "purpose": "表现凝神花成熟后的神识凝聚气息；不表现采收或阶段性生长。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 1024,
+    "height": 1024,
+    "matte": "red",
+    "motion": "Move from the mature neutral pose toward one focused extreme: open the petals by only a few degrees while a cool cyan-violet halo condenses smoothly at the flower center. End with the halo softly concentrated for mirrored return playback.",
+    "locked_elements": [
+      "the camera, mature plant scale, root position, and bottom-center anchor at the same pixel position",
+      "the petal count, flower-center geometry, leaf structure, neutral silhouette identity, and viewing angle; allow only the requested gentle leaf, petal, fruit, or cap motion",
+      "the original cyan-violet and jade palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "large blooming, petal-count changes, full growth stages, harvest disappearance, or flower duplication",
+      "hypnotic rapid pulsing, strong bloom, detached petals, particle bursts, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.sun_fruit_breathe",
+    "source_asset_id": "crop.sun_fruit",
+    "name_zh": "赤阳果成熟待机",
+    "purpose": "表现赤阳果成熟后的温暖灵力循环；保持果实数量和自动生产语义稳定。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Move from the mature neutral pose toward one warm luminous extreme: sway the leaves by a very small amount while a restrained red-gold highlight rolls across the fixed fruit surfaces. Keep every fruit still in size and placement, ending at a calm opposite extreme for mirrored return playback.",
+    "locked_elements": [
+      "the camera, mature plant scale, root placement, and bottom-center anchor at the same pixel position",
+      "the fruit count, fruit positions, branch structure, leaf count, neutral silhouette identity, and viewing angle; allow only the requested gentle leaf, petal, fruit, or cap motion",
+      "the original warm red-gold and jade palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "fire, smoke, fruit growth, fruit drop, fruit-count changes, harvest disappearance, or structural transformation",
+      "strong flame effects, fast shaking, detached leaves, particle bursts, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.five_element_ear_sway",
+    "source_asset_id": "crop.five_element_ear",
+    "name_zh": "五行穗成熟循环",
+    "purpose": "表现五行穗成熟后的五行能量依次流转，同时保持安静的灵田待机状态。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "continuous",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Complete one restrained five-color energy sequence through the existing grain heads in a fixed elemental order, returning exactly to the opening color state. Add only slight synchronized stalk sway and keep every grain head attached and structurally unchanged.",
+    "locked_elements": [
+      "the camera, mature plant scale, root placement, and bottom-center anchor at the same pixel position",
+      "the stalk count, grain-head count, attachment points, neutral silhouette identity, and viewing angle; allow only the requested gentle leaf, petal, fruit, or cap motion",
+      "the original five-element palette, rounded outlines, soft cel shading, and fixed light direction"
+    ],
+    "must_avoid": [
+      "random color order, neon colors, elemental explosions, full growth stages, harvest removal, or grain shedding",
+      "large stalk bending, detached heads, structural drift, extra particles, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.heaven_lotus_breathe",
+    "source_asset_id": "crop.heaven_lotus",
+    "name_zh": "天道莲成熟循环",
+    "purpose": "表现天道莲成熟后的稀有灵韵与宝物算力加成，不改变植物结构。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "continuous",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Let the existing lotus petals breathe almost imperceptibly while one thin jade-gold halo travels slowly around the fixed flower center for exactly one full orbit. Return every highlight and petal to the opening state without closing or reopening the flower.",
+    "locked_elements": [
+      "the camera, mature lotus scale, root placement, and bottom-center anchor at the same pixel position",
+      "the petal count, lotus-center geometry, leaf count, neutral silhouette identity, and viewing angle; allow only the requested gentle leaf, petal, fruit, or cap motion",
+      "the original jade-white and restrained gold palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "full bloom transformation, petal-count changes, harvest disappearance, sacred text, or explosive divine light",
+      "large deformation, detached petals, excessive bloom, particle bursts, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.purple_mushroom_breathe",
+    "source_asset_id": "crop.purple_mushroom",
+    "name_zh": "紫芝成熟待机",
+    "purpose": "表现紫芝成熟后的后期灵力充盈，维持稳定低速的自动生产观感。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 1024,
+    "height": 1024,
+    "matte": "red",
+    "motion": "Move from the mature neutral pose toward one softly charged extreme: lift the mushroom caps almost imperceptibly while muted violet luminous veins travel from the fixed stems into the caps. End with the veins gently visible for mirrored return playback.",
+    "locked_elements": [
+      "the camera, mature plant scale, root placement, and bottom-center anchor at the same pixel position",
+      "the cap count, cap shapes, stem structure, luminous-vein layout, neutral silhouette identity, and viewing angle; allow only the requested gentle leaf, petal, fruit, or cap motion",
+      "the original muted violet and jade palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "spore clouds, toxic imagery, cap-count changes, full growth stages, harvest removal, or structural mutation",
+      "large cap deformation, detached parts, neon purple, particle bursts, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.disciple_watering",
+    "source_asset_id": "character.disciple_watering",
+    "name_zh": "弟子浇水",
+    "purpose": "作为不影响自动生产的环境演出，表现弟子在灵田旁进行一次温和浇灌。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "continuous",
+    "width": 768,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Complete one closed tending action: the disciple slowly tilts the existing small celadon watering vessel, pours one narrow controlled stream toward the fixed target area, pauses briefly, then returns to the exact upright idle pose. Use gentle body weight transfer and restrained sleeve follow-through without walking.",
+    "locked_elements": [
+      "the camera, character scale, foot placement, and bottom-center anchor at the same pixel position",
+      "the exact face, hairstyle, jade-green costume, warm-ivory inner layer, dark-teal shoes, body proportions, hand count, and viewing angle from the supplied still",
+      "all original prop materials, colors, rounded linework, soft cel shading, and fixed lighting; allow only the temporary effect explicitly requested in Motion"
+    ],
+    "must_avoid": [
+      "walking, production interruption, manual-harvest framing, large water splashes, or an endless water stream",
+      "broken anatomy, extra fingers, costume changes, vessel morphing, facial drift, or matte contamination"
+    ],
+    "godot_fps": 8,
+    "frame_width": 256,
+    "frame_height": 342,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.disciple_meditating",
+    "source_asset_id": "character.disciple_meditating",
+    "name_zh": "弟子打坐",
+    "purpose": "作为低频环境待机动画，表现洞府修行氛围而不打断主循环。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 768,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Move from the neutral seated pose toward one gentle inhale extreme: raise the chest and shoulders almost imperceptibly, let the sleeves and hair tips follow with restrained delay, and expand a very soft jade aura close to the body. Keep the seated base fixed for mirrored exhale playback.",
+    "locked_elements": [
+      "the camera, character scale, foot placement, and bottom-center anchor at the same pixel position",
+      "the exact face, hairstyle, jade-green costume, warm-ivory inner layer, dark-teal shoes, body proportions, hand count, and viewing angle from the supplied still",
+      "all original prop materials, colors, rounded linework, soft cel shading, and fixed lighting; allow only the temporary effect explicitly requested in Motion"
+    ],
+    "must_avoid": [
+      "levitation, dramatic spellcasting, combat gestures, large aura expansion, or intense glow",
+      "broken anatomy, costume changes, facial drift, pose reconstruction, particles, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 342,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.disciple_inspecting",
+    "source_asset_id": "character.disciple_observing",
+    "name_zh": "弟子观察灵植",
+    "purpose": "作为装饰性环境动作，表现弟子观察灵植状态但不触发点击或照料任务。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 768,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Move from the neutral standing pose toward one attentive extreme: lean the upper body forward slightly, direct the eyes toward the fixed plant target, and make one small thoughtful nod. Keep both feet planted and end at the natural forward extreme for mirrored return playback.",
+    "locked_elements": [
+      "the camera, character scale, foot placement, and bottom-center anchor at the same pixel position",
+      "the exact face, hairstyle, jade-green costume, warm-ivory inner layer, dark-teal shoes, body proportions, hand count, and viewing angle from the supplied still",
+      "all original prop materials, colors, rounded linework, soft cel shading, and fixed lighting; allow only the temporary effect explicitly requested in Motion"
+    ],
+    "must_avoid": [
+      "walking, touching or changing the plant, manual-task framing, exaggerated bowing, or repeated head bobbing",
+      "broken anatomy, costume changes, facial drift, extra limbs, prop morphing, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 342,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.disciple_casting",
+    "source_asset_id": "character.disciple_spellcasting",
+    "name_zh": "弟子施展养护法术",
+    "purpose": "作为不影响生产结算的环境演出，表现一次轻柔的灵植养护法术。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "continuous",
+    "width": 768,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Complete one closed tending spell: the disciple raises one hand slowly, forms one small stable cyan-gold cultivation glyph, guides a thin light ribbon toward the fixed plant target, then lowers the hand and returns exactly to idle. Use restrained sleeve and hair follow-through with no combat stance.",
+    "locked_elements": [
+      "the camera, character scale, foot placement, and bottom-center anchor at the same pixel position",
+      "the exact face, hairstyle, jade-green costume, warm-ivory inner layer, dark-teal shoes, body proportions, hand count, and viewing angle from the supplied still",
+      "all original prop materials, colors, rounded linework, soft cel shading, and fixed lighting; allow only the temporary effect explicitly requested in Motion"
+    ],
+    "must_avoid": [
+      "combat magic, lightning, fire, explosions, weapon summoning, teleportation, or large particle fields",
+      "broken anatomy, extra fingers, costume changes, facial drift, changing glyph geometry, or matte contamination"
+    ],
+    "godot_fps": 8,
+    "frame_width": 256,
+    "frame_height": 342,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.spirit_beast_idle",
+    "source_asset_id": "character.spirit_beast",
+    "name_zh": "灵兽待机",
+    "purpose": "为主场景提供亲和的生命感，不承担按钮、提示或战斗功能。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 6,
+    "loop_mode": "ping_pong",
+    "width": 768,
+    "height": 768,
+    "matte": "magenta",
+    "motion": "Move from the neutral pose toward one gentle idle extreme: expand the torso slightly with a soft breath, turn one ear by a small amount, sway the tail subtly, and add a tiny curious head tilt. Keep every paw planted and end at a calm opposite extreme for mirrored return playback.",
+    "locked_elements": [
+      "the camera, creature scale, paw placement, and bottom-center anchor at the same pixel position",
+      "the face, ear count, tail count, markings, body proportions, and identity; allow only the requested breathing deformation",
+      "the original warm jade-white palette, rounded linework, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "walking, jumping, aggressive poses, large tail whipping, barking, attacks, or magical explosions",
+      "extra limbs, changing markings, facial drift, anatomy morphing, costume additions, or matte contamination"
+    ],
+    "godot_fps": 6,
+    "frame_width": 256,
+    "frame_height": 256,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.butterfly_flight",
+    "source_asset_id": "character.butterfly",
+    "name_zh": "蝴蝶振翅",
+    "purpose": "提供可由 Godot 沿路径移动的轻柔振翅循环，视频本身不烘焙飞行轨迹。",
+    "duration_seconds": 2,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "continuous",
+    "width": 512,
+    "height": 512,
+    "matte": "magenta",
+    "motion": "Complete exactly one slow rounded wingbeat cycle, opening and closing both wings symmetrically while the butterfly body remains completely stationary. Godot will control every flight-path and vertical-bob movement separately.",
+    "locked_elements": [
+      "the camera, creature scale, central body position, and body-center anchor at the same pixel position",
+      "the wing count, wing patterns, body proportions, antennae, and identity; allow only the requested symmetric wing opening and closing",
+      "the original soft colors, rounded linework, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "fast insect-like fluttering, baked travel path, large displacement, erratic motion, or multiple butterflies",
+      "asymmetric wing morphing, changing patterns, extra wings, missing antennae, or matte contamination"
+    ],
+    "godot_fps": 8,
+    "frame_width": 128,
+    "frame_height": 128,
+    "anchor_check": "body_center_region"
+  },
+  {
+    "id": "animation.chest_common_open",
+    "source_asset_id": "chest.common",
+    "name_zh": "普通宝箱开启",
+    "purpose": "用于普通宝物聚合收据或预览的短动画，不作为逐箱领取按钮。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "continuous",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Complete one closed reward cycle: begin with the common wooden chest closed, add one tiny anticipation compression with the base staying fixed, open the lid slowly, reveal a restrained warm jade light, then close and settle into the exact opening pose.",
+    "locked_elements": [
+      "the camera, chest scale, base placement, and bottom-center anchor at the same pixel position",
+      "the box proportions, hinge location, latch, trim, wood construction, closed-state identity, and viewing angle; allow the lid silhouette to change only through the existing hinge",
+      "the original warm wood and jade palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "loot objects flying out, coins, text, numbers, claim-button framing, repeated bouncing, or explosive glow",
+      "detached lid, broken hinge, changing trim, box morphing, extra chests, or matte contamination"
+    ],
+    "godot_fps": 8,
+    "frame_width": 384,
+    "frame_height": 384,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.chest_elite_open",
+    "source_asset_id": "chest.elite",
+    "name_zh": "精良宝箱开启",
+    "purpose": "用于精良宝物聚合收据或预览的短动画，不逐次打断自动生产。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "continuous",
+    "width": 1024,
+    "height": 1024,
+    "matte": "magenta",
+    "motion": "Complete one closed reward cycle: open the elite jade-trimmed chest with a gentle upward lid motion, reveal a soft cyan-blue inner glow and one small circular light wave, then close and return exactly to the opening pose. Keep the base and latch alignment stable.",
+    "locked_elements": [
+      "the camera, chest scale, base placement, and bottom-center anchor at the same pixel position",
+      "the box proportions, hinge location, latch, elite jade trim, closed-state identity, and viewing angle; allow the lid silhouette to change only through the existing hinge",
+      "the original jade, wood, and cyan-blue palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "loot objects flying out, text, numbers, claim-button framing, repeated bouncing, or large particle bursts",
+      "detached lid, broken hinge, changing trim, box morphing, extra chests, or matte contamination"
+    ],
+    "godot_fps": 8,
+    "frame_width": 384,
+    "frame_height": 384,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.chest_rare_open",
+    "source_asset_id": "chest.rare",
+    "name_zh": "稀有宝箱开启",
+    "purpose": "用于稀有宝物聚合收据或预览的克制奖励演出，不制造卡牌抽取界面。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "continuous",
+    "width": 1024,
+    "height": 1024,
+    "matte": "red",
+    "motion": "Complete one closed ceremonial reward cycle: lift the rare gold-trimmed lid smoothly, reveal a concentrated jade-gold and muted-violet glow, emit one elegant halo close to the chest, then close and settle into the exact opening pose without an explosion.",
+    "locked_elements": [
+      "the camera, chest scale, base placement, and bottom-center anchor at the same pixel position",
+      "the box proportions, hinge location, latch, rare gold trim, engraved details, closed-state identity, and viewing angle; allow the lid silhouette to change only through the existing hinge",
+      "the original jade-gold and muted-violet palette, rounded outlines, soft cel shading, and fixed lighting"
+    ],
+    "must_avoid": [
+      "loot objects flying out, text, numbers, card-reveal framing, repeated bouncing, fireworks, or explosive bloom",
+      "detached lid, broken hinge, changing engravings, box morphing, extra chests, or matte contamination"
+    ],
+    "godot_fps": 8,
+    "frame_width": 384,
+    "frame_height": 384,
+    "anchor_check": "bottom_center_root_region"
+  },
+  {
+    "id": "animation.breakthrough",
+    "source_asset_id": "effect_source.breakthrough",
+    "name_zh": "突破演出",
+    "purpose": "用于突破事件的短反馈；自动重复结果应聚合展示，不反复播放完整演出。",
+    "duration_seconds": 3,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "seam_blend",
+    "width": 1024,
+    "height": 1024,
+    "matte": "black",
+    "motion": "Animate the supplied three-ring, six-petal breakthrough formation from its visible calm state. Draw the existing broad energy ribbons gently inward around the empty center, brighten the existing rings in sequence, emit one restrained outward light wave, and settle every ring and petal back to the supplied calm state. Keep the center empty for a separately composited realm emblem or character.",
+    "locked_elements": [
+      "the camera, effect scale, empty effect center, and full-canvas registration",
+      "the existing three-ring layout, six cloud-petal topology, ring spacing, and symmetry",
+      "the original jade-green, warm-gold, and ivory palette, rounded shapes, soft glow falloff, and black matte"
+    ],
+    "must_avoid": [
+      "inventing a realm emblem, character, readable rune, text, probability number, or permanent new object",
+      "explosions, combat magic, full-screen flash, screen shake, excessive particles, or overexposed bloom"
+    ],
+    "godot_fps": 8,
+    "frame_width": 384,
+    "frame_height": 384,
+    "anchor_check": "fixed_canvas"
+  },
+  {
+    "id": "animation.tribulation",
+    "source_asset_id": "effect_source.tribulation",
+    "name_zh": "雷劫单雷反馈",
+    "purpose": "作为可重复组合的单次雷击模块，由 Godot 组成三、六或九雷的金丹雷劫。",
+    "duration_seconds": 2,
+    "source_fps": 24,
+    "target_fps": 10,
+    "loop_mode": "seam_blend",
+    "width": 1024,
+    "height": 1536,
+    "matte": "black",
+    "motion": "Animate the supplied single celestial lightning ribbon from its visible restrained state: brighten energy from the two existing cloud arcs down along the same bolt path, deliver one controlled pulse into the existing empty impact circle, let the jade-gold response ring expand slightly, then return the entire supplied effect to its opening restrained state. Keep the impact center empty for a separately composited target.",
+    "locked_elements": [
+      "the camera, strike path, empty impact center, effect scale, and full-canvas registration",
+      "the single existing bolt topology, two cloud arcs, response-ring geometry, and impact location",
+      "the restrained pale-cyan, ivory, blue-violet, and jade-gold palette, rounded effect contours, controlled glow falloff, and black matte"
+    ],
+    "must_avoid": [
+      "inventing a character, protective body aura, landscape, additional strike, or random branch count",
+      "rapid strobing, full-screen white flash, baked screen shake, fire, explosion, debris, or excessive particles",
+      "pixel art, noise, grain, oversharpening, color drift, or motion blur"
+    ],
+    "godot_fps": 10,
+    "frame_width": 256,
+    "frame_height": 384,
+    "anchor_check": "fixed_canvas"
+  },
+  {
+    "id": "animation.reincarnation",
+    "source_asset_id": "effect_source.reincarnation",
+    "name_zh": "轮回演出",
+    "purpose": "表达本世积累转化为道蕴并开始新一世，强调传承和重新生长而非死亡。",
+    "duration_seconds": 4,
+    "source_fps": 24,
+    "target_fps": 8,
+    "loop_mode": "seam_blend",
+    "width": 1024,
+    "height": 1024,
+    "matte": "black",
+    "motion": "Animate the supplied twin jade-gold spiral and seed motif from its visible calm state. Rotate the existing twin spiral slowly inward, condense its light toward the existing seed, release one warm dawn-colored ring, let the seed sprout glow gently, then return the existing spiral, ring, and seed to their opening calm state.",
+    "locked_elements": [
+      "the camera, effect scale, transformation center, and full-canvas registration",
+      "the existing twin-spiral direction, seed silhouette, ring symmetry, and stage order",
+      "the original jade, warm gold, and dawn palette, rounded shapes, soft glow falloff, and black matte"
+    ],
+    "must_avoid": [
+      "inventing a Taiji or yin-yang symbol, character, death imagery, soul extraction, destructive explosion, or dark horror effect",
+      "reversing stage order, excessive particles, overexposed bloom, or illuminating the black matte"
+    ],
+    "godot_fps": 8,
+    "frame_width": 384,
+    "frame_height": 384,
+    "anchor_check": "fixed_canvas"
+  }
+]
